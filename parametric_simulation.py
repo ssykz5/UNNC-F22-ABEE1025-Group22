@@ -1,9 +1,10 @@
 # Date of the first creation: 2022-10-18
 # This file is for EnergyPlus parametric simulation
-# Modified by Kaifeng ZHU (20411919) on 2022-10-19
-# Finish define the function run_one_parameter_parametric.
+# Modified by Kaifeng ZHU (20411919) on 2022-10-21
+# Add os
 
 import json
+import os
 from StaticEplusEngine import run_eplus_model, convert_json_idf
 
 def run_one_simulation_helper(eplus_run_path, idf_path, output_dir,
@@ -87,6 +88,10 @@ def run_one_parameter_parametric(eplus_run_path, idf_path, output_dir,
 	# Define output_paths is a dictionary 
 	output_paths = {}
 
+	# Make sure output_dir exists
+	if not os.path.isdir(output_dir):
+		os.mkdir(output_dir)
+
 	# Initialize running time
 	time = 1
 
@@ -95,6 +100,7 @@ def run_one_parameter_parametric(eplus_run_path, idf_path, output_dir,
 
 		# Change the output_dir of each parameter value
 		each_output_dir = output_dir + f"/run_{time}"
+
 
 		# Run one simulation
 		run_one_simulation_helper(eplus_run_path, idf_path, each_output_dir,
