@@ -5,6 +5,12 @@ __pycache__/
 
 virt_env
 
+energyplus9.5
+
+eplusout.end
+
+eplusout.err
+
 # C extensions
 *.so
 
