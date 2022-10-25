@@ -1,7 +1,6 @@
 # Date of the first creation: 2022-10-18
 # This file is for EnergyPlus parametric simulation
-# Modified by Kaifeng ZHU (20411919) on 2022-10-21
-# Add os
+# Modified by Kaifeng ZHU (20411919) on 2022-10-25
 
 import json
 import os
@@ -72,7 +71,7 @@ def run_one_parameter_parametric(eplus_run_path, idf_path, output_dir,
 					of the key in parameter_key to 0.1, 
 					the second will be 0.2, etc. 
 
-	Output:
+	Returns:
 	---------- 
 	output_paths: dict type, the key in the dict is the parameter 
 					values corresponding to parameter_vals, 

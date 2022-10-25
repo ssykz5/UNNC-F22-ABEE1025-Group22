@@ -1,8 +1,6 @@
 # Author:Haonan Zhang
 # Date of the creation: 2022-10-22
-# Last Modified by Kaifeng ZHU (2022-10-22)
-# The function for transforming datetime and the plot figure style 
-# are added.
+# Last Modified by Kaifeng ZHU (2022-10-25)
 
 # This file is for ploting one type of the results from the 
 # previous parametric simulation.
@@ -78,14 +76,28 @@ def plot_1D_results(out_paths, plot_column_name, y_axis_title,
 	
 	# Draw the figure for different parameter value
 	for parameter_value in out_paths.keys():
+
+		# Subtract the out_path corresponding to this parameter value
 		this_path = out_paths[parameter_value]
+
+		# Use pandas to read the csv file
 		this_df = pd.read_csv(this_path)
+
+		# Transform the type of the column 'Date/Time' to datetime
 		this_df['Date/Time'] = '2002' + this_df['Date/Time']
 		this_df['Date/Time'] = this_df['Date/Time'].apply(eplus_to_datetime)
+
+		# Set the start date and the end date
 		data_st_date = this_df.iloc[0]['Date/Time']
 		data_ed_date = this_df.iloc[-1]['Date/Time']
+
+		# Subtract the column of 'Date/Time' for x value
 		date_list = this_df['Date/Time']
+
+		# Subtract y value
 		this_y = this_df[plot_column_name].values
+
+		# Plot the figure
 		axs.plot(date_list, this_y)
 
 
@@ -104,7 +116,10 @@ def plot_1D_results(out_paths, plot_column_name, y_axis_title,
 	axs.set_ylabel('Air Temperature (C)',
 	              fontsize = fontsize)
 	axs.legend(fontsize = fontsize)
+
+	# Add title
 	plt.title(plot_title, fontsize = fontsize)
+	
 	# Save plotted figure
 	figure_path = output_dir + '/plot_figure.pdf'
 	plt.savefig(figure_path)
