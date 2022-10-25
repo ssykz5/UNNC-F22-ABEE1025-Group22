@@ -8,20 +8,21 @@
 # previous parametric simulation.
 
 import pandas as pd
-import datetimes as dt
+import datetime as dt
 import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
+
 
 def eplus_to_datetime(date_str):
 	'''
 	This function is for transform string object to datetime object
 	'''
-    if date_str[-8:-6] != '24':
-        dt_obj = pd.to_datetime(date_str)
-    else:
-        date_str = date_str[0: -8] + '00' + date_str[-6:]
-        dt_obj = pd.to_datetime(date_str) + dt.timedelta(days=1)
-    return dt_obj
+	if date_str[-8:-6] != '24':
+		dt_obj = pd.to_datetime(date_str)
+	else:
+		date_str = date_str[0: -8] + '00' + date_str[-6:]
+		dt_obj = pd.to_datetime(date_str) + dt.timedelta(days=1)
+	return dt_obj
 
 
 
@@ -29,25 +30,37 @@ def eplus_to_datetime(date_str):
 
 
 def plot_1D_results(out_paths, plot_column_name, y_axis_title,
-					plot_title):
+					plot_title, output_dir):
 	'''
 	Args:
 	--------
     inputs:
     
-	output_paths: dict type, the same as the output_paths
-				  from the previous function	
+	output_paths: dict type, the key in the dict is the parameter 
+				  values corresponding to parameter_vals, 
+				  and the value is the path to the corresponding 
+				  eplusout.csv file.
+				  the same as the output_paths from the function
+				  run_one_parameter_parametric in 
+				  parametric_simulation.py	
+
 	plot_column_name: string type, the column name of which
 					  the results will be plotted in eplusout.csv
-	y_axis_title: string, the title to the y axis of the plot
-	plot_title: string, the title to the plot
+
+	y_axis_title: string type, the title to the y axis of the plot
+
+	plot_title: string type, the title to the plot
+
+	output_dir: string type, the directory to store all simulation results
+						use to contain plot figure
 	
 	Returns:
 	--------
 	None 
 
 	This function will read all eplusout.csv files listed in output_paths, 
-	and plot the data at the column plot_column_name using matplotlib. 
+	and plot the data at the column plot_column_name using matplotlib.
+	The plotted fugure will save in the output_dir 
 	The final plot figure have:
 	
 		use hourly time steps as the x-axis
@@ -62,17 +75,18 @@ def plot_1D_results(out_paths, plot_column_name, y_axis_title,
 	# Set the style of the figure
 	fontsize = 20
 	fig, axs = plt.subplots(1, 1, figsize=(20,10))
-	date_list = table_df['Date/Time']
-
-
-	# Code need to be changed
-	for item in ['ZONE ONE:Zone Mean Air Temperature [C](TimeStep) ','Environment:Site Outdoor Air Drybulb Temperature [C](TimeStep)']:
-	    this_y = table_df[item].values
-	    axs.plot(date_list, this_y,
-	            alpha = 0.7,
-	            linestyle = '--',
-	            linewidth = 2,
-	            label = item)
+	
+	# Draw the figure for different parameter value
+	for parameter_value in out_paths.keys():
+		this_path = out_paths[parameter_value]
+		this_df = pd.read_csv(this_path)
+		this_df['Date/Time'] = '2002' + this_df['Date/Time']
+		this_df['Date/Time'] = this_df['Date/Time'].apply(eplus_to_datetime)
+		data_st_date = this_df.iloc[0]['Date/Time']
+		data_ed_date = this_df.iloc[-1]['Date/Time']
+		date_list = this_df['Date/Time']
+		this_y = this_df[plot_column_name].values
+		axs.plot(date_list, this_y)
 
 
 	# Set the style of the figure
@@ -90,5 +104,9 @@ def plot_1D_results(out_paths, plot_column_name, y_axis_title,
 	axs.set_ylabel('Air Temperature (C)',
 	              fontsize = fontsize)
 	axs.legend(fontsize = fontsize)
+	plt.title(plot_title, fontsize = fontsize)
+	# Save plotted figure
+	figure_path = output_dir + '/plot_figure.pdf'
+	plt.savefig(figure_path)
 
 	return None
