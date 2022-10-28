@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2022.10.25 14:42,
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2022.10.28 21:19,
    ** Warning ** Weather file location will be used rather than entered (IDF) Location object.
    **   ~~~   ** ..Location object=DENVER STAPLETON INTL ARPT CO USA WMO=724690
    **   ~~~   ** ..Weather File Location=Chicago Ohare Intl Ap IL USA TMY3 WMO#=725300

@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 
 def eplus_to_datetime(date_str):
 	'''
-	This function is for transform string object to datetime object
+	This function is for transforming string object to datetime object
 	'''
 	if date_str[-8:-6] != '24':
 		dt_obj = pd.to_datetime(date_str)
