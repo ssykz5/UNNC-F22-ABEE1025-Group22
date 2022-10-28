@@ -7,9 +7,9 @@ virt_env
 
 energyplus9.5
 
-eplusout.end
+test.py
 
-eplusout.err
+test01.py
 
 # C extensions
 *.so
