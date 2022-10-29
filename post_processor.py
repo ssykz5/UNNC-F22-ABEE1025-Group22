@@ -77,7 +77,7 @@ def plot_1D_results(out_paths, plot_column_name, y_axis_title,
 	# Draw the figure for different parameter value
 	for parameter_value in out_paths.keys():
 
-		# Subtract the out_path corresponding to this parameter value
+		# Extract the out_path corresponding to this parameter value
 		this_path = out_paths[parameter_value]
 
 		# Use pandas to read the csv file
@@ -91,10 +91,10 @@ def plot_1D_results(out_paths, plot_column_name, y_axis_title,
 		data_st_date = this_df.iloc[0]['Date/Time']
 		data_ed_date = this_df.iloc[-1]['Date/Time']
 
-		# Subtract the column of 'Date/Time' for x value
+		# Extract the column of 'Date/Time' for x value
 		date_list = this_df['Date/Time']
 
-		# Subtract y value
+		# Extract y value
 		this_y = this_df[plot_column_name].values
 
 		# Plot the figure
