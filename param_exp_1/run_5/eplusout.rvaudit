@@ -4,7 +4,7 @@
  output file:./param_exp_1/run_5/eplusout.csv
  getting all vars from:./param_exp_1/run_5/eplusout.eso
   number variables requested for output=          12
- ReadVars Run Time=00hr 00min  0.01sec
+ ReadVars Run Time=00hr 00min  0.03sec
  ReadVarsESO program completed successfully.
  ReadVarsESO
  processing:./1ZoneUncontrolled_win_1.mvi

@@ -98,7 +98,7 @@ def plot_1D_results(out_paths, plot_column_name, y_axis_title,
 		this_y = this_df[plot_column_name].values
 
 		# Plot the figure
-		axs.plot(date_list, this_y)
+		axs.plot(date_list, this_y, label = parameter_value)
 
 
 	# Set the style of the figure
@@ -115,7 +115,7 @@ def plot_1D_results(out_paths, plot_column_name, y_axis_title,
 	              fontsize = fontsize)
 	axs.set_ylabel('Air Temperature (C)',
 	              fontsize = fontsize)
-	axs.legend(fontsize = fontsize)
+	axs.legend()
 
 	# Add title
 	plt.title(plot_title, fontsize = fontsize)
