@@ -433,8 +433,8 @@ Version,
 
 WindowMaterial:SimpleGlazingSystem,
   SimpleWindow:DOUBLE PANE WINDOW,
-  1.5,
-  0.73,
+  2.2,
+  0.55,
   0.812;
 
 Zone,
