@@ -32,7 +32,7 @@ def plot_1D_results(out_paths, plot_column_name, y_axis_title,
 	'''
 	Args:
 	--------
-    inputs:
+    	inputs:
     
 	output_paths: dict type, the key in the dict is the parameter 
 				  values corresponding to parameter_vals, 
