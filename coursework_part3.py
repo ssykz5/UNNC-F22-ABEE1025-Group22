@@ -146,7 +146,6 @@ def run_two_parameter_parametric(eplus_run_path, idf_path, output_dir,
 								parameter_key2, parameter_key2_value)
 
 			# Name the key of output dictionary
-			this_key = f"Parameter1: {parameter_key1_value}; Parameter2: {parameter_key2_value}"
 			this_key = (parameter_key1_value, parameter_key2_value)
 
 			output_paths[this_key] = output_path
