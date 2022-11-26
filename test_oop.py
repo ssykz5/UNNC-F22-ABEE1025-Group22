@@ -3,6 +3,7 @@
 # Testing file
 
 from coursework_part3_OOP import *
+import copy
 
 sim = Simulation(eplus_run_path = './energyplus9.5/energyplus', idf_path = './1ZoneUncontrolled_win_1.idf',
 				 output_dir = './test_OOP_res_01', parameter_key1 = ['WindowMaterial:SimpleGlazingSystem',
@@ -13,29 +14,31 @@ sim = Simulation(eplus_run_path = './energyplus9.5/energyplus', idf_path = './1Z
 test_interval_1 = 0.3
 test_interval_2 = 0.6
 
-# Run the simulation
+# Run the simulation for the first time.
 sim.run_two_parameter_parametric(test_interval_1, test_interval_2)
 sim.calculate_average_indoor_air_temperature()
 
-# Show the simulation result
-print("First Simulation: ")
-print("Optimal value of parameter key 1: ", sim.optimal_value_parameter1)
-print("Optimal value of parameter key 2: ", sim.optimal_value_parameter2)
-print("Optimal value of parameter (key 1, key 2): ", sim.get_optimal_values())
+# Save the first simulation's result
+opt_val_para_key_1 = copy.deepcopy(sim.optimal_value_parameter1)
+opt_val_para_key_2 = copy.deepcopy(sim.optimal_value_parameter2)
+opt_vals = copy.deepcopy(sim.get_optimal_values())
+output_dir_first_sim = copy.deepcopy(sim.output_dir)
+
+# Save the first simulation's parameter and values
+para_key_1 = copy.deepcopy(sim.parameter_key1)
+para_key_2 = copy.deepcopy(sim.parameter_key2)
+para_key_1_vals = copy.deepcopy(sim.parameter_key1_vals)
+para_key_2_vals = copy.deepcopy(sim.parameter_key2_vals)
 
 # Change the name of parameter key
-print(f"The Origin:\nparameter_key1: {sim.parameter_key1}\nparameter_key2: {sim.parameter_key2}")
 temp1 = sim.parameter_key1
 sim.parameter_key1 = sim.parameter_key2
 sim.parameter_key2 = temp1
-print(f"After changing:\nparameter_key1: {sim.parameter_key1}\nparameter_key2: {sim.parameter_key2}")
 
 # Change the value of parameter key
-print(f"The Origin:\nparameter_key1_vals: {sim.parameter_key1_vals}\nparameter_key2_vals: {sim.parameter_key2_vals}")
 temp2 = sim.parameter_key1_vals
 sim.parameter_key1_vals = sim.parameter_key2_vals
 sim.parameter_key2_vals = temp2
-print(f"After changing:\nparameter_key1_vals: {sim.parameter_key1_vals}\nparameter_key2_vals: {sim.parameter_key2_vals}")
 
 # Change the output_dir of next simulation
 sim.output_dir = './test_OOP_res_02'
@@ -51,73 +54,22 @@ sim.reset_simulation()
 sim.run_two_parameter_parametric(test_interval_1, test_interval_2)
 sim.calculate_average_indoor_air_temperature()
 
-# Show the simulation result
-print("Second Simulation")
+# Show the first simulation result
+print("First Simulation: ")
+print("Output directory: ", output_dir_first_sim)
+print(f"Parameter_key1: {para_key_1}\nParameter_key2: {para_key_2}")
+print(f"Parameter_key1_vals: {para_key_1_vals}\nParameter_key2_vals: {para_key_2_vals}")
+print("Optimal value of parameter key 1: ", opt_val_para_key_1)
+print("Optimal value of parameter key 2: ", opt_val_para_key_2)
+print("Optimal value of parameter (key 1, key 2): ", opt_vals)
+print("")
+
+# Show the second simulation result
+print("Second Simulation: ")
+print("Output directory: ", sim.output_dir)
+print(f"Parameter_key1: {sim.parameter_key1}\nParameter_key2: {sim.parameter_key2}")
+print(f"Parameter_key1_vals: {sim.parameter_key1_vals}\nParameter_key2_vals: {sim.parameter_key2_vals}")
 print("Optimal value of parameter key 1: ", sim.optimal_value_parameter1)
 print("Optimal value of parameter key 2: ", sim.optimal_value_parameter2)
 print("Optimal value of parameter (key 1, key 2): ", sim.get_optimal_values())
 
-print(f"The Origin:\nparameter_key1: {sim.parameter_key1}\nparameter_key2: {sim.parameter_key2}")
-print(f"The Origin:\nparameter_key1_vals: {sim.parameter_key1_vals}\nparameter_key2_vals: {sim.parameter_key2_vals}")
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-# sim.generate_parameter_values(test_interval_1, test_interval_2)
-
-# sim.get_full_values()
-
-# result1 = sim.run_two_simulation_helper(parameter_key1_value = 0.25, parameter_key2_value = 1.0)
-# result2 = sim.run_two_simulation_helper(parameter_key1_value = 0.25, parameter_key2_value = 2.5)
-# result3 = sim.run_two_simulation_helper(parameter_key1_value = 0.75, parameter_key2_value = 1.0)
-# result4 = sim.run_two_simulation_helper(parameter_key1_value = 0.75, parameter_key2_value = 2.5)
-
-# print("result1: ", result1)
-# print("result2: ", result2)
-# print("result3: ", result3)
-# print("result4: ", result4)
-
-# parameter_key1 = sim.parameter_key1
-# parameter_key2 = sim.parameter_key2
-# print(f"parameter_key1: {parameter_key1}")
-# print(f"parameter_key2: {parameter_key2}")
-
-# sim.parameter_key1 = parameter_key2
-# sim.parameter_key2 = "s"
-# new_1 = sim.parameter_key1
-# new_2 = sim.parameter_key2
-# print(f"New_parameter_key1: {new_1}")
-# print(f"New_parameter_key2: {new_2}")
-
-
-
-
-
-
-
-
-
-
-# message = sim.run_two_parameter_parametric(test_interval_1, test_interval_2)
-# output_paths = sim.get_output_paths()
-# print(message)
-# print(output_paths)
-# sim.calculate_average_indoor_air_temperature()
-# opt_val1 = sim.get_optimal_value_1()
-# opt_val2 = sim.get_optimal_value_2()
-# opt_vals = sim.get_optimal_values()
-# print("opt_val1: ", opt_val1)
-# print("opt_val2: ", opt_val2)
-# print("opt_vals: ", opt_vals)

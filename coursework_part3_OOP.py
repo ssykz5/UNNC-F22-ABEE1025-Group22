@@ -205,9 +205,9 @@ class Simulation:
 			epjson_dict = json.load(epJSON)
 
 		# Change the JSON dict value of parameter_key1
-		# ['WindowMaterial:SimpleGlazingSystem', 
-		#  'SimpleWindow:DOUBLE PANE WINDOW', 
-		#  'solar_heat_gain_coefficient']
+		# For example, ['WindowMaterial:SimpleGlazingSystem', 
+		#  				'SimpleWindow:DOUBLE PANE WINDOW', 
+		#  				'solar_heat_gain_coefficient']
 		inner_dict = epjson_dict
 		for i in range(len(self._parameter_key1)):
 			if i < len(self._parameter_key1) - 1:
