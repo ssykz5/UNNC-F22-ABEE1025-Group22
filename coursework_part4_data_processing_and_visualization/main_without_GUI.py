@@ -20,10 +20,14 @@ class Analysis:
             The directory where store csv files. e.g.,"C:\Test"
         data_sheet: dict
             The dictionary contains all the dataframes read from file_directories.
+        df_names: list
+            The list of every dataframe after reading csv files.
+
         """
         self._name = name
         self._file_directory = file_directory
         self._data_sheet = {}
+        self._df_names = []
 
     # Getter to get the value of attributes.
     @property
@@ -35,8 +39,11 @@ class Analysis:
     @property
     def data_sheet(self):
         return self._data_sheet
+    @property
+    def df_names(self):
+        return self._df_names
     
-    # Setter used to rename the building.
+    # Setter used to rename.
     @name.setter
     def name(self, new_name):
         if type(new_name) is str:
@@ -49,6 +56,18 @@ class Analysis:
             self._file_directory = new_directory
         else:
             print("Please use a str to replace file_directories.")
+    @df_names.setter
+    def df_names(self, new_names):
+        # Make sure the new names list has the same length with df_names.
+        if type(new_names) is list and len(new_names) == len(self._df_names):
+            for index in range(len(new_names)):
+                this_new_name = new_names[index]
+                this_old_name = self._df_names[index]
+                self._data_sheet[this_new_name] = self._data_sheet[this_old_name]
+                del self._data_sheet[this_old_name]
+            self._df_names = new_names
+        else:
+            print("Invalid dataframe new names, please try it again.")
 
     # Data Aquisition
     def read_csv_to_df(self):
@@ -67,16 +86,20 @@ class Analysis:
             # Save this dataframe into the data_sheet dict.
             self._data_sheet[df_name] = this_df
 
+        self._df_names = list(self._data_sheet.keys())
+
     def display_data_sheet_names(self):
         """
         This function is for displaying the name of each dataframe in
         data_sheet.
         """
-        names = self.data_sheet.keys()
+        names = self._data_sheet.keys()
         print(names)
 
     # Data cleaning
     
+   
+
 
     
 
