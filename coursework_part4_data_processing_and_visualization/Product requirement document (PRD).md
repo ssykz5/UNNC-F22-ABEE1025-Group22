@@ -9,4 +9,4 @@
 ## 3. Algorithm behind the software
     
 ## 4. Similar products in the market
-    Excel, Tableau, knime
+    Excel, Tableau, Knime
