@@ -7,7 +7,7 @@
 ## 2. Key functions and Algorithm behind of this software
 * Data Aquisition
   * Read excel or csv file into pandas dataframe.
-* Data processing
+* Data Processing
   * Use pandas achieve data cleaning.
     * Drop useless (empty) rows and columns.
     * Change the column names.
@@ -18,8 +18,11 @@
       * Draw the graph with one set of x values and single/multiple sets of y values.
 * Data Comparison
   * For indoor temperature analyzing only (CSET, PMB data, or other similar structure data)
-    * Method from CIBSE Guide
+    * Method from CIBSE Guide A
       * NOT FINISHED!!!!!!----------
+      * For Educational buildings: recommended temperature:
+        * Summer: 21-25 C
+        * Winter: 19-21 C
 * Data Storage and Return
   * For data:
     * Output csv files.
