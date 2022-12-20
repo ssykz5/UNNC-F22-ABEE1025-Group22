@@ -97,12 +97,95 @@ class Analysis:
         print(names)
 
     # Data cleaning
+    def drop_empty_column(self):
+        """
+        This function is for deleting empty column
+        """
+        for this_df_name in self._data_sheet.keys():
+            self._data_sheet[this_df_name] = self._data_sheet[this_df_name].dropna(axis=1, how="all")
+        
+
+    def rename_one_df(self, this_df_name, column_names):
+        """
+        This function is used for delete useless column and empty row, and
+        change the column name into English
+        ---------
+        Args:
+        column_names: list of column names
+        """
+        self._data_sheet[this_df_name] = self._data_sheet[this_df_name].dropna(axis=0, how="all")
+        self._data_sheet[this_df_name].columns = column_names
+
+    def rename_df(self, column_names):
+        """
+        This function is used for delete useless column and empty row, and
+        change the column name into English. Rename all the dataframe.
+        ---------
+        Args:
+        column_names: list of column names
+        """
+        for this_df_name in self._data_sheet.keys():
+            self.rename_one_df(this_df_name, column_names)
+
+    def modify_df(self, column_names, this_df_name=None):
+        """
+        This function is for modify the datasheet.
+        ---------
+        Args:
+        column_names: list of column names.
+        this_df_name: default value is None, and all the dataframes will be modified.
+                    If this_df_name contains a string, this dataframe called this_df_name
+                    will be modified.
+        """
+        if this_df_name is None:
+            self.drop_empty_column()
+            self.rename_df(column_names)
+        else:
+            self.drop_empty_column()
+            self.rename_one_df(this_df_name, column_names)
+
+
+    def seperate_date_and_time_for_one_df(self, df_name, seperate_column_name="Date&Time"):
+        """
+        Add date and time columns for one dataframe.
+        ---------
+        Args:
+        df_name: string
+            The name of this dataframe.
+        seperate_column_name: string
+            The column name used to seperate date and time. Default value is "Date&Time".
+        """
+        this_df = self._data_sheet[df_name]
+
+        this_df["Date"] = this_df[seperate_column_name].dt.date
+        this_df["Time"] = this_df[seperate_column_name].dt.time
+
+    def seperate_date_and_time(self, seperate_column_name="Date&Time"):
+        """
+        Add date and time columns for every dataframe.
+        --------
+        Args:
+        seperate_column_name: string
+            The column name used to seperate date and time. Default value is "Date&Time".
+        """
+        for this_df_name in self._data_sheet.keys():
+            self.seperate_date_and_time_for_one_df(this_df_name, seperate_column_name)
+
+    def remove_c(self):
+        """
+        Remove C symbol and transform data type to float
+        --------------
+        column_names is a list contains the names of the column needs to be monified
+        """
+        for this_df_name in self._df_names:
+            this_df = self._data_sheet[this_df_name]
+            for this_column in this_df.columns:
+                if this_df[this_column].dtypes == object:
+                    this_df[this_column] = this_df[this_column].str.replace('℃', '', case=False)
+                    this_df[this_column] = this_df[this_column].astype(float, errors = 'raise')
+            
+                
     
-   
-
-
-    
-
 
         
 
