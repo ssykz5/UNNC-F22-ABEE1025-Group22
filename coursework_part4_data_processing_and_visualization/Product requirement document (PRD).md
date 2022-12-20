@@ -1,12 +1,31 @@
-# Software title
+# Software title: TBC
 
 ## 1. Background and motivation of this software
     It is always difficult for us to analyze and visualize data, especially if there is a large amount of it. Data cleaning and visualizing always consume lots of time and irritate us a lot.
 
     This software is designed for analyzing and visualizing data with graphic user interface, especially for indoor temperature analyzing. The idea is coming up when we try to analyse data of CSET and PMB building from Building Performance Report coursework.
-## 2. Key functions of this software
-    After importing a excel or csv file, it can help you do the data cleaning (drop useless rows and columns). Additionaly, it can help you calculate the mean value. Then, it can be used to draw graphs to visialize data. If the data contains indoor temperature, it can give you the results compared with the recommended values from CIBSE Guide.
-## 3. Algorithm behind the software
-    
-## 4. Similar products in the market
+## 2. Key functions and Algorithm behind of this software
+* Data Aquisition
+  * Read excel or csv file into pandas dataframe.
+* Data processing
+  * Use pandas achieve data cleaning.
+    * Drop useless (empty) rows and columns.
+    * Change the column names.
+    * Add Date column from Date&Time.
+    * Calculate mean value of each date. (Use Date column as index) (Other columns are also acceptable)
+* Data Visualization
+    * Use matplotlib.pyplot achieve data visualization.
+      * Draw the graph with one set of x values and single/multiple sets of y values.
+* Data Comparison
+  * For indoor temperature analyzing only (CSET, PMB data, or other similar structure data)
+    * Method from CIBSE Guide
+      * NOT FINISHED!!!!!!----------
+* Data Storage and Return
+  * For data:
+    * Output csv files.
+  * For graphs:
+    * Output svg files.
+* GUI
+  * Use tkinter
+## 3. Similar products in the market
     Excel, Tableau, Knime
