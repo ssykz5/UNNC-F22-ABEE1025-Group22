@@ -104,6 +104,18 @@ class Analysis:
         for this_df_name in self._data_sheet.keys():
             self._data_sheet[this_df_name] = self._data_sheet[this_df_name].dropna(axis=1, how="all")
         
+    def drop_useless_column(self, useless_column_names, this_df_name=None):
+        """
+        This function is for dropping useless column
+        """
+        if this_df_name is None:
+            for this_df_name in self._data_sheet.keys():
+                this_df = self._data_sheet[this_df_name]
+                self._data_sheet[this_df_name] = this_df.drop(useless_column_names, axis=1)
+        else:
+            this_df = self._data_sheet[this_df_name]
+            self._data_sheet[this_df_name] = this_df.drop(useless_column_names, axis=1)
+
 
     def rename_one_df(self, this_df_name, column_names):
         """
@@ -213,10 +225,39 @@ class Analysis:
         for this_df_name in self._data_sheet.keys():
             self.seperate_date_and_time_for_one_df(this_df_name, seperate_column_name)
 
+    def ascending_df_by_datetime(self, df_name=None, dtcolumn="Date&Time"):
+        """
+        Ascending sort by dtcolumn (default is Date&Time).
+        --------
+        Args:
+        df_name: string
+            The name of the dataframe needs to be ascended.
+            Default value is None, which means all the df in self.data_sheet
+            will be ascended.
+        dtcolumn: string
+            The column of datetime, default name is "Date&Time".
+        """
+        if df_name is None:
+            for this_df_name in self._data_sheet.keys():
+                this_df = self._data_sheet[this_df_name]
+                this_df = this_df.sort_values(by=dtcolumn)
+                this_df.reset_index(inplace=True)
+                del this_df["index"]
+        else:
+            this_df = self._data_sheet[df_name]
+            this_df = this_df.sort_values(by=dtcolumn)
+            this_df.reset_index(inplace=True)
+            del this_df["index"]
+
     def remove_c(self, df_name, column_names):
         """
         Remove C symbol and transform data type to float
         --------------
+        Args:
+        df_name: string
+            The name of the dataframe needs to be removed degree C.
+            Default value is None, which means all the df in self.data_sheet
+            will be removed degree C.
         column_name: list 
                     Contains the names of the column needs to be monified.
         """
@@ -225,10 +266,44 @@ class Analysis:
             this_df[column_name] = this_df[column_name].str.replace('℃', '', case=False)
             this_df[column_name] = this_df[column_name].astype(float, errors = 'raise')
 
-            
-            
-                
-    
+    def remove_row_contain_specific_data(self, specific_data, df_name=None):
+        """
+        Remove row contain specific data like "无数据".
+        -----------
+        Args:
+        specific_data: string
+        df_name: string
+            The name of the dataframe needs to remove specific data.
+            Default value is None, which means all the specific data in self.data_sheet
+            will be removed.
+        """
+        if df_name is None:
+            for this_df_name in self._data_sheet.keys():
+                this_df = self._data_sheet[this_df_name]
+                for column_name in this_df.columns:
+                    this_df = this_df.drop(index = this_df[(this_df\
+                            [column_name] == specific_data)].index.tolist())
+        else:
+            this_df = df_name
+            for column_name in this_df.columns:
+                this_df =  this_df.drop(index = this_df[(this_df\
+                        [column_name] == specific_data)].index.tolist())
 
-        
+    def f_to_c(self, df_name, column_name="Temperature(C)"):
+        """
+        This function is for transforming Fahrenheit to Celsius.
+        Principle: the temperature of degree celsius is almost impossible 
+        greater than 50 degree C.
+        ----------
+        Args:
+        df_name: string
+            The name of the dataframe needs to transfer fahrenheit degree to celsius.
+        column_names: string 
+            It contains the column name need to be transferred.
+            Default value is ["Temperature(C)"]
+        """
+        this_df = self._data_sheet[df_name]
+        this_df.loc[this_df[column_name]>50, column_name] = \
+            (this_df.loc[this_df[column_name]>50, column_name]-32)/1.8
+
 
