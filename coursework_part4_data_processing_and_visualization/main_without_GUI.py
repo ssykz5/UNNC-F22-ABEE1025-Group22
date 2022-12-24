@@ -144,6 +144,48 @@ class Analysis:
             self.drop_empty_column()
             self.rename_one_df(this_df_name, column_names)
 
+    def chinese_time_format_to_datetime(self, df_name, dtcolumn="Date&Time"):
+        """
+        This function is for transferring the format like 06/14/22 上午09时30分47秒
+        to 2022-07-06 09:44:44 (datetime type).
+        --------
+        Args:
+        df_name: string
+            The dataframe name of df needs to be transfer.
+        dtcolumn: string
+            The column needs to be transferred. Defaut column name is Date&Time.
+        """
+        this_df = self._data_sheet[df_name]
+        this_df[dtcolumn] = this_df[dtcolumn].str.replace('时', ':', case=False)
+        this_df[dtcolumn] = this_df[dtcolumn].str.replace('分', ':', case=False)
+        this_df[dtcolumn] = this_df[dtcolumn].str.replace('秒', '', case=False)
+        
+        this_df.loc[this_df[dtcolumn].str[9] == "上", dtcolumn] = \
+            pd.to_datetime(this_df.loc[this_df[dtcolumn].str[9] == "上", dtcolumn]\
+                .str.replace('上午', '', case=False))
+        this_df.loc[this_df[dtcolumn].str[9] == "下", dtcolumn] = \
+            pd.to_datetime(this_df.loc[this_df[dtcolumn].str[9] == "下", dtcolumn]\
+                .str.replace('下午', '', case=False)) + dt.timedelta(hours=12)
+        this_df[dtcolumn] = pd.to_datetime(this_df[dtcolumn])
+
+    def transfer_to_datetime(self, df_name=None, dtcolumn="Date&Time"):
+        """
+        This function is for transferring the object column to datetime column.
+        ---------
+        Args:
+        df_name: string
+            The dataframe name of df needs to be transfer. Default value is None, which
+            means all the dataframe in self.data_sheet will be transferred.
+        dtcolumn: string
+            The column needs to be transferred. Defaut column name is Date&Time.
+        """
+        if df_name == None:
+            for this_df_name in self._df_names:
+                this_df = self._data_sheet[this_df_name]
+                this_df[dtcolumn] = pd.to_datetime(this_df[dtcolumn])
+        else:
+            this_df = self._df_names[df_name]
+            this_df[dtcolumn] = pd.to_datetime(this_df[dtcolumn])
 
     def seperate_date_and_time_for_one_df(self, df_name, seperate_column_name="Date&Time"):
         """
@@ -171,18 +213,19 @@ class Analysis:
         for this_df_name in self._data_sheet.keys():
             self.seperate_date_and_time_for_one_df(this_df_name, seperate_column_name)
 
-    def remove_c(self):
+    def remove_c(self, df_name, column_names):
         """
         Remove C symbol and transform data type to float
         --------------
-        column_names is a list contains the names of the column needs to be monified
+        column_name: list 
+                    Contains the names of the column needs to be monified.
         """
-        for this_df_name in self._df_names:
-            this_df = self._data_sheet[this_df_name]
-            for this_column in this_df.columns:
-                if this_df[this_column].dtypes == object:
-                    this_df[this_column] = this_df[this_column].str.replace('℃', '', case=False)
-                    this_df[this_column] = this_df[this_column].astype(float, errors = 'raise')
+        this_df = self._data_sheet[df_name]
+        for column_name in column_names:
+            this_df[column_name] = this_df[column_name].str.replace('℃', '', case=False)
+            this_df[column_name] = this_df[column_name].astype(float, errors = 'raise')
+
+            
             
                 
     
