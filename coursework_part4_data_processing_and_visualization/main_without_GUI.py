@@ -22,12 +22,15 @@ class Analysis:
             The dictionary contains all the dataframes read from file_directories.
         df_names: list
             The list of every dataframe after reading csv files.
+        average_dfs: dict
+            The dictionary contains all the day average dataframes.
 
         """
         self._name = name
         self._file_directory = file_directory
         self._data_sheet = {}
         self._df_names = []
+        self._average_dfs = {}
 
     # Getter to get the value of attributes.
     @property
@@ -42,6 +45,9 @@ class Analysis:
     @property
     def df_names(self):
         return self._df_names
+    @property
+    def average_dfs(self):
+        return self._average_dfs
     
     # Setter used to rename.
     @name.setter
@@ -306,4 +312,83 @@ class Analysis:
         this_df.loc[this_df[column_name]>50, column_name] = \
             (this_df.loc[this_df[column_name]>50, column_name]-32)/1.8
 
+    # Data processing
+    def calculate_average_one_day(self, df_name, column_of_date, today):
+        """
+        This function is for calculate average value in one day.
+        -----------
+        Args:
+        input_df: pandas dataframe, which is needed to calculate average value in one day.
+        column_of_date: string type, the column name of date.
+        today: datetime type, the day of calculating average value.
+        Returns:
+        this_mean: pandas series contains mean values of each column.
+        """
+        this_df = self._data_sheet[df_name]
+        today_df = this_df[this_df[column_of_date] == today]
+        this_mean = today_df.mean(numeric_only=True)
+        # Return a Series of mean values
+        return this_mean
 
+    def calculate_average(self, column_of_date, start_date=None, end_date=None, df_name=None):
+        """
+        Calculate the average number in different days.
+        ---------
+        Warning:
+        start_date must cannot before the first date.
+        Args:
+        input_df: pandas dataframe, which is needed to calculate average value in one day.
+        column_of_date: string type, the column name of date.
+        start_date: datetime type, the start date for calculation.
+        end_date: datetime type, the end date for calculation.
+        Returns:
+        average_df: pandas dateframe, contains average values.
+        """
+        # Judge whether start or end date exists, if not, use the first date of input_df as
+        # start_date, last date of input_df as end_date.
+        if df_name is not None:
+            this_df = self._data_sheet[df_name]
+            if start_date == None:
+                today = this_df.iloc[0]["Date"]
+            else:
+                today = start_date
+            if end_date == None:
+                end_date = this_df.iloc[len(this_df)-1]["Date"]
+            
+            date = pd.Series([today])
+            average_df = self.calculate_average_one_day(df_name, column_of_date, today)
+            today = today + dt.timedelta(1)
+            while today <= end_date:
+                today_df = this_df[this_df[column_of_date] == today]
+                if today_df.empty is False:
+                    date = pd.concat([date, pd.Series([today])], axis=0, ignore_index=True)
+                    this_average_df = self.calculate_average_one_day(this_df, column_of_date, today)
+                    average_df = pd.concat([average_df, this_average_df], axis=1, ignore_index=True)
+                today = today + dt.timedelta(1)
+            average_df = average_df.T
+            average_df["Date"] = date
+            self._average_dfs[df_name] = average_df
+        # Useless
+        else:
+            for df_name in self._df_names:
+                this_df = self._data_sheet[df_name]
+                if start_date == None:
+                    today = this_df.iloc[0]["Date"]
+                else:
+                    today = start_date
+                if end_date == None:
+                    end_date = this_df.iloc[len(this_df)-1]["Date"]
+                
+                date = pd.Series([today])
+                average_df = self.calculate_average_one_day(df_name, column_of_date, today)
+                today = today + dt.timedelta(1)
+                while today <= end_date:
+                    today_df = this_df[this_df[column_of_date] == today]
+                    if today_df.empty is False:
+                        date = pd.concat([date, pd.Series([today])], axis=0, ignore_index=True)
+                        this_average_df = self.calculate_average_one_day(this_df, column_of_date, today)
+                        average_df = pd.concat([average_df, this_average_df], axis=1, ignore_index=True)
+                    today = today + dt.timedelta(1)
+                average_df = average_df.T
+                average_df["Date"] = date
+                self._average_dfs[df_name] = average_df
