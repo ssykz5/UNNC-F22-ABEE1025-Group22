@@ -6,7 +6,7 @@
     This software is designed for analyzing and visualizing data with graphic user interface, especially for indoor temperature analyzing. The idea is coming up when we try to analyse data of CSET and PMB building from Building Performance Report coursework.
 ## 2. Key functions and Algorithm behind of this software
 * Data Aquisition
-  * Read excel or csv file into pandas dataframe.
+  * Read csv file into pandas dataframe.
 * Data Processing
   * Use pandas achieve data cleaning.
     * Drop useless (empty) rows and columns.

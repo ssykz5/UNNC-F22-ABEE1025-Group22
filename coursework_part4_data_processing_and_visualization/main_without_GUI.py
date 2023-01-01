@@ -393,3 +393,4 @@ class Analysis:
                 average_df[column_of_date] = date
                 self._average_dfs[df_name] = average_df
 
+# Data visualization.
