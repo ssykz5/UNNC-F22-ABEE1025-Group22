@@ -11,6 +11,7 @@ test.py
 
 test01.py
 
+Result
 # C extensions
 *.so
 

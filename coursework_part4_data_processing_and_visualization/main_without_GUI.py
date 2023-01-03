@@ -584,3 +584,44 @@ class Analysis:
         plt.savefig(output_dir, format="svg")
         plt.close()
 
+    # Data Storage
+    def output_csv(self, is_avg, df_names=None, output_dir=None):
+        """
+        This function is used for outputting dataframes to csv files.
+        -------------------
+        Args:
+        is_avg: bool
+            Whether the dfs are self.average_dfs or self._data_sheet
+        df_names: list
+            The list contains the names of dataframes need to output
+            csv files.
+            Default value is None which means all the dfs in self.data_sheet
+            will be output.
+        output_dir: string
+            The name of output directory of graph which is after the self.output_dir.
+            Default value is None.
+        """
+        # Set output folder.
+        if output_dir is not None:
+            output_dir = self._output_path + "/" + output_dir
+        if not os.path.isdir(output_dir):
+            os.makedirs(output_dir)
+            os.chmod(output_dir, stat.S_IWRITE)
+
+        if df_names is None:
+            for this_df_name in self._df_names:
+                if is_avg is False:
+                    this_df = self._data_sheet[this_df_name]
+                else:
+                    this_df = self._average_dfs[this_df_name]
+                this_output_dir = output_dir + f"/{this_df_name}.csv"
+                this_df.to_csv(this_output_dir, index=False)
+        else:
+            for this_df_name in df_names:
+                if is_avg is False:
+                    this_df = self._data_sheet[this_df_name]
+                else:
+                    this_df = self._average_dfs[this_df_name]
+                this_output_dir = output_dir + f"/{this_df_name}.csv"
+                this_df.to_csv(this_output_dir, index=False)
+
