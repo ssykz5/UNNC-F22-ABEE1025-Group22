@@ -6,6 +6,7 @@ import pandas as pd
 import datetime as dt
 import matplotlib.pyplot as plt
 import os
+import stat
 
 class Analysis:
     def __init__(self, name, file_directory):
@@ -24,13 +25,16 @@ class Analysis:
             The list of every dataframe after reading csv files.
         average_dfs: dict
             The dictionary contains all the day average dataframes.
-
+        output_path: string
+            The output path for saving figures and datas.
+            Default path is "./Result".
         """
         self._name = name
         self._file_directory = file_directory
         self._data_sheet = {}
         self._df_names = []
         self._average_dfs = {}
+        self._output_path = r"./Result"
 
     # Getter to get the value of attributes.
     @property
@@ -48,8 +52,11 @@ class Analysis:
     @property
     def average_dfs(self):
         return self._average_dfs
+    @property
+    def output_path(self):
+        return self._output_path
     
-    # Setter used to rename.
+    # Setter used to rename or reset.
     @name.setter
     def name(self, new_name):
         if type(new_name) is str:
@@ -74,6 +81,10 @@ class Analysis:
             self._df_names = new_names
         else:
             print("Invalid dataframe new names, please try it again.")
+    @output_path.setter
+    def output_path(self, new_path):
+        if type(new_path) is str:
+            self._output_path = r"./" + new_path
 
     # Data Aquisition
     def read_csv_to_df(self):
@@ -345,7 +356,7 @@ class Analysis:
         start_date: datetime type, the start date for calculation.
         end_date: datetime type, the end date for calculation.
         Returns:
-        average_df: pandas dateframe, contains average values.
+        average_df: pandas dateframe, contains average values. (Saved in the class attribute)
         """
         if df_name is not None:
             # Judge whether start or end date exists, if not, use the first date of input_df as
@@ -393,4 +404,73 @@ class Analysis:
                 average_df[column_of_date] = date
                 self._average_dfs[df_name] = average_df
 
-# Data visualization.
+    # Data visualization
+    def plot_graph(self, df_names, is_avg, figure_name, x_name, y_names, output_dir=None):
+        """
+        Plot graph.
+        -------------
+        Args:
+        df_names: list
+            The list of names of dataframes where the datas are retrieved from.
+        is_avg: bool
+            Whether the dfs are self.average_dfs or self._data_sheet
+        figure_name: string
+            The name of this graph.
+        x_name: string
+            The column name of datas used for x-axis.
+        y_names: list
+            The list of column names of datas used for y-axis.
+        output_dir: string
+            The name of output directory of graph which is after the self.output_dir.
+            Default value is None.
+        """
+        # Set the font as SimHei.
+        plt.rcParams['font.sans-serif'] = ['SimHei']
+        # Display the negative sign.
+        plt.rcParams['axes.unicode_minus'] = False  
+        plt.figure(figsize=(20, 10))
+        # Set the background grid lines.
+        plt.grid(linestyle="--") 
+        ax = plt.gca()
+        # Get rid of upper frame.
+        ax.spines['top'].set_visible(False)
+        # Get rid of right frame.
+        ax.spines['right'].set_visible(False)
+        pd.plotting.register_matplotlib_converters()
+
+        # Plot graph in different dataframes.
+        for this_df_name in df_names:
+            # Judge the type of dfs.
+            if is_avg is False:
+                this_df = self._data_sheet[this_df_name]
+            else:
+                this_df = self._average_dfs[this_df_name]
+            # Set x value.
+            x_data = this_df[x_name]
+
+            for this_y_name in y_names:
+                # Set y value.
+                y_data = this_df[this_y_name]
+                # Plot the graph
+                plt.plot(x_data, y_data, marker='o', label=f"{this_y_name}: {this_df_name}", linewidth=1.5)
+
+        # Set the title and labels.
+        plt.title(figure_name, fontsize=12, fontweight='bold')
+        plt.xlabel(x_name, fontsize=12, fontweight='bold')
+        plt.ylabel("Value", fontsize=12, fontweight='bold')
+
+        plt.legend(loc=0, numpoints=1)
+        leg = plt.gca().get_legend()
+        ltext = leg.get_texts()
+        plt.setp(ltext, fontsize=12, fontweight='bold')
+
+        if output_dir is not None:
+            output_dir = self._output_path + "/" + output_dir
+
+        if not os.path.isdir(output_dir):
+            os.makedirs(output_dir)
+            os.chmod(output_dir, stat.S_IWRITE)
+
+        output_dir += f"/{figure_name}.svg"
+        # Save the graph as a svg file.
+        plt.savefig(output_dir, format="svg")    
