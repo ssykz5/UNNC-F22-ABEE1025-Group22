@@ -28,6 +28,8 @@ class Analysis:
         output_path: string
             The output path for saving figures and datas.
             Default path is "./Result".
+        outdoor_temp_df: pandas dataframe
+            df contains outdoor temperature
         """
         self._name = name
         self._file_directory = file_directory
@@ -35,6 +37,7 @@ class Analysis:
         self._df_names = []
         self._average_dfs = {}
         self._output_path = r"./Result"
+        self._outdoor_temp_df = pd.DataFrame()
 
     # Getter to get the value of attributes.
     @property
@@ -55,6 +58,9 @@ class Analysis:
     @property
     def output_path(self):
         return self._output_path
+    @property
+    def outdoor_temp_df(self):
+        return self._outdoor_temp_df
     
     # Setter used to rename or reset.
     @name.setter
@@ -85,6 +91,10 @@ class Analysis:
     def output_path(self, new_path):
         if type(new_path) is str:
             self._output_path = r"./" + new_path
+
+    @outdoor_temp_df.setter
+    def outdoor_temp_df(self, new_df):
+        self._outdoor_temp_df = new_df
 
     # Data Aquisition
     def read_csv_to_df(self):
@@ -403,6 +413,30 @@ class Analysis:
                 average_df = average_df.T
                 average_df[column_of_date] = date
                 self._average_dfs[df_name] = average_df
+
+    def gemerate_recommended_temp_range(self, temp_col="Temperature(C)"):
+        """
+        This function is used for generating recommended temperature range.
+        """
+        temp_df = self._outdoor_temp_df
+        temp_df["Comfortable Temperature"] = temp_df[temp_col] * 0.33 + 18.8
+        temp_df["Max Acceptable Temperature"] = temp_df["Comfortable Temperature"] + 3
+
+    
+    
+    def is_recommended_temp(self, is_avg, df_names=None):
+        """
+        This function is used for judging whether the temperature is in the recommended range.
+        """
+        for this_df_name in df_names:
+            # Judge the type of dfs.
+            if is_avg is False:
+                this_df = self._data_sheet[this_df_name]
+            else:
+                this_df = self._average_dfs[this_df_name]
+            
+            
+
 
     # Data visualization
     def plot_graph(self, df_names, is_avg, figure_name, x_name, y_names, output_dir=None):
