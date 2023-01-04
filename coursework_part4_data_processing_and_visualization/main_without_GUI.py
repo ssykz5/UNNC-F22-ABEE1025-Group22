@@ -417,6 +417,10 @@ class Analysis:
     def gemerate_recommended_temp_range(self, temp_col="Temperature(C)"):
         """
         This function is used for generating recommended temperature range.
+        -------------
+        Args:
+        temp_col: string
+            The column name of temperature.
         """
         temp_df = self._outdoor_temp_df
         temp_df["Comfortable Temperature"] = temp_df[temp_col] * 0.33 + 18.8
@@ -424,16 +428,72 @@ class Analysis:
 
     
     
-    def is_recommended_temp(self, is_avg, df_names=None):
+    def is_recommended_temp(self, is_avg, df_names=None, start_dt=None, end_dt=None):
         """
         This function is used for judging whether the temperature is in the recommended range.
         """
+        standard_df = self._outdoor_temp_df
         for this_df_name in df_names:
+            this_output_df = pd.DataFrame()
             # Judge the type of dfs.
             if is_avg is False:
                 this_df = self._data_sheet[this_df_name]
             else:
                 this_df = self._average_dfs[this_df_name]
+            standard_start_dt = standard_df.iloc[0]["Date&Time"]
+            standard_end_dt = standard_df.iloc[-1]["Date&Time"]
+            this_df_start_dt = this_df.iloc[0]["Date&Time"]
+            this_df_end_dt = this_df.iloc[-1]["Date&Time"]
+
+            if start_dt is None:
+                if standard_start_dt < this_df_start_dt:
+                    start_dt = this_df_start_dt
+                else:
+                    start_dt = standard_start_dt
+            else:
+                if start_dt < standard_start_dt:
+                    if standard_start_dt < this_df_start_dt:
+                        start_dt = this_df_start_dt
+                    else:
+                        start_dt = standard_start_dt
+                else:
+                    if this_df_start_dt > start_dt:
+                        start_dt = this_df_start_dt
+                    
+            if end_dt is None:
+                if standard_end_dt < this_df_end_dt:
+                    end_dt = standard_end_dt
+                else:
+                    end_dt = this_df_end_dt
+            else:
+                if end_dt > standard_end_dt:
+                    if this_df_end_dt < standard_end_dt:
+                        end_dt = this_df_end_dt
+                    else:
+                        end_dt = standard_end_dt
+                else:
+                    if this_df_end_dt < end_dt:
+                        end_dt = this_df_end_dt
+            # Set the time interval (5mins)
+            now = start_dt
+
+            now_lower = now
+            now_upper = now + dt.timedelta(minutes=5)
+            # Get the mean standard temperature in 5 mins interval
+            standard_5_df = standard_df.loc[(standard_df["Date&Time"]>=now_lower)&(standard_df["Date&Time"]<now_upper), ["Date&Time", "Comfortable Temperature", "Max Acceptable Temperature"]]
+            standard_5_df = standard_5_df.mean(numeric_only=True)
+            # Get the mean this_df temperature in 5 mins interval
+            this_df_5_df = this_df.loc[(this_df["Date&Time"]>=now_lower)&(this_df["Date&Time"]<now_upper), ["Date&Time", "Temperature(C)"]]
+            this_df_5_df = this_df_5_df.mean(numeric_only=True)
+
+            this_comparison_data = [[this_df_5_df["Temperature(C)"], standard_5_df["Comfortable Temperature"], standard_5_df["Max Acceptable Temperature"], now]]
+            this_comparison_df = pd.DataFrame(this_comparison_data, columns=["Indoor Temperature(C)", "Comfortable Temperature", "Max Acceptable Temperature", "Date&Time"])
+            this_output_df = pd.concat([this_output_df, this_comparison_df], axis=0, ignore_index=True)
+
+            
+
+            
+            
             
             
 
