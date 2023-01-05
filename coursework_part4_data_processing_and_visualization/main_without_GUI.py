@@ -5,6 +5,7 @@
 import pandas as pd
 import datetime as dt
 import matplotlib.pyplot as plt
+import numpy as np
 import os
 import stat
 
@@ -450,10 +451,28 @@ class Analysis:
         temp_df = self._outdoor_temp_df
         temp_df["Comfortable Temperature"] = temp_df[temp_col] * 0.33 + 18.8
         temp_df["Max Acceptable Temperature"] = temp_df["Comfortable Temperature"] + 3
+        temp_df["Min Acceptable Temperature"] = temp_df["Comfortable Temperature"] - 3
 
     def add_reco_temp_one_time(self, this_df, this_df_name, standard_df, start_date=None, end_date=None, start_time=None, end_time=None):
         """
         This function is for adding recommended temperature range for one dataframe.
+        Only the dataframe which has the Temperature(C) column can be used.
+        -----------
+        Args:
+        this_df: pandas dataframe
+            The dataframe needs to be add recommended temperature range.
+        this_df_name: string
+            The name of this_df
+        standard_df: pandas dataframe
+            The dataframe contains recommended temperature range.
+        start_date: dt.datetime
+            The date starts to add range. Default value is None.
+        end_date: dt.datetime
+            The date ends to add range. Default is None.
+        start_time: dt.datetime
+            The start time to add range.
+        end_time: dt.datetime
+            The end time to add range.
         """
         # Initialise output dataframe.
         this_output_df = pd.DataFrame()
@@ -474,12 +493,39 @@ class Analysis:
         # Set the begin date as start_date.
         today = start_date
         # Loop used to get the values in every valid date.
-        while today <= end_date:
+
+        # Testing code ------------
+        # print("standard_start_date: ", standard_start_date)
+        # print("this_df_start_date: ", this_df_start_date)
+        # print("start_date: ", start_date)
+
+        # print()
+        # print("standard_end_date: ", standard_end_date)
+        # print("this_df_end_date: ", this_df_end_date)
+        # print("end_date", end_date)
+        # print()
+        # print("today: ", today)
+        # ------------------------
+
+        while today.date() <= end_date.date():
             # Set the today dfs.
             today_standard_df = standard_df.loc[standard_df["Date"] == today.date()]
             today_this_df = this_df.loc[this_df["Date"] == today.date()]
+
+            today_this_df = today_this_df[["Date&Time", "Temperature(C)", "Date", "Time"]]
+
+            # print("-----------")
+            # print("today_standard_df: ", today_standard_df)
+            # print("today_this_df: ", today_this_df)
+            # print("---------")
+
+            judgement = False
+            if today_standard_df.empty is not True:
+                if today_this_df.empty is not True:
+                    judgement = True
+
             # Make sure the dfs have this day's values.
-            if today_standard_df.empty & today_this_df.empty is not True:
+            if judgement is True:
                 # Reset the index.
                 today_standard_df = today_standard_df.reset_index(drop=True)
                 today_this_df = today_this_df.reset_index(drop=True)
@@ -494,30 +540,54 @@ class Analysis:
                 else:
                     start_time = max([today_standard_start_time, today_this_df_start_time, start_time])
                 if end_time is None:
-                    end_time = min([today_standard_end_time, today_this_df_end_time])
+                    this_end_time = min([today_standard_end_time, today_this_df_end_time])
                 else:
-                    end_time = min([today_standard_end_time, today_this_df_end_time, end_time])
+                    this_end_time = min([today_standard_end_time, today_this_df_end_time, end_time])
                 # Set the begin time as start_time.
                 now = start_time
+
+                # print("---------")
+                # print("now: ", now)
+                # print("today_standard_end_time: ", today_standard_end_time)
+                # print("today_this_df_end_time: ", today_this_df_end_time)
+                # print("this_end_time: ", this_end_time)
+                # print("----------")
+
+                # print("-----------")
+                # print("today_standard_df: ", today_standard_df)
+                # print("today_this_df: ", today_this_df)
+
                 # Loop used to get the values in every valid time.
-                while now <= end_time:
+                not_break = True
+                while (now.time() <= this_end_time.time()) and not_break:
                     # Set the time interval (5mins)
                     now_lower = now.time()
                     now_upper = (now + dt.timedelta(minutes=5)).time()
                     # Get the mean standard temperature in 5 mins interval
-                    standard_5_df = today_standard_df.loc[(today_standard_df["Time"]>=now_lower)&(today_standard_df["Time"]<now_upper), ["Date&Time", "Comfortable Temperature", "Max Acceptable Temperature"]]
+                    standard_5_df = today_standard_df.loc[(today_standard_df["Time"]>=now_lower)&(today_standard_df["Time"]<now_upper), ["Date&Time", "Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature"]]
                     standard_5_df = standard_5_df.mean(numeric_only=True)
                     # Get the mean this_df temperature in 5 mins interval
                     this_df_5_df = today_this_df.loc[(today_this_df["Time"]>=now_lower)&(today_this_df["Time"]<now_upper), ["Date&Time", "Temperature(C)"]]
                     this_df_5_df = this_df_5_df.mean(numeric_only=True)
 
-                    this_comparison_data = [[this_df_5_df["Temperature(C)"], standard_5_df["Comfortable Temperature"], standard_5_df["Max Acceptable Temperature"], today.date(), now.time(), now]]
-                    this_comparison_df = pd.DataFrame(this_comparison_data, columns=["Indoor Temperature(C)", "Comfortable Temperature", "Max Acceptable Temperature", "Date", "Time", "Date&Time"])
+                    this_comparison_data = [[this_df_5_df["Temperature(C)"], standard_5_df["Comfortable Temperature"], standard_5_df["Max Acceptable Temperature"], standard_5_df["Min Acceptable Temperature"], today.date(), now.time(), now]]
+                    this_comparison_df = pd.DataFrame(this_comparison_data, columns=["Indoor Temperature(C)", "Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature", "Date", "Time", "Date&Time"])
                     this_output_df = pd.concat([this_output_df, this_comparison_df], axis=0, ignore_index=True)
                     # Set for next 5 mins.
                     now = now + dt.timedelta(minutes=5)
+                    # print("now: ", now)
+
+                    if now.time() >= dt.time(23, 50, 00):
+                        not_break = False
+
+
             # Set for next date
             today += dt.timedelta(days=1)
+
+            # print("------------")
+            # print("After plus: today is", today)
+            # print()
+
         # Save this output into self._dfs_with_reco_range.
         self._dfs_with_reco_range[this_df_name] = this_output_df
         self._df_names_with_reco_range = list(self._dfs_with_reco_range.keys())
@@ -525,6 +595,22 @@ class Analysis:
     def add_recommended_temp(self, is_avg, df_names=None, start_date=None, end_date=None, start_time=None, end_time=None):
         """
         This function is used for judging whether the temperature is in the recommended range.
+        Only the dataframe which has the Temperature(C) column can be used.
+        -----------
+        Args:
+        is_avg: bool
+            Whether the dfs are self.average_dfs or self._data_sheet
+        df_names: list
+            The list of df names need to be added recommended temperature range.
+            Default value is None, which means all the dfs will be added.
+        start_date: dt.datetime
+            The date starts to add range. Default value is None.
+        end_date: dt.datetime
+            The date ends to add range. Default is None.
+        start_time: dt.datetime
+            The start time to add range.
+        end_time: dt.datetime
+            The end time to add range.
         """
         standard_df = self._outdoor_temp_df
         if df_names is not None:
@@ -547,15 +633,17 @@ class Analysis:
                 self.add_reco_temp_one_time(this_df, this_df_name, standard_df, start_date, end_date, start_time, end_time)
 
     # Data visualization
-    def plot_graph(self, df_names, is_avg, figure_name, x_name, y_names, output_dir=None):
+    def plot_graph(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None):
         """
         Plot graph.
         -------------
         Args:
         df_names: list
             The list of names of dataframes where the datas are retrieved from.
-        is_avg: bool
-            Whether the dfs are self.average_dfs or self._data_sheet
+        df_type: int
+            1 means self._data_sheet
+            2 means self._average_dfs
+            3 means self._dfs_with_reco_range
         figure_name: string
             The name of this graph.
         x_name: string
@@ -583,10 +671,14 @@ class Analysis:
         # Plot graph in different dataframes.
         for this_df_name in df_names:
             # Judge the type of dfs.
-            if is_avg is False:
+            if df_type == 1:
                 this_df = self._data_sheet[this_df_name]
-            else:
+            elif df_type == 2:
                 this_df = self._average_dfs[this_df_name]
+            elif df_type == 3:
+                this_df = self._dfs_with_reco_range[this_df_name]
+            else:
+                return "Invalid Use !!!"
             # Set x value.
             x_data = this_df[x_name]
 
@@ -594,7 +686,7 @@ class Analysis:
                 # Set y value.
                 y_data = this_df[this_y_name]
                 # Plot the graph
-                plt.plot(x_data, y_data, marker='o', label=f"{this_y_name}: {this_df_name}", linewidth=1.5)
+                plt.plot(x_data, y_data, marker='o', label=f"{this_y_name}: {this_df_name}", linewidth=1, markersize=1.5)
 
         # Set the title and labels.
         plt.title(figure_name, fontsize=12, fontweight='bold')
@@ -618,7 +710,7 @@ class Analysis:
         plt.savefig(output_dir, format="svg")
         plt.close()    
 
-    def plot_each_day(self, df_names, is_avg, figure_name, x_name, y_names, output_dir=None, start_date=None, end_date=None, date_column="Date", start_time=None, end_time=None):
+    def plot_each_day(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None, start_date=None, end_date=None, date_column="Date", start_time=None, end_time=None):
         """
         Plot graph of each day.
         Default: all the values will be used.
@@ -626,8 +718,10 @@ class Analysis:
         Args:
         df_names: list
             The list of names of dataframes where the datas are retrieved from.
-        is_avg: bool
-            Whether the dfs are self.average_dfs or self._data_sheet
+        df_type: int
+            1 means self._data_sheet
+            2 means self._average_dfs
+            3 means self._dfs_with_reco_range
         figure_name: string
             The name of this graph.
         x_name: string
@@ -671,10 +765,14 @@ class Analysis:
         # Plot graph in different dataframes.
         for this_df_name in df_names:
             # Judge the type of dfs.
-            if is_avg is False:
+            if df_type == 1:
                 this_df = self._data_sheet[this_df_name]
-            else:
+            elif df_type == 2:
                 this_df = self._average_dfs[this_df_name]
+            elif df_type == 3:
+                this_df = self._dfs_with_reco_range[this_df_name]
+            else:
+                return "Invalid Use !!!"
             # Set the start date and the end date.
             if start_date is not None:
                 today = start_date
