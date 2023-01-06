@@ -7,6 +7,8 @@ import tkinter.messagebox as msgbox
 from tkinter import filedialog
 from main_without_GUI import *
 import os
+from tkcalendar import DateEntry
+from tkinter import ttk
 
 class DataPloting(tk.Tk):
     def __init__(self):
@@ -90,6 +92,11 @@ class DataPloting(tk.Tk):
         # ------------
         # Plot Graphs.
         # ------------
+        # Choose start and end dates.
+        start_date_btn = ttk.Button(self, text="Choose start date", command=self.choose_start_date)
+        start_date_btn.pack()
+        end_date_btn = ttk.Button(self, text="Choose end date", command=self.choose_end_date)
+        end_date_btn.pack()
         plot_average_btn = tk.Button(self, text="Plot Day Average Temperature vs Date", command=self.plotting_average, bg="green", fg="white")
         plot_average_btn.pack(fill=tk.NONE, side=tk.TOP, padx=20, pady=20, anchor="center")
 
@@ -143,6 +150,57 @@ class DataPloting(tk.Tk):
         print(this_analysis.average_dfs)
 
         msgbox.showinfo("Reminder", "Data import successfully!")
+
+
+    def choose_start_date(self):
+        """
+        This function is for choosing date.
+        """
+        def get_start_date(self):
+            self.start_date = cal.get_date()
+            
+            print(self.start_date)
+            print(type(self.start_date))
+        
+        # Create upper window.
+        top = tk.Toplevel(self)
+        ttk.Label(top, text='Choose date').pack(padx=10, pady=10)
+        cal = DateEntry(top, width=12, background='darkblue',
+                        foreground='white', borderwidth=2, year=2010)
+        # Set the default date.
+        cal.set_date(dt.date(2022, 6, 14))
+        cal.pack(padx=10, pady=10)
+
+        self.start_date = cal.get_date()
+        cal.bind("<<DateEntrySelected>>", get_start_date)
+        
+        print(self.start_date)
+        print(type(self.start_date))
+
+    def choose_end_date(self):
+        """
+        This function is for choosing date.
+        """
+        def get_end_date(self):
+            self.end_date = cal.get_date()
+            
+            print(self.end_date)
+            print(type(self.end_date))
+        
+        # Create upper window.
+        top = tk.Toplevel(self)
+        ttk.Label(top, text='Choose date').pack(padx=10, pady=10)
+        cal = DateEntry(top, width=12, background='darkblue',
+                        foreground='white', borderwidth=2, year=2010)
+        # Set the default date.
+        cal.set_date(dt.date(2022, 7, 23))
+        cal.pack(padx=10, pady=10)
+
+        self.end_date = cal.get_date()
+        cal.bind("<<DateEntrySelected>>", get_end_date)
+        
+        print(self.end_date)
+        print(type(self.end_date))
 
     def plotting_average(self):
         """
