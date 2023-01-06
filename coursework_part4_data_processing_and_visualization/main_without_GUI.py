@@ -130,6 +130,7 @@ class Analysis:
             domain = os.path.abspath(self._file_directory)
             df_name = info
             df_name = df_name.replace(".CSV", "")
+            df_name = df_name.replace(".csv", "")
             # This file repository address.
             info = os.path.join(domain, info)
             # Read csv
@@ -633,7 +634,7 @@ class Analysis:
                 self.add_reco_temp_one_time(this_df, this_df_name, standard_df, start_date, end_date, start_time, end_time)
 
     # Data visualization
-    def plot_graph(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None):
+    def plot_graph(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None, is_GUI=False):
         """
         Plot graph.
         -------------
@@ -651,8 +652,11 @@ class Analysis:
         y_names: list
             The list of column names of datas used for y-axis.
         output_dir: string
-            The name of output directory of graph which is after the self.output_dir.
+            The name of output directory of graph which is after the self.output_dir. (not GUI)
+            If is_GUI is True, it is the absolute directory.
             Default value is None.
+        is_GUI: bool
+            Judege whether the use of this function is for GUI.
         """
         # Set the font as SimHei.
         plt.rcParams['font.sans-serif'] = ['SimHei']
@@ -699,7 +703,8 @@ class Analysis:
         plt.setp(ltext, fontsize=12, fontweight='bold')
 
         if output_dir is not None:
-            output_dir = self._output_path + "/" + output_dir
+            if is_GUI is False:
+                output_dir = self._output_path + "/" + output_dir
 
         if not os.path.isdir(output_dir):
             os.makedirs(output_dir)
@@ -708,9 +713,10 @@ class Analysis:
         output_dir += f"/{figure_name}.svg"
         # Save the graph as a svg file.
         plt.savefig(output_dir, format="svg")
+        plt.show()
         plt.close()    
 
-    def plot_each_day(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None, start_date=None, end_date=None, date_column="Date", start_time=None, end_time=None):
+    def plot_each_day(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None, start_date=None, end_date=None, date_column="Date", start_time=None, end_time=None, is_GUI=False):
         """
         Plot graph of each day.
         Default: all the values will be used.
@@ -813,7 +819,8 @@ class Analysis:
         plt.setp(ltext, fontsize=8, fontweight='bold')
 
         if output_dir is not None:
-            output_dir = self._output_path + "/" + output_dir
+            if is_GUI is False:
+                output_dir = self._output_path + "/" + output_dir
 
         if not os.path.isdir(output_dir):
             os.makedirs(output_dir)

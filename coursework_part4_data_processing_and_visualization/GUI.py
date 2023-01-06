@@ -71,7 +71,7 @@ def initialize_analysis():
     # globals[analysis_name]
     # analysis_name = analysis_name_entry.get()
     # analysis_dict[analysis_name.get()] = Analysis(analysis_name.get(), path.get())
-    analysis_dict[analysis_name_entry.get()] = Analysis(analysis_name_entry.get(), path.get())
+    analysis_dict[analysis_name_entry.get()] = Analysis(analysis_name_entry.get(), path_entry.get())
 
 
 def show_analysis_dict():
