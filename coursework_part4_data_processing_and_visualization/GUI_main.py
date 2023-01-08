@@ -49,6 +49,12 @@ class DataPloting(tk.Tk):
         self.output_dir.set(os.path.abspath("."))
         # print(self.directory.get())
 
+        # Initialize start date and end date.
+        self.start_date = tk.StringVar()
+        self.start_date.set('2022-06-14')
+        self.end_date = tk.StringVar()
+        self.end_date.set('2022-7-23')
+
         # -----------------
         # For choosing target directory.
         # ----------------
@@ -99,6 +105,8 @@ class DataPloting(tk.Tk):
         end_date_btn.pack()
         plot_average_btn = tk.Button(self, text="Plot Day Average Temperature vs Date", command=self.plotting_average, bg="green", fg="white")
         plot_average_btn.pack(fill=tk.NONE, side=tk.TOP, padx=20, pady=20, anchor="center")
+        plot_each_day_btn = tk.Button(self, text="Plot Temperature vs Time in different date", command=self.plotting_each_day, bg="green", fg="white")
+        plot_each_day_btn.pack(fill=tk.NONE, side=tk.TOP, padx=20, pady=20, anchor="center")
 
         # -------------
         # Quit button.
@@ -106,6 +114,12 @@ class DataPloting(tk.Tk):
         goodbye_button = tk.Button(self, text="Quit",
                                     command=self.say_goodbye, bg="green", fg="white")
         goodbye_button.pack(side=tk.BOTTOM, padx=(0, 20), pady=(0, 20))
+
+        #=============
+        # Testing
+        #=============
+        show_end_date_btn = tk.Button(self, text="Show end date", command=self.show_self_end_date)
+        show_end_date_btn.pack(side=tk.BOTTOM)
 
     def select_directory_input(self):
         """
@@ -156,11 +170,15 @@ class DataPloting(tk.Tk):
         """
         This function is for choosing date.
         """
+
+        date = self.start_date
+
         def get_start_date(self):
-            self.start_date = cal.get_date()
+            # self.start_date.set(str(cal.get_date()))
+            date.set(str(cal.get_date()))
             
-            print(self.start_date)
-            print(type(self.start_date))
+            # print(date.get())
+            # print(type(date))
         
         # Create upper window.
         top = tk.Toplevel(self)
@@ -171,36 +189,54 @@ class DataPloting(tk.Tk):
         cal.set_date(dt.date(2022, 6, 14))
         cal.pack(padx=10, pady=10)
 
-        self.start_date = cal.get_date()
+        date.set(str(cal.get_date()))
         cal.bind("<<DateEntrySelected>>", get_start_date)
+
+        self.start_date = date
         
-        print(self.start_date)
-        print(type(self.start_date))
+        # print(self.start_date.get())
+        # print(type(self.start_date))
 
     def choose_end_date(self):
         """
         This function is for choosing date.
         """
+
+        date = self.end_date
+
         def get_end_date(self):
-            self.end_date = cal.get_date()
+            # retrive_end_date["End date"] = cal.get_date()
+            # self.end_date = cal.get_date()
+            date.set(str(cal.get_date()))
+            # print(cal.get_date())
+            # print(type(cal.get_date()))
             
-            print(self.end_date)
-            print(type(self.end_date))
+            # print("self.end_date: ", self.end_date)
+            # print(type(self.end_date))
         
         # Create upper window.
         top = tk.Toplevel(self)
         ttk.Label(top, text='Choose date').pack(padx=10, pady=10)
         cal = DateEntry(top, width=12, background='darkblue',
-                        foreground='white', borderwidth=2, year=2010)
+                        foreground='white', borderwidth=2, year=2022, month=7, day=23)
         # Set the default date.
         cal.set_date(dt.date(2022, 7, 23))
         cal.pack(padx=10, pady=10)
 
-        self.end_date = cal.get_date()
+        # confirm_btn = tk.Button(top, text="Confirm")
+        date.set(str(cal.get_date()))
+        # self.end_date = retrive_end_date["End date"]
         cal.bind("<<DateEntrySelected>>", get_end_date)
+
+        self.end_date = date
+
+        # self.end_date = cal.get_date()
         
         print(self.end_date)
         print(type(self.end_date))
+
+    def show_self_end_date(self):
+        print(self.start_date.get())
 
     def plotting_average(self):
         """
@@ -208,6 +244,19 @@ class DataPloting(tk.Tk):
         """
         this_analysis = self.analysis
         this_analysis.plot_graph(df_names=this_analysis.df_names, df_type=2, figure_name="Day Average Temperature vs Date", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True)
+
+    def plotting_each_day(self):
+        """
+        This function is for plotting graph of each day.
+        """
+        this_analysis = self.analysis
+        # Transfer to dt.date.
+        style = "%Y-%m-%d"
+        start_date = dt.datetime.strptime(self.start_date.get(), style)
+        end_date = dt.datetime.strptime(self.end_date.get(), style)
+        start_date = start_date.date()
+        end_date = end_date.date()
+        this_analysis.plot_each_day(df_names=this_analysis.df_names, df_type=1, figure_name="Temperature vs Time in different date", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
 
     def select_directory_output(self):
         """

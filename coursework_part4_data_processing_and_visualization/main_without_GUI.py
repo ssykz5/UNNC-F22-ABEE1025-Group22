@@ -829,6 +829,7 @@ class Analysis:
         output_dir += f"/{figure_name}.svg"
         # Save the graph as a svg file.
         plt.savefig(output_dir, format="svg")
+        plt.show()
         plt.close()
 
     # Data Storage
