@@ -55,6 +55,12 @@ class DataPloting(tk.Tk):
         self.end_date = tk.StringVar()
         self.end_date.set('2022-7-23')
 
+        # Initialize start time and end time.
+        self.start_time = tk.StringVar()
+        self.start_time.set('09/00')
+        self.end_time = tk.StringVar()
+        self.end_time.set('18/00')
+
         # -----------------
         # For choosing target directory.
         # ----------------
@@ -99,9 +105,9 @@ class DataPloting(tk.Tk):
         # Plot Graphs.
         # ------------
         # Choose start and end dates.
-        start_date_btn = ttk.Button(self, text="Choose start date", command=self.choose_start_date)
+        start_date_btn = ttk.Button(self, text="Choose start date & time", command=self.choose_start_date_and_time)
         start_date_btn.pack()
-        end_date_btn = ttk.Button(self, text="Choose end date", command=self.choose_end_date)
+        end_date_btn = ttk.Button(self, text="Choose end date & time", command=self.choose_end_date_and_time)
         end_date_btn.pack()
         plot_average_btn = tk.Button(self, text="Plot Day Average Temperature vs Date", command=self.plotting_average, bg="green", fg="white")
         plot_average_btn.pack(fill=tk.NONE, side=tk.TOP, padx=20, pady=20, anchor="center")
@@ -118,7 +124,7 @@ class DataPloting(tk.Tk):
         #=============
         # Testing
         #=============
-        show_end_date_btn = tk.Button(self, text="Show end date", command=self.show_self_end_date)
+        show_end_date_btn = tk.Button(self, text="Testing", command=self.show_self_end_date)
         show_end_date_btn.pack(side=tk.BOTTOM)
 
     def select_directory_input(self):
@@ -166,77 +172,251 @@ class DataPloting(tk.Tk):
         msgbox.showinfo("Reminder", "Data import successfully!")
 
 
-    def choose_start_date(self):
+    def choose_start_date_and_time(self):
         """
-        This function is for choosing date.
+        This function is for choosing date and time.
         """
-
+        # Get the date and time from the class attributes.
         date = self.start_date
+        time = self.start_time
+        hour = tk.StringVar()
+        minute = tk.StringVar()
+        time_list = self.start_time.get().split("/")
+        hour.set(time_list[0])
+        minute.set(time_list[1])
+        
+        # Get the values used to choose for time.
+        (values_h, values_t) = self.get_h_and_m_list()
 
-        def get_start_date(self):
+        def set_start_date(self):
+            """
+            This function is used for setting the start date.
+            """
             # self.start_date.set(str(cal.get_date()))
             date.set(str(cal.get_date()))
             
             # print(date.get())
             # print(type(date))
-        
-        # Create upper window.
-        top = tk.Toplevel(self)
-        ttk.Label(top, text='Choose date').pack(padx=10, pady=10)
-        cal = DateEntry(top, width=12, background='darkblue',
-                        foreground='white', borderwidth=2, year=2010)
-        # Set the default date.
-        cal.set_date(dt.date(2022, 6, 14))
-        cal.pack(padx=10, pady=10)
+        def set_start_hour(self):
+            """
+            This function is for setting start hour.
+            """
+            hour.set(hour_box.get())
+            time_str = hour.get() + "/" + minute.get()
+            time.set(time_str)
 
-        date.set(str(cal.get_date()))
-        cal.bind("<<DateEntrySelected>>", get_start_date)
-
-        self.start_date = date
-        
-        # print(self.start_date.get())
-        # print(type(self.start_date))
-
-    def choose_end_date(self):
-        """
-        This function is for choosing date.
-        """
-
-        date = self.end_date
-
-        def get_end_date(self):
-            # retrive_end_date["End date"] = cal.get_date()
-            # self.end_date = cal.get_date()
-            date.set(str(cal.get_date()))
-            # print(cal.get_date())
-            # print(type(cal.get_date()))
+            # time_list[0] = hour.get()
+            print("hour: ", hour.get())
+            # print("time_list[0]: ", time_list[0])
+            print("time: ", time.get())
+            print("Above for start hour.")
             
-            # print("self.end_date: ", self.end_date)
-            # print(type(self.end_date))
+        def set_start_minute(self):
+            """
+            This function is for setting start minute.
+            """
+            minute.set(minute_box.get())
+            time_str = hour.get() + "/" + minute.get()
+            time.set(time_str)
+            # time_list[1] = minute.get()
+            print("minute: ", minute.get())
+            # print("time_list[1]: ", time_list[1])
+            print("time: ", time.get())
+            print("Above for start minute.")
         
         # Create upper window.
         top = tk.Toplevel(self)
-        ttk.Label(top, text='Choose date').pack(padx=10, pady=10)
-        cal = DateEntry(top, width=12, background='darkblue',
+        top_width = self.winfo_screenwidth() / 2.7
+        top_height = self.winfo_screenheight() / 5
+        top_left = (self.winfo_screenwidth() - top_width) / 2
+        top_top = (self.winfo_screenheight() - top_height) / 2
+        top.geometry("%dx%d+%d+%d" % (top_width, top_height, top_left, top_top))
+        ttk.Label(top, text='Choose start date and time', font=("Times", 22, "bold")).pack(padx=10, pady=10)
+        ttk.Label(top, text="Date:", font=("Times", 20)).pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        # The widget for date selection.
+        cal = DateEntry(top, width=8, height=15, background='darkblue', font=("Times", 20),
+                        foreground='white', borderwidth=2, year=2022, month=6, day=14)
+        # Set the default date.
+        # cal.set_date(dt.date(2022, 6, 14))
+        cal.pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+
+        # date.set(str(cal.get_date()))
+        # Bind the DateEntrySelected event with set_start_date function.
+        cal.bind("<<DateEntrySelected>>", set_start_date)
+        
+        ttk.Label(top, text="Time:", font=("Times", 20)).pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+
+        # The Combobox for choosing the hour.
+        hour_box = ttk.Combobox(
+            master=top,  
+            height=15,  
+            width=3,  
+            state="normal",  
+            cursor="arrow",  
+            font=("", 20),  
+            values=values_h, 
+            textvariable=hour)
+        hour_box.pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        # Bind this event with function.
+        hour_box.bind("<<ComboboxSelected>>", set_start_hour)
+        # : text.
+        ttk.Label(top, text=":", font=("", 20)).pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        # The Combobox for choosing the minute.
+        minute_box = ttk.Combobox(
+            master=top,  
+            height=15,  
+            width=3,  
+            state="normal",  
+            cursor="arrow",  
+            font=("", 20),  
+            values=values_t,  
+            textvariable=minute)
+        minute_box.pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        # Bind this event with function.
+        minute_box.bind("<<ComboboxSelected>>", set_start_minute)
+
+        # Store date and time into the class attribute.
+        self.start_date = date
+        self.start_time = time
+
+    def choose_end_date_and_time(self):
+        """
+        This function is for choosing end date and time.
+        """
+        # Get the date and time from the class attributes.
+        date = self.end_date
+        time = self.end_time
+        hour = tk.StringVar()
+        minute = tk.StringVar()
+        time_list = self.end_time.get().split("/")
+        hour.set(time_list[0])
+        minute.set(time_list[1])
+        
+        # Get the values used to choose for time.
+        (values_h, values_t) = self.get_h_and_m_list()
+
+        def set_end_date(self):
+            """
+            This function is used for setting the end date.
+            """
+            # self.start_date.set(str(cal.get_date()))
+            date.set(str(cal.get_date()))
+            
+            # print(date.get())
+            # print(type(date))
+        def set_end_hour(self):
+            """
+            This function is for setting end hour.
+            """
+            hour.set(hour_box.get())
+            time_str = hour.get() + "/" + minute.get()
+            time.set(time_str)
+
+            # time_list[0] = hour.get()
+            print("hour: ", hour.get())
+            # print("time_list[0]: ", time_list[0])
+            print("time: ", time.get())
+            print("Above for start hour.")
+            
+        def set_end_minute(self):
+            """
+            This function is for setting start minute.
+            """
+            minute.set(minute_box.get())
+            time_str = hour.get() + "/" + minute.get()
+            time.set(time_str)
+            # time_list[1] = minute.get()
+            print("minute: ", minute.get())
+            # print("time_list[1]: ", time_list[1])
+            print("time: ", time.get())
+            print("Above for start minute.")
+        
+        # Create upper window.
+        top = tk.Toplevel(self)
+        top_width = self.winfo_screenwidth() / 2.7
+        top_height = self.winfo_screenheight() / 5
+        top_left = (self.winfo_screenwidth() - top_width) / 2
+        top_top = (self.winfo_screenheight() - top_height) / 2
+        top.geometry("%dx%d+%d+%d" % (top_width, top_height, top_left, top_top))
+        ttk.Label(top, text='Choose end date and time', font=("Times", 22, "bold")).pack(padx=10, pady=10)
+        ttk.Label(top, text="Date:", font=("Times", 20)).pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        # The widget for date selection.
+        cal = DateEntry(top, width=8, height=15, background='darkblue', font=("Times", 20),
                         foreground='white', borderwidth=2, year=2022, month=7, day=23)
         # Set the default date.
-        cal.set_date(dt.date(2022, 7, 23))
-        cal.pack(padx=10, pady=10)
+        # cal.set_date(dt.date(2022, 6, 14))
+        cal.pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
 
-        # confirm_btn = tk.Button(top, text="Confirm")
-        date.set(str(cal.get_date()))
-        # self.end_date = retrive_end_date["End date"]
-        cal.bind("<<DateEntrySelected>>", get_end_date)
-
-        self.end_date = date
-
-        # self.end_date = cal.get_date()
+        # date.set(str(cal.get_date()))
+        # Bind the DateEntrySelected event with set_start_date function.
+        cal.bind("<<DateEntrySelected>>", set_end_date)
         
-        print(self.end_date)
-        print(type(self.end_date))
+        ttk.Label(top, text="Time:", font=("Times", 20)).pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+
+        # The Combobox for choosing the hour.
+        hour_box = ttk.Combobox(
+            master=top,  
+            height=15,  
+            width=3,  
+            state="normal",  
+            cursor="arrow",  
+            font=("", 20),  
+            values=values_h, 
+            textvariable=hour)
+        hour_box.pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        # Bind this event with function.
+        hour_box.bind("<<ComboboxSelected>>", set_end_hour)
+        # : text.
+        ttk.Label(top, text=":", font=("", 20)).pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        # The Combobox for choosing the minute.
+        minute_box = ttk.Combobox(
+            master=top,  
+            height=15,  
+            width=3,  
+            state="normal",  
+            cursor="arrow",  
+            font=("", 20),  
+            values=values_t,  
+            textvariable=minute)
+        minute_box.pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        # Bind this event with function.
+        minute_box.bind("<<ComboboxSelected>>", set_end_minute)
+
+        # Store date and time into the class attribute.
+        self.end_date = date
+        self.end_time = time
 
     def show_self_end_date(self):
-        print(self.start_date.get())
+        print(self.end_date.get())
+        print(self.end_time.get())
+     
+
+    def get_h_and_m_list(self):
+        """
+        This function is for getting the hour and minute list for time choosing box.
+        ----------
+        Returns:
+        a tuple contains the lists of hours and minutes. e.g.(hours list, minutes list)
+        """
+        # Initialize hours' list and minutes' list.
+        values_h = []
+        values_m = []
+        for this_h in [i for i in range(24)]:
+            if this_h < 10:
+                this_h = "0" + str(this_h)
+            else:
+                this_h = str(this_h)
+            values_h.append(this_h)
+        for this_m in [i for i in range(60)]:
+            if this_m < 10:
+                this_m = "0" + str(this_m)
+            else:
+                this_m = str(this_m)
+            values_m.append(this_m)
+        return (values_h, values_m)
+
+
+
 
     def plotting_average(self):
         """
@@ -273,7 +453,7 @@ class DataPloting(tk.Tk):
     def say_goodbye(self):
         # Showing message
         msgbox.showinfo("Goodbye!", "Goodbye, see you next time!")
-        self.after(2000, self.destroy)
+        self.after(1000, self.destroy)
 
 
 
