@@ -23,7 +23,7 @@ class DataPloting(tk.Tk):
         self.title("DataPloting")
 
         # Set the size of the main window.
-        self.width = 1080
+        self.width = 1200
         self.height = 720
         size_geo = '%dx%d+%d+%d' % (self.width, self.height, (self.winfo_screenwidth()-self.width)/2, (self.winfo_screenheight()-self.height)/2)
         self.geometry(size_geo)
@@ -57,62 +57,113 @@ class DataPloting(tk.Tk):
 
         # Initialize start time and end time.
         self.start_time = tk.StringVar()
-        self.start_time.set('09/00')
+        self.start_time.set('09:00')
         self.end_time = tk.StringVar()
-        self.end_time.set('18/00')
+        self.end_time.set('18:00')
+
+        # Create a PanedWindow for storing other PanedWindow.
+        self.p_control = tk.PanedWindow(self, orient=tk.VERTICAL)
+        self.p_control.pack(fill=tk.NONE, expand=1, side=tk.TOP, anchor="n")
+
+        # Create a PanedWindow for creating the analysis.
+        self.p_create = tk.PanedWindow(self)
+        # self.p_create.pack(fill=tk.NONE, expand=1, side=tk.TOP, anchor="n")
+        self.p_control.add(self.p_create)
 
         # -----------------
         # For choosing target directory.
         # ----------------
-        tfd_label = tk.Label(self, text="Target File Directory:", bg="#6fb765", fg="white")
+        tfd_label = tk.Label(self.p_create, text="Target File Directory:", bg="#6fb765", fg="white")
         tfd_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
         # Directory Entry
-        directory_entry = tk.Entry(self, textvariable=self.directory, state="readonly", bg="green")
+        directory_entry = tk.Entry(self.p_create, textvariable=self.directory, state="readonly", bg="green")
         directory_entry.pack(fill=tk.X, side=tk.LEFT, padx=20, pady=20, anchor="n")
         # Choose button
-        choose_dir_btn = tk.Button(self, text="Choose Directory", command=self.select_directory_input, bg="green", fg="white")
+        choose_dir_btn = tk.Button(self.p_create, text="Choose Directory", command=self.select_directory_input, bg="green", fg="white")
         choose_dir_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
 
         # --------------
         # For analysis name decision.
         # --------------
-        # Initialize the analysis name.
-        self.analysis_name = tk.StringVar()
-        self.analysis_name.set("New Analysis")
+        
         # Label
-        analysis_name_label = tk.Label(self, text="Analyse Name:", bg="#6fb765", fg="white")
-        analysis_name_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        # analysis_name_label = tk.Label(self, text="Analyse Name:", bg="#6fb765", fg="white")
+        # analysis_name_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
         # Name entry
-        analysis_name_entry = tk.Entry(self, textvariable=self.analysis_name, state="normal")
-        analysis_name_entry.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
-        # Name button
-        create_analysis_btn = tk.Button(self, text="Create Analysis", command=self.initialize_analysis, bg="green", fg="white")
-        create_analysis_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        # analysis_name_entry = tk.Entry(self, textvariable=self.analysis_name, state="normal")
+        # analysis_name_entry.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        
 
         # -------------
         # For choosing output directory
         # -------------
-        output_label = tk.Label(self, text="Output File Directory:", bg="#6fb765", fg="white")
+        output_label = tk.Label(self.p_create, text="Output File Directory:", bg="#6fb765", fg="white")
         output_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
         # Output directory Entry
-        output_entry = tk.Entry(self, textvariable=self.output_dir, state="readonly", bg="green")
+        output_entry = tk.Entry(self.p_create, textvariable=self.output_dir, state="readonly", bg="green")
         output_entry.pack(fill=tk.X, side=tk.LEFT, padx=20, pady=20, anchor="n")
         # Choose button
-        output_choose_dir_btn = tk.Button(self, text="Choose Directory", command=self.select_directory_output, bg="green", fg="white")
+        output_choose_dir_btn = tk.Button(self.p_create, text="Choose Directory", command=self.select_directory_output, bg="green", fg="white")
         output_choose_dir_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+
+        # Initialize the analysis name.
+        self.analysis_name = tk.StringVar()
+        self.analysis_name.set("New Analysis")
+        # Create analysis button
+        create_analysis_btn = tk.Button(self.p_create, text="Create Analysis", command=self.initialize_analysis, bg="green", fg="white")
+        create_analysis_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
 
         # ------------
         # Plot Graphs.
         # ------------
+        # Create a PanedWindow for choosing the start date and time.
+        self.p_dt = tk.PanedWindow(self)
+        self.p_control.add(self.p_dt)
+
+        self.p_dt_start = tk.PanedWindow(self)
+        # self.p_dt_start.pack(fill=tk.NONE, expand=1, anchor="n", side=tk.TOP)
+        self.p_dt.add(self.p_dt_start)
         # Choose start and end dates.
-        start_date_btn = ttk.Button(self, text="Choose start date & time", command=self.choose_start_date_and_time)
-        start_date_btn.pack()
-        end_date_btn = ttk.Button(self, text="Choose end date & time", command=self.choose_end_date_and_time)
-        end_date_btn.pack()
-        plot_average_btn = tk.Button(self, text="Plot Day Average Temperature vs Date", command=self.plotting_average, bg="green", fg="white")
-        plot_average_btn.pack(fill=tk.NONE, side=tk.TOP, padx=20, pady=20, anchor="center")
-        plot_each_day_btn = tk.Button(self, text="Plot Temperature vs Time in different date", command=self.plotting_each_day, bg="green", fg="white")
-        plot_each_day_btn.pack(fill=tk.NONE, side=tk.TOP, padx=20, pady=20, anchor="center")
+        # Showing start date.
+        start_date_indicator = tk.Label(self.p_dt_start, text="Start Date:")
+        start_date_indicator.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        start_date_label = tk.Label(self.p_dt_start, textvariable=self.start_date)
+        start_date_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        # Showing start time.
+        start_time_indicator = tk.Label(self.p_dt_start, text="Start time:")
+        start_time_indicator.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        start_time_label = tk.Label(self.p_dt_start, textvariable=self.start_time)
+        start_time_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        # Choose start date and time.
+        start_date_btn = tk.Button(self.p_dt_start, text="Choose start date & time", command=self.choose_start_date_and_time)
+        start_date_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+
+        # Create a PanedWindow for choosing the end date and time.
+        self.p_dt_end = tk.PanedWindow(self)
+        # self.p_dt_end.pack(fill=tk.NONE, expand=1, anchor="n", side=tk.TOP)
+        self.p_dt.add(self.p_dt_end)
+        # Showing end date.
+        end_date_indicator = tk.Label(self.p_dt_end, text="End Date:")
+        end_date_indicator.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        end_date_label = tk.Label(self.p_dt_end, textvariable=self.end_date)
+        end_date_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        # Showing start time.
+        end_time_indicator = tk.Label(self.p_dt_end, text="End time:")
+        end_time_indicator.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        end_time_label = tk.Label(self.p_dt_end, textvariable=self.end_time)
+        end_time_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        # Choose start date and time.
+        end_date_btn = tk.Button(self.p_dt_end, text="Choose end date & time", command=self.choose_end_date_and_time)
+        end_date_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+
+        # Create a PanedWindow for plotting.
+        self.p_plot = tk.PanedWindow(self)
+        self.p_control.add(self.p_plot)
+        # Create plotting.
+        plot_average_btn = tk.Button(self.p_plot, text="Plot Day Average Temperature vs Date", command=self.plotting_average, bg="green", fg="white")
+        plot_average_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="center")
+        plot_each_day_btn = tk.Button(self.p_plot, text="Plot Temperature vs Time in different date", command=self.plotting_each_day, bg="green", fg="white")
+        plot_each_day_btn.pack(fill=tk.NONE, side=tk.RIGHT, padx=20, pady=20, anchor="center")
 
         # -------------
         # Quit button.
@@ -137,8 +188,9 @@ class DataPloting(tk.Tk):
         else:
             path = path.replace("/", "\\")   
             self.directory.set(path)
+        info = f"The target directory:\n{self.directory.get()}"
+        msgbox.showinfo("Target Directory", info)
 
-        # print(self.directory.get())
 
     def initialize_analysis(self):
         """
@@ -181,7 +233,7 @@ class DataPloting(tk.Tk):
         time = self.start_time
         hour = tk.StringVar()
         minute = tk.StringVar()
-        time_list = self.start_time.get().split("/")
+        time_list = self.start_time.get().split(":")
         hour.set(time_list[0])
         minute.set(time_list[1])
         
@@ -202,7 +254,7 @@ class DataPloting(tk.Tk):
             This function is for setting start hour.
             """
             hour.set(hour_box.get())
-            time_str = hour.get() + "/" + minute.get()
+            time_str = hour.get() + ":" + minute.get()
             time.set(time_str)
 
             # time_list[0] = hour.get()
@@ -216,7 +268,7 @@ class DataPloting(tk.Tk):
             This function is for setting start minute.
             """
             minute.set(minute_box.get())
-            time_str = hour.get() + "/" + minute.get()
+            time_str = hour.get() + ":" + minute.get()
             time.set(time_str)
             # time_list[1] = minute.get()
             print("minute: ", minute.get())
@@ -288,7 +340,7 @@ class DataPloting(tk.Tk):
         time = self.end_time
         hour = tk.StringVar()
         minute = tk.StringVar()
-        time_list = self.end_time.get().split("/")
+        time_list = self.end_time.get().split(":")
         hour.set(time_list[0])
         minute.set(time_list[1])
         
@@ -309,7 +361,7 @@ class DataPloting(tk.Tk):
             This function is for setting end hour.
             """
             hour.set(hour_box.get())
-            time_str = hour.get() + "/" + minute.get()
+            time_str = hour.get() + ":" + minute.get()
             time.set(time_str)
 
             # time_list[0] = hour.get()
@@ -323,7 +375,7 @@ class DataPloting(tk.Tk):
             This function is for setting start minute.
             """
             minute.set(minute_box.get())
-            time_str = hour.get() + "/" + minute.get()
+            time_str = hour.get() + ":" + minute.get()
             time.set(time_str)
             # time_list[1] = minute.get()
             print("minute: ", minute.get())
@@ -387,6 +439,9 @@ class DataPloting(tk.Tk):
         self.end_time = time
 
     def show_self_end_date(self):
+        """
+        For testing
+        """
         print(self.end_date.get())
         print(self.end_time.get())
      
@@ -415,9 +470,6 @@ class DataPloting(tk.Tk):
             values_m.append(this_m)
         return (values_h, values_m)
 
-
-
-
     def plotting_average(self):
         """
         This function is for plotting temperature average.
@@ -431,12 +483,19 @@ class DataPloting(tk.Tk):
         """
         this_analysis = self.analysis
         # Transfer to dt.date.
-        style = "%Y-%m-%d"
-        start_date = dt.datetime.strptime(self.start_date.get(), style)
-        end_date = dt.datetime.strptime(self.end_date.get(), style)
+        date_format = "%Y-%m-%d"
+        start_date = dt.datetime.strptime(self.start_date.get(), date_format)
+        end_date = dt.datetime.strptime(self.end_date.get(), date_format)
         start_date = start_date.date()
         end_date = end_date.date()
-        this_analysis.plot_each_day(df_names=this_analysis.df_names, df_type=1, figure_name="Temperature vs Time in different date", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
+        # Transfer to dt.time.
+        time_format = "%H:%M"
+        start_time = dt.datetime.strptime(self.start_time.get(), time_format)
+        start_time = start_time.time()
+        end_time = dt.datetime.strptime(self.end_time.get(), time_format)
+        end_time = end_time.time()
+
+        this_analysis.plot_each_day(df_names=this_analysis.df_names, df_type=1, figure_name="Temperature vs Time in different date", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time)
 
     def select_directory_output(self):
         """
@@ -448,7 +507,8 @@ class DataPloting(tk.Tk):
         else:
             path = path.replace("/", "\\")   
             self.output_dir.set(path)
-        print(self.output_dir.get())
+        info = f"The output directory:\n{self.output_dir.get()}"
+        msgbox.showinfo("Output Directory", info)
 
     def say_goodbye(self):
         # Showing message
