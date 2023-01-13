@@ -961,16 +961,26 @@ class Analysis:
                 y_data = this_df[this_y_name]
                 # Plot the graph
                 plt.plot(x_data, y_data, marker='o', label=f"{this_y_name}: {this_df_name}", linewidth=1, markersize=1.5)
+        
+        # Get the outdoor temperature dataframe.
+        outdoor_df = self.outdoor_average_temp_df
 
-        outdoor_df = self.outdoor_temp_df
-        # Calculate the day average.
-
+        # Change this_df with date range.
+        if start_date is not None:
+            if start_date < outdoor_df.iloc[0][date_column]:
+                start_date = outdoor_df.iloc[0][date_column]
+            outdoor_df = outdoor_df[outdoor_df[date_column]>=start_date]
+        if end_date is not None:
+            if end_date > outdoor_df.iloc[-1][date_column]:
+                end_date = outdoor_df.iloc[-1][date_column]
+            outdoor_df = outdoor_df[outdoor_df[date_column]<=end_date]
+        
         x_name_reco = outdoor_df[x_name]
         for y_name_reco in y_names_for_reco:
             # Set y value.
             y_data_reco = outdoor_df[y_name_reco]
             # Plot the graph.
-            plt.plot(x_name_reco, y_data_reco, marker='s', label=f"{y_name_reco}", linewidth=1, markersize=1.5)
+            plt.plot(x_name_reco, y_data_reco, linestyle='dotted', label=f"{y_name_reco}", linewidth=1, markersize=1.5)
 
         # Set the title and labels.
         plt.title(figure_name, fontsize=12, fontweight='bold')
@@ -1088,7 +1098,9 @@ class Analysis:
                     
                 today = today + dt.timedelta(1)
 
-        outdoor_df = self.outdoor_average_temp_df
+        outdoor_df = self.outdoor_temp_df
+        
+        print("outdoor_df:", outdoor_df)
 
         if start_date is not None:
             today = start_date
@@ -1100,12 +1112,21 @@ class Analysis:
         while today <= end_date:
             today_df = outdoor_df[outdoor_df[date_column] == today]
 
+            
+
             if today_df.empty is False:
+
+                # today_df[x_name] = today_df["Date&Time"].dt.time
+                today_df.loc[:, x_name] = pd.to_datetime(today_df[x_name]).dt.time
 
                 if start_time is not None:
                     today_df = today_df.loc[today_df[x_name] >= start_time]
                 if end_time is not None:
                     today_df = today_df.loc[today_df[x_name] <= end_time]
+
+                print("===========")
+                print("today_df: ", today_df)
+                print("==========")
 
                 # Set up input
                 x_data = today_df[x_name]
@@ -1114,7 +1135,7 @@ class Analysis:
                     # Set y value.
                     y_data = today_df[this_y_name]
                     # Plot the graph
-                    plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=0.5, markersize=0.5)
+                    plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=0.5, markersize=0.5, linestyle = 'dotted')
                 
             today = today + dt.timedelta(1)
 

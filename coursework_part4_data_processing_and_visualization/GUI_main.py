@@ -196,11 +196,11 @@ class DataPloting(tk.Tk):
         # Create plotting with recommendations.
         self.p_reco = tk.PanedWindow(self)
         self.p_control.add(self.p_reco)
-        # NOT MODIFIED
-        plot_average_btn = tk.Button(self.p_plot, text="Plot Day Average Temperature vs Date", command=self.plotting_average, bg="green", fg="white")
-        plot_average_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="center")
-        plot_each_day_btn = tk.Button(self.p_plot, text="Plot Temperature vs Time in different date", command=self.plotting_each_day, bg="green", fg="white")
-        plot_each_day_btn.pack(fill=tk.NONE, side=tk.RIGHT, padx=20, pady=20, anchor="center")
+        # Botton for plotting with recommended range.
+        reco_each_day_btn = tk.Button(self.p_reco, text="Plot Temperature vs Time in different date with recommended range", command=self.plotting_each_day_with_reco, bg="green", fg="white")
+        reco_each_day_btn.pack(fill=tk.NONE, side=tk.RIGHT, padx=20, pady=20, anchor="center")
+        reco_average_btn = tk.Button(self.p_reco, text="Plot Day Average Temperature vs Date with recommended range", command=self.plotting_average_with_reco, bg="green", fg="white")
+        reco_average_btn.pack(fill=tk.NONE, side=tk.RIGHT, padx=20, pady=20, anchor="center")
 
 
         # -------------
@@ -652,7 +652,7 @@ class DataPloting(tk.Tk):
         else:
             df_names = [choice]
 
-            this_analysis.plot_graph_with_recommandation(df_names=df_names, df_type=2, figure_name=f"Day Average Temperature vs Date with recommendations ({choice})", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
+        this_analysis.plot_graph_with_recommandation(df_names=df_names, df_type=2, figure_name=f"Day Average Temperature vs Date with recommendations ({choice})", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
 
     def plotting_each_day_with_reco(self):
         """
