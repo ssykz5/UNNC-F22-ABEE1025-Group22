@@ -31,6 +31,8 @@ class Analysis:
             Default path is "./Result".
         outdoor_temp_df: pandas dataframe
             df contains outdoor temperature.
+        outdoor_average_temp_df: pandas dataframe
+            df contains outdoor temperature in days' average.
         dfs_with_reco_range: dict
             The dictionary contains all the dfs with recommend temperature range.
         df_names_with_reco_range: list
@@ -43,6 +45,7 @@ class Analysis:
         self._average_dfs = {}
         self._output_path = r"./Result"
         self._outdoor_temp_df = pd.DataFrame()
+        self._outdoor_average_temp_df = pd.DataFrame()
         self._dfs_with_reco_range = {}
         self._df_names_with_reco_range = []
 
@@ -74,6 +77,9 @@ class Analysis:
     @property
     def df_names_with_reco_range(self):
         return self._df_names_with_reco_range
+    @property
+    def outdoor_average_temp_df(self):
+        return self._outdoor_average_temp_df
     
     # Setter used to rename or reset.
     @name.setter
@@ -232,7 +238,7 @@ class Analysis:
                 .str.replace('下午', '', case=False)) + dt.timedelta(hours=12)
         this_df[dtcolumn] = pd.to_datetime(this_df[dtcolumn])
 
-    def transfer_to_datetime(self, df_name=None, dtcolumn="Date&Time"):
+    def transfer_to_datetime(self, df_name=None, dtcolumn="Date&Time", is_outdoor_temp=False, date_column="Date"):
         """
         This function is for transferring the object column to datetime column.
         ---------
@@ -243,13 +249,16 @@ class Analysis:
         dtcolumn: string
             The column needs to be transferred. Defaut column name is Date&Time.
         """
-        if df_name == None:
-            for this_df_name in self._df_names:
-                this_df = self._data_sheet[this_df_name]
-                this_df[dtcolumn] = pd.to_datetime(this_df[dtcolumn])
+        if is_outdoor_temp is True:
+            self._outdoor_temp_df[dtcolumn] = pd.to_datetime(self._outdoor_temp_df[dtcolumn])
         else:
-            this_df = self._df_names[df_name]
-            this_df[dtcolumn] = pd.to_datetime(this_df[dtcolumn])
+            if df_name == None:
+                for this_df_name in self._df_names:
+                    this_df = self._data_sheet[this_df_name]
+                    this_df[dtcolumn] = pd.to_datetime(this_df[dtcolumn])
+            else:
+                this_df = self._df_names[df_name]
+                this_df[dtcolumn] = pd.to_datetime(this_df[dtcolumn])
 
     def seperate_date_and_time_for_one_df(self, df_name, seperate_column_name="Date&Time"):
         """
@@ -381,7 +390,7 @@ class Analysis:
         # Return a Series of mean values
         return this_mean
 
-    def calculate_average(self, df_name=None, column_of_date="Date", start_date=None, end_date=None):
+    def calculate_average(self, df_name=None, column_of_date="Date", start_date=None, end_date=None, df_type=1):
         """
         Calculate the average number in different days.
         ---------
@@ -398,7 +407,21 @@ class Analysis:
         if df_name is not None:
             # Judge whether start or end date exists, if not, use the first date of input_df as
             # start_date, last date of input_df as end_date.
-            this_df = self._data_sheet[df_name]
+
+            # Judge the type of dfs.
+            if df_type == 1:
+                this_df = self._data_sheet[df_name]
+            elif df_type == 2:
+                return "The dataframe is already in average."
+            elif df_type == 3:
+                this_df = self._dfs_with_reco_range[df_name]
+            elif df_type == 4:
+                this_df = self._outdoor_temp_df
+                this_df["Date"] = this_df["Date&Time"].dt.date
+            else:
+                return "Invalid Use !!!"
+
+            # this_df = self._data_sheet[df_name]
             if start_date == None:
                 today = this_df.iloc[0][column_of_date]
             else:
@@ -407,6 +430,7 @@ class Analysis:
                 end_date = this_df.iloc[len(this_df)-1][column_of_date]
             date = pd.Series([today])
             average_df = self.calculate_average_one_day(this_df, column_of_date, today)
+
             today = today + dt.timedelta(1)
             while today <= end_date:
                 today_df = this_df[this_df[column_of_date] == today]
@@ -417,7 +441,12 @@ class Analysis:
                 today = today + dt.timedelta(1)
             average_df = average_df.T
             average_df[column_of_date] = date
-            self._average_dfs[df_name] = average_df
+
+            if df_type == 1:
+                self._average_dfs[df_name] = average_df
+            elif df_type == 4:
+                self._outdoor_average_temp_df = average_df
+
         else:
             for df_name in self._df_names:
                 this_df = self._data_sheet[df_name]
@@ -634,7 +663,7 @@ class Analysis:
                 self.add_reco_temp_one_time(this_df, this_df_name, standard_df, start_date, end_date, start_time, end_time)
 
     # Data visualization
-    def plot_graph(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None, is_GUI=False):
+    def plot_graph(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None, is_GUI=False, start_date=None, end_date=None, date_column="Date"):
         """
         Plot graph.
         -------------
@@ -657,6 +686,15 @@ class Analysis:
             Default value is None.
         is_GUI: bool
             Judege whether the use of this function is for GUI.
+        start_date: datetime.date
+            Start date of plotting.
+            Default value is None.
+        end_date: datetime.time
+            End date of plotting.
+            Default value is None.
+        date_column: string
+            The name of date column.
+            Default value is "Date".
         """
         # Set the font as SimHei.
         plt.rcParams['font.sans-serif'] = ['SimHei']
@@ -683,6 +721,17 @@ class Analysis:
                 this_df = self._dfs_with_reco_range[this_df_name]
             else:
                 return "Invalid Use !!!"
+
+            # Change this_df with date range.
+            if start_date is not None:
+                if start_date < this_df.iloc[0][date_column]:
+                    start_date = this_df.iloc[0][date_column]
+                this_df = this_df[this_df[date_column]>=start_date]
+            if end_date is not None:
+                if end_date > this_df.iloc[-1][date_column]:
+                    end_date = this_df.iloc[-1][date_column]
+                this_df = this_df[this_df[date_column]<=end_date]
+
             # Set x value.
             x_data = this_df[x_name]
 
@@ -832,14 +881,278 @@ class Analysis:
         plt.show()
         plt.close()
 
+    def plot_graph_with_recommandation(self, df_names, df_type, figure_name, x_name, y_names, y_names_for_reco=["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature"], output_dir=None, is_GUI=False, start_date=None, end_date=None, date_column="Date"):
+        """
+        Plot graph with recommandation.
+        -------------
+        Args:
+        df_names: list
+            The list of names of dataframes where the datas are retrieved from.
+        df_type: int
+            1 means self._data_sheet
+            2 means self._average_dfs
+            3 means self._dfs_with_reco_range
+        figure_name: string
+            The name of this graph.
+        x_name: string
+            The column name of datas used for x-axis.
+        y_names: list
+            The list of column names of datas used for y-axis.
+        y_names_for_reco: list
+            The list of column names for outdoor temperature range.
+            e.g. ["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature"]
+        output_dir: string
+            The name of output directory of graph which is after the self.output_dir. (not GUI)
+            If is_GUI is True, it is the absolute directory.
+            Default value is None.
+        is_GUI: bool
+            Judege whether the use of this function is for GUI.
+        start_date: datetime.date
+            Start date of plotting.
+            Default value is None.
+        end_date: datetime.time
+            End date of plotting.
+            Default value is None.
+        date_column: string
+            The name of date column.
+            Default value is "Date".
+        """
+        # Set the font as SimHei.
+        plt.rcParams['font.sans-serif'] = ['SimHei']
+        # Display the negative sign.
+        plt.rcParams['axes.unicode_minus'] = False  
+        plt.figure(figsize=(20, 10))
+        # Set the background grid lines.
+        plt.grid(linestyle="--") 
+        ax = plt.gca()
+        # Get rid of upper frame.
+        ax.spines['top'].set_visible(False)
+        # Get rid of right frame.
+        ax.spines['right'].set_visible(False)
+        pd.plotting.register_matplotlib_converters()
+
+        # Plot graph in different dataframes.
+        for this_df_name in df_names:
+            # Judge the type of dfs.
+            if df_type == 1:
+                this_df = self._data_sheet[this_df_name]
+            elif df_type == 2:
+                this_df = self._average_dfs[this_df_name]
+            elif df_type == 3:
+                this_df = self._dfs_with_reco_range[this_df_name]
+            else:
+                return "Invalid Use !!!"
+
+            # Change this_df with date range.
+            if start_date is not None:
+                if start_date < this_df.iloc[0][date_column]:
+                    start_date = this_df.iloc[0][date_column]
+                this_df = this_df[this_df[date_column]>=start_date]
+            if end_date is not None:
+                if end_date > this_df.iloc[-1][date_column]:
+                    end_date = this_df.iloc[-1][date_column]
+                this_df = this_df[this_df[date_column]<=end_date]
+
+            # Set x value.
+            x_data = this_df[x_name]
+
+            for this_y_name in y_names:
+                # Set y value.
+                y_data = this_df[this_y_name]
+                # Plot the graph
+                plt.plot(x_data, y_data, marker='o', label=f"{this_y_name}: {this_df_name}", linewidth=1, markersize=1.5)
+
+        outdoor_df = self.outdoor_temp_df
+        # Calculate the day average.
+
+        x_name_reco = outdoor_df[x_name]
+        for y_name_reco in y_names_for_reco:
+            # Set y value.
+            y_data_reco = outdoor_df[y_name_reco]
+            # Plot the graph.
+            plt.plot(x_name_reco, y_data_reco, marker='s', label=f"{y_name_reco}", linewidth=1, markersize=1.5)
+
+        # Set the title and labels.
+        plt.title(figure_name, fontsize=12, fontweight='bold')
+        plt.xlabel(x_name, fontsize=12, fontweight='bold')
+        plt.ylabel("Value", fontsize=12, fontweight='bold')
+
+        plt.legend(loc=0, numpoints=1)
+        leg = plt.gca().get_legend()
+        ltext = leg.get_texts()
+        plt.setp(ltext, fontsize=12, fontweight='bold')
+
+        if output_dir is not None:
+            if is_GUI is False:
+                output_dir = self._output_path + "/" + output_dir
+
+        if not os.path.isdir(output_dir):
+            os.makedirs(output_dir)
+            os.chmod(output_dir, stat.S_IWRITE)
+
+        output_dir += f"/{figure_name}.svg"
+        # Save the graph as a svg file.
+        plt.savefig(output_dir, format="svg")
+        plt.show()
+        plt.close()
+
+    def plot_each_day_with_recommendatioin(self, df_names, df_type, figure_name, x_name, y_names, y_names_for_reco=["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature"], output_dir=None, start_date=None, end_date=None, date_column="Date", start_time=None, end_time=None, is_GUI=False):
+        """
+        Plot graph of each day.
+        Default: all the values will be used.
+        -------------
+        Args:
+        df_names: list
+            The list of names of dataframes where the datas are retrieved from.
+        df_type: int
+            1 means self._data_sheet
+            2 means self._average_dfs
+            3 means self._dfs_with_reco_range
+        figure_name: string
+            The name of this graph.
+        x_name: string
+            The column name of datas used for x-axis.
+            Usually "Time".
+        y_names: list
+            The list of column names of datas used for y-axis.
+        output_dir: string
+            The name of output directory of graph which is after the self.output_dir.
+            Default value is None.
+        start_date: datetime.date
+            Start date of plotting.
+            Default value is None.
+        end_date: datetime.time
+            End date of plotting.
+            Default value is None.
+        date_column: string
+            The name of date column.
+            Default value is "Date".
+        start_time: datetime.time
+            Start time of plotting.
+            Default value is None.
+        end_time: datetime.time
+            End time of plotting.
+            Default value is None.
+        """
+        # Set the font as SimHei.
+        plt.rcParams['font.sans-serif'] = ['SimHei']
+        # Display the negative sign.
+        plt.rcParams['axes.unicode_minus'] = False  
+        plt.figure(figsize=(20, 10))
+        # Set the background grid lines.
+        plt.grid(linestyle="--") 
+        ax = plt.gca()
+        # Get rid of upper frame.
+        ax.spines['top'].set_visible(False)
+        # Get rid of right frame.
+        ax.spines['right'].set_visible(False)
+        pd.plotting.register_matplotlib_converters()
+
+        # Plot graph in different dataframes.
+        for this_df_name in df_names:
+            # Judge the type of dfs.
+            if df_type == 1:
+                this_df = self._data_sheet[this_df_name]
+            elif df_type == 2:
+                this_df = self._average_dfs[this_df_name]
+            elif df_type == 3:
+                this_df = self._dfs_with_reco_range[this_df_name]
+            else:
+                return "Invalid Use !!!"
+            # Set the start date and the end date.
+            if start_date is not None:
+                today = start_date
+            else:
+                today = this_df.iloc[0][date_column]
+            if end_date is None:
+                end_date = this_df.iloc[-1][date_column]
+
+            while today <= end_date:
+                today_df = this_df[this_df[date_column] == today]
+
+                if today_df.empty is False:
+
+                    if start_time is not None:
+                        today_df = today_df.loc[today_df[x_name] >= start_time]
+                    if end_time is not None:
+                        today_df = today_df.loc[today_df[x_name] <= end_time]
+
+                    # Set up input
+                    x_data = today_df[x_name]
+
+                    for this_y_name in y_names:
+                        # Set y value.
+                        y_data = today_df[this_y_name]
+                        # Plot the graph
+                        plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=0.5, markersize=0.5)
+                    
+                today = today + dt.timedelta(1)
+
+        outdoor_df = self.outdoor_average_temp_df
+
+        if start_date is not None:
+            today = start_date
+        else:
+            today = outdoor_df.iloc[0][date_column]
+        if end_date is None:
+            end_date = outdoor_df.iloc[-1][date_column]
+
+        while today <= end_date:
+            today_df = outdoor_df[outdoor_df[date_column] == today]
+
+            if today_df.empty is False:
+
+                if start_time is not None:
+                    today_df = today_df.loc[today_df[x_name] >= start_time]
+                if end_time is not None:
+                    today_df = today_df.loc[today_df[x_name] <= end_time]
+
+                # Set up input
+                x_data = today_df[x_name]
+
+                for this_y_name in y_names_for_reco:
+                    # Set y value.
+                    y_data = today_df[this_y_name]
+                    # Plot the graph
+                    plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=0.5, markersize=0.5)
+                
+            today = today + dt.timedelta(1)
+
+                
+        # Set the title and labels.
+        plt.title(figure_name, fontsize=12, fontweight='bold')
+        plt.xlabel(x_name, fontsize=12, fontweight='bold')
+        plt.ylabel("Value", fontsize=12, fontweight='bold')
+
+        plt.legend(loc=0, numpoints=1)
+        leg = plt.gca().get_legend()
+        ltext = leg.get_texts()
+        plt.setp(ltext, fontsize=8, fontweight='bold')
+
+        if output_dir is not None:
+            if is_GUI is False:
+                output_dir = self._output_path + "/" + output_dir
+
+        if not os.path.isdir(output_dir):
+            os.makedirs(output_dir)
+            os.chmod(output_dir, stat.S_IWRITE)
+
+        output_dir += f"/{figure_name}.svg"
+        # Save the graph as a svg file.
+        plt.savefig(output_dir, format="svg")
+        plt.show()
+        plt.close()
+
     # Data Storage
-    def output_csv(self, is_avg, df_names=None, output_dir=None):
+    def output_csv(self, df_type, df_names=None, output_dir=None):
         """
         This function is used for outputting dataframes to csv files.
         -------------------
         Args:
-        is_avg: bool
-            Whether the dfs are self.average_dfs or self._data_sheet
+        df_type: int
+            1 means self._data_sheet
+            2 means self._average_dfs
+            3 means self._dfs_with_reco_range
         df_names: list
             The list contains the names of dataframes need to output
             csv files.
@@ -858,18 +1171,30 @@ class Analysis:
 
         if df_names is None:
             for this_df_name in self._df_names:
-                if is_avg is False:
+                # Judge the type of the dataframe.
+                if df_type == 1:
                     this_df = self._data_sheet[this_df_name]
-                else:
+                elif df_type == 2:
                     this_df = self._average_dfs[this_df_name]
+                elif df_type == 3:
+                    this_df = self._dfs_with_reco_range[this_df_name]
+                else:
+                    return "Invalid Use !!!"
+
                 this_output_dir = output_dir + f"/{this_df_name}.csv"
                 this_df.to_csv(this_output_dir, index=False)
         else:
             for this_df_name in df_names:
-                if is_avg is False:
+                # Judge the type of the dataframe.
+                if df_type == 1:
                     this_df = self._data_sheet[this_df_name]
-                else:
+                elif df_type == 2:
                     this_df = self._average_dfs[this_df_name]
+                elif df_type == 3:
+                    this_df = self._dfs_with_reco_range[this_df_name]
+                else:
+                    return "Invalid Use !!!"
+                    
                 this_output_dir = output_dir + f"/{this_df_name}.csv"
                 this_df.to_csv(this_output_dir, index=False)
 

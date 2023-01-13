@@ -113,6 +113,26 @@ class DataPloting(tk.Tk):
         create_analysis_btn = tk.Button(self.p_create, text="Create Analysis", command=self.initialize_analysis, bg="green", fg="white")
         create_analysis_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
 
+        # -------------
+        # Input the outdoor temperature.
+        # ------------
+        self.p_outdoor = tk.PanedWindow(self)
+        self.p_control.add(self.p_outdoor)
+
+        # Create a variable for storing the outdoor temperature csv directory.
+        self.outdoor_temp_dir = tk.StringVar()
+        # Set the default value.
+        self.outdoor_temp_dir.set("Please Choose the Outdoor Temperature File.")
+        # Show the outdoor_temperature directory.
+        outdoor_temp_entry = tk.Entry(self.p_outdoor, textvariable=self.outdoor_temp_dir, state="readonly", bg="green", width=40)
+        outdoor_temp_entry.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        # Button used to choose outdoor temperature file.
+        outdoor_temp_btn = tk.Button(self.p_outdoor, text="Choose Outdoor Temperature File", command=self.select_outdoor_temp_input)
+        outdoor_temp_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+        # Add outdoor temperature df into the analysis.
+        add_outdoor_temp_btn = tk.Button(self.p_outdoor, text="Add Outdoor Temperature datas into the Analysis", command=self.add_outdoor_temperature_df)
+        add_outdoor_temp_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="n")
+
         # ------------
         # Plot Graphs.
         # ------------
@@ -159,11 +179,29 @@ class DataPloting(tk.Tk):
         # Create a PanedWindow for plotting.
         self.p_plot = tk.PanedWindow(self)
         self.p_control.add(self.p_plot)
-        # Create plotting.
+        # Choose plotting df names.
+        self.plot_df = tk.StringVar()
+        self.plot_df.set("All")
+        choose_plot_name_label = tk.Label(self.p_plot, text="The name of csv for Plotting")
+        choose_plot_name_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="center")
+        choose_plot_name_entry = tk.Entry(self.p_plot, textvariable=self.plot_df, state="readonly")
+        choose_plot_name_entry.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="center")
+        choose_plot_name_btn = tk.Button(self.p_plot, text="Choose plotting dataframe", command=self.choose_plotting_df_name)
+        choose_plot_name_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="center")
+        # Create plotting for common.
         plot_average_btn = tk.Button(self.p_plot, text="Plot Day Average Temperature vs Date", command=self.plotting_average, bg="green", fg="white")
         plot_average_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="center")
         plot_each_day_btn = tk.Button(self.p_plot, text="Plot Temperature vs Time in different date", command=self.plotting_each_day, bg="green", fg="white")
         plot_each_day_btn.pack(fill=tk.NONE, side=tk.RIGHT, padx=20, pady=20, anchor="center")
+        # Create plotting with recommendations.
+        self.p_reco = tk.PanedWindow(self)
+        self.p_control.add(self.p_reco)
+        # NOT MODIFIED
+        plot_average_btn = tk.Button(self.p_plot, text="Plot Day Average Temperature vs Date", command=self.plotting_average, bg="green", fg="white")
+        plot_average_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="center")
+        plot_each_day_btn = tk.Button(self.p_plot, text="Plot Temperature vs Time in different date", command=self.plotting_each_day, bg="green", fg="white")
+        plot_each_day_btn.pack(fill=tk.NONE, side=tk.RIGHT, padx=20, pady=20, anchor="center")
+
 
         # -------------
         # Quit button.
@@ -190,6 +228,18 @@ class DataPloting(tk.Tk):
             self.directory.set(path)
         info = f"The target directory:\n{self.directory.get()}"
         msgbox.showinfo("Target Directory", info)
+
+    def select_outdoor_temp_input(self):
+        """
+        This function is for selecting the outdoor temperature csv file.
+        """
+        Filepath = filedialog.askopenfilename()
+        self.outdoor_temp_dir.set(Filepath)
+
+        info = f"Outdoor Temperature Directory:\n{self.outdoor_temp_dir.get()}"
+        msgbox.showinfo("Outdoor Temperature Directory", info)
+
+        print(self.outdoor_temp_dir.get())
 
 
     def initialize_analysis(self):
@@ -221,7 +271,29 @@ class DataPloting(tk.Tk):
         print("Average dfs =====")
         print(this_analysis.average_dfs)
 
-        msgbox.showinfo("Reminder", "Data import successfully!")
+        # Get the df_names.
+        self.df_names = this_analysis.df_names
+        self.df_names.append("All")
+
+        msgbox.showinfo("Reminder", "Analysis created successfully!")
+
+    def add_outdoor_temperature_df(self):
+        """
+        This function is for adding outdoor temperature dataframe to analysis.
+        """
+        # Make sure there is a target directory.
+        if self.outdoor_temp_dir.get() == "Please Choose the Outdoor Temperature File.":
+            msgbox.showwarning("Warning", "Please choose the outdoor temperature csv directory first.")
+        else:
+            outdoor_temp_df = pd.read_csv(self.outdoor_temp_dir.get(), encoding='gbk')
+            self.analysis.outdoor_temp_df = outdoor_temp_df
+            self.analysis.transfer_to_datetime(is_outdoor_temp=True)
+            this_analysis = self.analysis
+            this_analysis.calculate_average(df_name="Outdoor Average", df_type=4)
+
+            msgbox.showinfo("Reminder", "Outdoor Temperature Data added successfully!")
+            print(self.analysis.outdoor_temp_df)
+            print(self.analysis.outdoor_average_temp_df)
 
 
     def choose_start_date_and_time(self):
@@ -442,8 +514,8 @@ class DataPloting(tk.Tk):
         """
         For testing
         """
-        print(self.end_date.get())
-        print(self.end_time.get())
+        print(self.plot_df.get())
+
      
 
     def get_h_and_m_list(self):
@@ -470,12 +542,68 @@ class DataPloting(tk.Tk):
             values_m.append(this_m)
         return (values_h, values_m)
 
+    def choose_plotting_df_name(self):
+        """
+        This function is for choosing the plotting df name.
+        """
+        plot_df = self.plot_df
+
+        def choose_plotting_df(self):
+            """
+            This function is for choosing plotting df.
+            """
+            plot_df.set(choose_df_name_box.get())
+            print("plot_df: ", plot_df.get())
+            
+
+        # Create upper window.
+        top = tk.Toplevel(self)
+        top_width = self.winfo_screenwidth() / 2.7
+        top_height = self.winfo_screenheight() / 7
+        top_left = (self.winfo_screenwidth() - top_width) / 2
+        top_top = (self.winfo_screenheight() - top_height) / 2
+        top.geometry("%dx%d+%d+%d" % (top_width, top_height, top_left, top_top))
+        ttk.Label(top, text='Choose the name(s) of csv(s) for Plotting', font=("Times", 22, "bold")).pack(padx=10, pady=10)
+        
+
+        choose_df_name_box = ttk.Combobox(
+            master=top,  
+            height=15,  
+            width=10,  
+            state="normal",  
+            cursor="arrow",  
+            font=("", 20),  
+            values=self.df_names,  
+            textvariable=plot_df)
+        choose_df_name_box.pack()
+
+        # Bind this event with function.
+        choose_df_name_box.bind("<<ComboboxSelected>>", choose_plotting_df)
+
+        self.plot_df = plot_df
+        
+
     def plotting_average(self):
         """
         This function is for plotting temperature average.
         """
         this_analysis = self.analysis
-        this_analysis.plot_graph(df_names=this_analysis.df_names, df_type=2, figure_name="Day Average Temperature vs Date", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True)
+
+        # Transfer to dt.date.
+        date_format = "%Y-%m-%d"
+        start_date = dt.datetime.strptime(self.start_date.get(), date_format)
+        end_date = dt.datetime.strptime(self.end_date.get(), date_format)
+        start_date = start_date.date()
+        end_date = end_date.date()
+
+        # Choose the dataframe needs to be plotted.
+        choice = self.plot_df.get()
+        if choice == "All":
+            df_names = this_analysis.df_names
+        else:
+            df_names = [choice]
+
+        this_analysis.plot_graph(df_names=df_names, df_type=2, figure_name=f"Day Average Temperature vs Date ({choice})", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
 
     def plotting_each_day(self):
         """
@@ -495,7 +623,65 @@ class DataPloting(tk.Tk):
         end_time = dt.datetime.strptime(self.end_time.get(), time_format)
         end_time = end_time.time()
 
-        this_analysis.plot_each_day(df_names=this_analysis.df_names, df_type=1, figure_name="Temperature vs Time in different date", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time)
+        # Choose the dataframe needs to be plotted.
+        choice = self.plot_df.get()
+        if choice == "All":
+            df_names = this_analysis.df_names
+        else:
+            df_names = [choice]
+
+        this_analysis.plot_each_day(df_names=df_names, df_type=1, figure_name=f"Temperature vs Time in different date ({choice})", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time)
+
+    def plotting_average_with_reco(self):
+        """
+        This function is for plotting temperature average with recommendations.
+        """
+        this_analysis = self.analysis
+
+        # Transfer to dt.date.
+        date_format = "%Y-%m-%d"
+        start_date = dt.datetime.strptime(self.start_date.get(), date_format)
+        end_date = dt.datetime.strptime(self.end_date.get(), date_format)
+        start_date = start_date.date()
+        end_date = end_date.date()
+
+        # Choose the dataframe needs to be plotted.
+        choice = self.plot_df.get()
+        if choice == "All":
+            df_names = this_analysis.df_names
+        else:
+            df_names = [choice]
+
+            this_analysis.plot_graph_with_recommandation(df_names=df_names, df_type=2, figure_name=f"Day Average Temperature vs Date with recommendations ({choice})", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
+
+    def plotting_each_day_with_reco(self):
+        """
+        This function is for plotting graph of each day with recommendations.
+        """
+        this_analysis = self.analysis
+        # Transfer to dt.date.
+        date_format = "%Y-%m-%d"
+        start_date = dt.datetime.strptime(self.start_date.get(), date_format)
+        end_date = dt.datetime.strptime(self.end_date.get(), date_format)
+        start_date = start_date.date()
+        end_date = end_date.date()
+        # Transfer to dt.time.
+        time_format = "%H:%M"
+        start_time = dt.datetime.strptime(self.start_time.get(), time_format)
+        start_time = start_time.time()
+        end_time = dt.datetime.strptime(self.end_time.get(), time_format)
+        end_time = end_time.time()
+
+        # Choose the dataframe needs to be plotted.
+        choice = self.plot_df.get()
+        if choice == "All":
+            df_names = this_analysis.df_names
+        else:
+            df_names = [choice]
+
+        this_analysis.plot_each_day_with_recommendatioin(df_names=df_names, df_type=1, figure_name=f"Temperature vs Time in different date with recommendations ({choice})", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time)
+
+
 
     def select_directory_output(self):
         """
