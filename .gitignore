@@ -14,6 +14,10 @@ test01.py
 Result
 
 GUI_result
+
+GUI.py
+tk_GUI.py
+tk_learning.py
 # C extensions
 *.so
 
