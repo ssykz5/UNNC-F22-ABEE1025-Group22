@@ -9,8 +9,9 @@ from main_without_GUI import *
 import os
 from tkcalendar import DateEntry
 from tkinter import ttk
+import copy
 
-class DataPloting(tk.Tk):
+class DataPlotting(tk.Tk):
     def __init__(self):
         """
         This class is for GUI.
@@ -20,7 +21,7 @@ class DataPloting(tk.Tk):
         # self.analysis = Analysis()
 
         # Set the title of the main window
-        self.title("DataPloting")
+        self.title("Plotting")
 
         # Set the size of the main window.
         self.width = 1200
@@ -38,8 +39,8 @@ class DataPloting(tk.Tk):
         self.iconbitmap('.\\Tower.ico')
 
         # Set the software title.
-        self.title_size = self.winfo_width() // 15
-        software_title=tk.Label(self, text="DataPloting", bg="yellow", fg="red", font=('Times', f"{self.title_size}", 'bold italic underline'))
+        self.title_size = self.winfo_width() // 20
+        software_title=tk.Label(self, text="Indoor Temperature Plotting", bg="yellow", fg="red", font=('Times', f"{self.title_size}", 'bold italic underline'))
         software_title.pack(side=tk.TOP)
 
         # Initialize the original directories.
@@ -599,7 +600,14 @@ class DataPloting(tk.Tk):
         # Choose the dataframe needs to be plotted.
         choice = self.plot_df.get()
         if choice == "All":
-            df_names = this_analysis.df_names
+            df_names = copy.deepcopy(this_analysis.df_names)
+            # Remove "All" element in the name list.
+            df_names.remove("All")
+
+
+            print("Testing code!!!")
+            print("df_names: ", df_names)
+
         else:
             df_names = [choice]
 
@@ -626,7 +634,9 @@ class DataPloting(tk.Tk):
         # Choose the dataframe needs to be plotted.
         choice = self.plot_df.get()
         if choice == "All":
-            df_names = this_analysis.df_names
+            df_names = copy.deepcopy(this_analysis.df_names)
+            # Remove "All" element in the name list.
+            df_names.remove("All")
         else:
             df_names = [choice]
 
@@ -648,7 +658,9 @@ class DataPloting(tk.Tk):
         # Choose the dataframe needs to be plotted.
         choice = self.plot_df.get()
         if choice == "All":
-            df_names = this_analysis.df_names
+            df_names = copy.deepcopy(this_analysis.df_names)
+            # Remove "All" element in the name list.
+            df_names.remove("All")
         else:
             df_names = [choice]
 
@@ -675,7 +687,9 @@ class DataPloting(tk.Tk):
         # Choose the dataframe needs to be plotted.
         choice = self.plot_df.get()
         if choice == "All":
-            df_names = this_analysis.df_names
+            df_names = copy.deepcopy(this_analysis.df_names)
+            # Remove "All" element in the name list.
+            df_names.remove("All")
         else:
             df_names = [choice]
 
@@ -704,5 +718,5 @@ class DataPloting(tk.Tk):
 
 
 if __name__ == "__main__":
-    app = DataPloting()
+    app = DataPlotting()
     app.mainloop()

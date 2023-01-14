@@ -1,4 +1,4 @@
-# Software title: DataPloting
+# Software title: Indoor Temperature Plotting
 
 ## 1. Background and motivation of this software
     It is always difficult for us to analyze and visualize data, especially if there is a large amount of it. Data cleaning and visualizing always consume lots of time and irritate us a lot.

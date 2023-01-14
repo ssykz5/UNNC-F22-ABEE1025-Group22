@@ -8,6 +8,7 @@ import matplotlib.pyplot as plt
 import numpy as np
 import os
 import stat
+import copy
 
 class Analysis:
     def __init__(self, name, file_directory):
@@ -917,6 +918,7 @@ class Analysis:
             The name of date column.
             Default value is "Date".
         """
+        
         # Set the font as SimHei.
         plt.rcParams['font.sans-serif'] = ['SimHei']
         # Display the negative sign.
@@ -930,6 +932,10 @@ class Analysis:
         # Get rid of right frame.
         ax.spines['right'].set_visible(False)
         pd.plotting.register_matplotlib_converters()
+
+        # Initialize start and end date for recommended range.
+        reco_start_date = copy.deepcopy(start_date)
+        reco_end_date = copy.deepcopy(end_date)
 
         # Plot graph in different dataframes.
         for this_df_name in df_names:
@@ -963,24 +969,57 @@ class Analysis:
                 plt.plot(x_data, y_data, marker='o', label=f"{this_y_name}: {this_df_name}", linewidth=1, markersize=1.5)
         
         # Get the outdoor temperature dataframe.
-        outdoor_df = self.outdoor_average_temp_df
+        outdoor_df = self._outdoor_average_temp_df
+
+        print("Testing---")
+        print("Outdoor_temp_df:", outdoor_df)
+
+        # Testing
+        outdoor_df.loc[:, date_column] = pd.to_datetime(outdoor_df[date_column]).dt.date
+
 
         # Change this_df with date range.
-        if start_date is not None:
-            if start_date < outdoor_df.iloc[0][date_column]:
-                start_date = outdoor_df.iloc[0][date_column]
-            outdoor_df = outdoor_df[outdoor_df[date_column]>=start_date]
-        if end_date is not None:
-            if end_date > outdoor_df.iloc[-1][date_column]:
-                end_date = outdoor_df.iloc[-1][date_column]
-            outdoor_df = outdoor_df[outdoor_df[date_column]<=end_date]
+        if reco_start_date is not None:
+            if reco_start_date < outdoor_df.iloc[0][date_column]:
+                reco_start_date = outdoor_df.iloc[0][date_column]
+            outdoor_df = outdoor_df[outdoor_df[date_column]>=reco_start_date]
+
+            print("Testing+++")
+            print("Outdoor_temp_df:", outdoor_df)
+
+        if reco_end_date is not None:
+            if reco_end_date > outdoor_df.iloc[-1][date_column]:
+                reco_end_date = outdoor_df.iloc[-1][date_column]
+            outdoor_df = outdoor_df[outdoor_df[date_column]<=reco_end_date]
+
+            print("Testing+++")
+            print("Outdoor_temp_df:", outdoor_df)
+
+
+        print("Testing---")
+        print("Outdoor_temp_df after:", outdoor_df)
         
-        x_name_reco = outdoor_df[x_name]
+        # Plotting recommended range.
+        x_data_reco = outdoor_df[x_name]
+
+        print("Testing=====")
+        print("x_data:", x_data_reco)
+
+
         for y_name_reco in y_names_for_reco:
             # Set y value.
             y_data_reco = outdoor_df[y_name_reco]
+
+            print("Testing=======")
+            print("y_data:", y_data_reco)
+
+
             # Plot the graph.
-            plt.plot(x_name_reco, y_data_reco, linestyle='dotted', label=f"{y_name_reco}", linewidth=1, markersize=1.5)
+            plt.plot(x_data_reco, y_data_reco, linestyle='dotted', label=f"{y_name_reco}", linewidth=1, markersize=1.5)
+
+            print("Testing======")
+            print("Outdoor_temperature: ", y_name_reco)
+            print()
 
         # Set the title and labels.
         plt.title(figure_name, fontsize=12, fontweight='bold')
@@ -1117,7 +1156,7 @@ class Analysis:
             if today_df.empty is False:
 
                 # today_df[x_name] = today_df["Date&Time"].dt.time
-                today_df.loc[:, x_name] = pd.to_datetime(today_df[x_name]).dt.time
+                today_df.loc[:, x_name] = pd.to_datetime(today_df["Date&Time"]).dt.time
 
                 if start_time is not None:
                     today_df = today_df.loc[today_df[x_name] >= start_time]
