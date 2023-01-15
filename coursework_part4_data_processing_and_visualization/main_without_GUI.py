@@ -19,10 +19,10 @@ class Analysis:
         ------------
         name: string
             The name of this analysis. e.g., CSET
-        file_directories: string
+        file_directory: string
             The directory where store csv files. e.g.,"C:\Test"
         data_sheet: dict
-            The dictionary contains all the dataframes read from file_directories.
+            The dictionary contains all the dataframes read from file_directory.
         df_names: list
             The name of every dataframe after reading csv files.
         average_dfs: dict
@@ -34,10 +34,6 @@ class Analysis:
             df contains outdoor temperature.
         outdoor_average_temp_df: pandas dataframe
             df contains outdoor temperature in days' average.
-        dfs_with_reco_range: dict
-            The dictionary contains all the dfs with recommend temperature range.
-        df_names_with_reco_range: list
-            The name of every dataframe in dfs_with_reco_range.
         """
         self._name = name
         self._file_directory = file_directory
@@ -47,8 +43,6 @@ class Analysis:
         self._output_path = r"./Result"
         self._outdoor_temp_df = pd.DataFrame()
         self._outdoor_average_temp_df = pd.DataFrame()
-        self._dfs_with_reco_range = {}
-        self._df_names_with_reco_range = []
 
     # Getter to get the value of attributes.
     @property
@@ -73,14 +67,9 @@ class Analysis:
     def outdoor_temp_df(self):
         return self._outdoor_temp_df
     @property
-    def dfs_with_reco_range(self):
-        return self._dfs_with_reco_range
-    @property
-    def df_names_with_reco_range(self):
-        return self._df_names_with_reco_range
-    @property
     def outdoor_average_temp_df(self):
         return self._outdoor_average_temp_df
+    
     
     # Setter used to rename or reset.
     @name.setter
@@ -114,19 +103,7 @@ class Analysis:
     @outdoor_temp_df.setter
     def outdoor_temp_df(self, new_df):
         self._outdoor_temp_df = new_df
-    @df_names_with_reco_range.setter
-    def df_names_with_reco_range(self, new_names):
-        # Make sure the new names list has the same length with df_names.
-        if type(new_names) is list and len(new_names) == len(self._df_names_with_reco_range):
-            for index in range(len(new_names)):
-                this_new_name = new_names[index]
-                this_old_name = self._df_names_with_reco_range[index]
-                self._dfs_with_reco_range[this_new_name] = self._dfs_with_reco_range[this_old_name]
-                del self._dfs_with_reco_range[this_old_name]
-            self._df_names_with_reco_range = new_names
-        else:
-            print("Invalid dataframe new names, please try it again.")
-
+    
     # Data Aquisition
     def read_csv_to_df(self):
         """
@@ -158,14 +135,21 @@ class Analysis:
     # Data cleaning
     def drop_empty_column(self):
         """
-        This function is for deleting empty column
+        This function is for deleting empty column.
         """
         for this_df_name in self._data_sheet.keys():
             self._data_sheet[this_df_name] = self._data_sheet[this_df_name].dropna(axis=1, how="all")
         
     def drop_useless_column(self, useless_column_names, this_df_name=None):
         """
-        This function is for dropping useless column
+        This function is for dropping useless columns.
+        --------
+        Args:
+        useless_column_names: string
+            The columns names needs to be dropped
+        this_df_name: string
+            The df name needs to be modified.
+            Default value is None which means all the data_sheet dfs will be modified.
         """
         if this_df_name is None:
             for this_df_name in self._data_sheet.keys():
@@ -179,9 +163,10 @@ class Analysis:
     def rename_one_df(self, this_df_name, column_names):
         """
         This function is used for delete useless column and empty row, and
-        change the column name into English
+        change the column name into English.
         ---------
         Args:
+        this_df_name: The name of data_sheet needs to be modified.
         column_names: list of column names
         """
         self._data_sheet[this_df_name] = self._data_sheet[this_df_name].dropna(axis=0, how="all")
@@ -414,8 +399,8 @@ class Analysis:
                 this_df = self._data_sheet[df_name]
             elif df_type == 2:
                 return "The dataframe is already in average."
-            elif df_type == 3:
-                this_df = self._dfs_with_reco_range[df_name]
+            # elif df_type == 3:
+            #     this_df = self._dfs_with_reco_range[df_name]
             elif df_type == 4:
                 this_df = self._outdoor_temp_df
                 this_df["Date"] = this_df["Date&Time"].dt.date
@@ -484,185 +469,6 @@ class Analysis:
         temp_df["Max Acceptable Temperature"] = temp_df["Comfortable Temperature"] + 3
         temp_df["Min Acceptable Temperature"] = temp_df["Comfortable Temperature"] - 3
 
-    def add_reco_temp_one_time(self, this_df, this_df_name, standard_df, start_date=None, end_date=None, start_time=None, end_time=None):
-        """
-        This function is for adding recommended temperature range for one dataframe.
-        Only the dataframe which has the Temperature(C) column can be used.
-        -----------
-        Args:
-        this_df: pandas dataframe
-            The dataframe needs to be add recommended temperature range.
-        this_df_name: string
-            The name of this_df
-        standard_df: pandas dataframe
-            The dataframe contains recommended temperature range.
-        start_date: dt.datetime
-            The date starts to add range. Default value is None.
-        end_date: dt.datetime
-            The date ends to add range. Default is None.
-        start_time: dt.datetime
-            The start time to add range.
-        end_time: dt.datetime
-            The end time to add range.
-        """
-        # Initialise output dataframe.
-        this_output_df = pd.DataFrame()
-        # Get the start date and end date in standard and test dfs.
-        standard_start_date = standard_df["Date&Time"].min()
-        standard_end_date = standard_df["Date&Time"].max()
-        this_df_start_date = this_df["Date&Time"].min()
-        this_df_end_date = this_df["Date&Time"].max()
-        # Get the proper start and end date.
-        if start_date is None:
-            start_date = max([standard_start_date, this_df_start_date])
-        else:
-            start_date = max([standard_start_date, this_df_start_date, start_date])
-        if end_date is None:
-            end_date = min([standard_end_date, this_df_end_date])
-        else:
-            end_date = min([standard_end_date, this_df_end_date, end_date])
-        # Set the begin date as start_date.
-        today = start_date
-        # Loop used to get the values in every valid date.
-
-        # Testing code ------------
-        # print("standard_start_date: ", standard_start_date)
-        # print("this_df_start_date: ", this_df_start_date)
-        # print("start_date: ", start_date)
-
-        # print()
-        # print("standard_end_date: ", standard_end_date)
-        # print("this_df_end_date: ", this_df_end_date)
-        # print("end_date", end_date)
-        # print()
-        # print("today: ", today)
-        # ------------------------
-
-        while today.date() <= end_date.date():
-            # Set the today dfs.
-            today_standard_df = standard_df.loc[standard_df["Date"] == today.date()]
-            today_this_df = this_df.loc[this_df["Date"] == today.date()]
-
-            today_this_df = today_this_df[["Date&Time", "Temperature(C)", "Date", "Time"]]
-
-            # print("-----------")
-            # print("today_standard_df: ", today_standard_df)
-            # print("today_this_df: ", today_this_df)
-            # print("---------")
-
-            judgement = False
-            if today_standard_df.empty is not True:
-                if today_this_df.empty is not True:
-                    judgement = True
-
-            # Make sure the dfs have this day's values.
-            if judgement is True:
-                # Reset the index.
-                today_standard_df = today_standard_df.reset_index(drop=True)
-                today_this_df = today_this_df.reset_index(drop=True)
-                # Get the start time and end time in standard and test dfs.
-                today_standard_start_time = today_standard_df["Date&Time"].min()
-                today_standard_end_time = today_standard_df["Date&Time"].max()
-                today_this_df_start_time = today_this_df["Date&Time"].min()
-                today_this_df_end_time = today_this_df["Date&Time"].max()
-                # Get the proper start and end time.
-                if start_time is None:
-                    start_time = max([today_standard_start_time, today_this_df_start_time])
-                else:
-                    start_time = max([today_standard_start_time, today_this_df_start_time, start_time])
-                if end_time is None:
-                    this_end_time = min([today_standard_end_time, today_this_df_end_time])
-                else:
-                    this_end_time = min([today_standard_end_time, today_this_df_end_time, end_time])
-                # Set the begin time as start_time.
-                now = start_time
-
-                # print("---------")
-                # print("now: ", now)
-                # print("today_standard_end_time: ", today_standard_end_time)
-                # print("today_this_df_end_time: ", today_this_df_end_time)
-                # print("this_end_time: ", this_end_time)
-                # print("----------")
-
-                # print("-----------")
-                # print("today_standard_df: ", today_standard_df)
-                # print("today_this_df: ", today_this_df)
-
-                # Loop used to get the values in every valid time.
-                not_break = True
-                while (now.time() <= this_end_time.time()) and not_break:
-                    # Set the time interval (5mins)
-                    now_lower = now.time()
-                    now_upper = (now + dt.timedelta(minutes=5)).time()
-                    # Get the mean standard temperature in 5 mins interval
-                    standard_5_df = today_standard_df.loc[(today_standard_df["Time"]>=now_lower)&(today_standard_df["Time"]<now_upper), ["Date&Time", "Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature"]]
-                    standard_5_df = standard_5_df.mean(numeric_only=True)
-                    # Get the mean this_df temperature in 5 mins interval
-                    this_df_5_df = today_this_df.loc[(today_this_df["Time"]>=now_lower)&(today_this_df["Time"]<now_upper), ["Date&Time", "Temperature(C)"]]
-                    this_df_5_df = this_df_5_df.mean(numeric_only=True)
-
-                    this_comparison_data = [[this_df_5_df["Temperature(C)"], standard_5_df["Comfortable Temperature"], standard_5_df["Max Acceptable Temperature"], standard_5_df["Min Acceptable Temperature"], today.date(), now.time(), now]]
-                    this_comparison_df = pd.DataFrame(this_comparison_data, columns=["Indoor Temperature(C)", "Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature", "Date", "Time", "Date&Time"])
-                    this_output_df = pd.concat([this_output_df, this_comparison_df], axis=0, ignore_index=True)
-                    # Set for next 5 mins.
-                    now = now + dt.timedelta(minutes=5)
-                    # print("now: ", now)
-
-                    if now.time() >= dt.time(23, 50, 00):
-                        not_break = False
-
-
-            # Set for next date
-            today += dt.timedelta(days=1)
-
-            # print("------------")
-            # print("After plus: today is", today)
-            # print()
-
-        # Save this output into self._dfs_with_reco_range.
-        self._dfs_with_reco_range[this_df_name] = this_output_df
-        self._df_names_with_reco_range = list(self._dfs_with_reco_range.keys())
-
-    def add_recommended_temp(self, is_avg, df_names=None, start_date=None, end_date=None, start_time=None, end_time=None):
-        """
-        This function is used for judging whether the temperature is in the recommended range.
-        Only the dataframe which has the Temperature(C) column can be used.
-        -----------
-        Args:
-        is_avg: bool
-            Whether the dfs are self.average_dfs or self._data_sheet
-        df_names: list
-            The list of df names need to be added recommended temperature range.
-            Default value is None, which means all the dfs will be added.
-        start_date: dt.datetime
-            The date starts to add range. Default value is None.
-        end_date: dt.datetime
-            The date ends to add range. Default is None.
-        start_time: dt.datetime
-            The start time to add range.
-        end_time: dt.datetime
-            The end time to add range.
-        """
-        standard_df = self._outdoor_temp_df
-        if df_names is not None:
-            for this_df_name in df_names:
-                # Judge the type of dfs.
-                if is_avg is False:
-                    this_df = self._data_sheet[this_df_name]
-                else:
-                    this_df = self._average_dfs[this_df_name]
-                # Add recommended temperature range for one dataframe
-                self.add_reco_temp_one_time(this_df, this_df_name, standard_df, start_date, end_date, start_time, end_time)
-        else:
-            for this_df_name in self._df_names:
-                # Judge the type of dfs.
-                if is_avg is False:
-                    this_df = self._data_sheet[this_df_name]
-                else:
-                    this_df = self._average_dfs[this_df_name]
-                # Add recommended temperature range for one dataframe
-                self.add_reco_temp_one_time(this_df, this_df_name, standard_df, start_date, end_date, start_time, end_time)
-
     # Data visualization
     def plot_graph(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None, is_GUI=False, start_date=None, end_date=None, date_column="Date"):
         """
@@ -674,7 +480,6 @@ class Analysis:
         df_type: int
             1 means self._data_sheet
             2 means self._average_dfs
-            3 means self._dfs_with_reco_range
         figure_name: string
             The name of this graph.
         x_name: string
@@ -718,8 +523,8 @@ class Analysis:
                 this_df = self._data_sheet[this_df_name]
             elif df_type == 2:
                 this_df = self._average_dfs[this_df_name]
-            elif df_type == 3:
-                this_df = self._dfs_with_reco_range[this_df_name]
+            # elif df_type == 3:
+            #     this_df = self._dfs_with_reco_range[this_df_name]
             else:
                 return "Invalid Use !!!"
 
@@ -777,7 +582,6 @@ class Analysis:
         df_type: int
             1 means self._data_sheet
             2 means self._average_dfs
-            3 means self._dfs_with_reco_range
         figure_name: string
             The name of this graph.
         x_name: string
@@ -825,8 +629,8 @@ class Analysis:
                 this_df = self._data_sheet[this_df_name]
             elif df_type == 2:
                 this_df = self._average_dfs[this_df_name]
-            elif df_type == 3:
-                this_df = self._dfs_with_reco_range[this_df_name]
+            # elif df_type == 3:
+            #     this_df = self._dfs_with_reco_range[this_df_name]
             else:
                 return "Invalid Use !!!"
             # Set the start date and the end date.
@@ -892,7 +696,6 @@ class Analysis:
         df_type: int
             1 means self._data_sheet
             2 means self._average_dfs
-            3 means self._dfs_with_reco_range
         figure_name: string
             The name of this graph.
         x_name: string
@@ -944,8 +747,8 @@ class Analysis:
                 this_df = self._data_sheet[this_df_name]
             elif df_type == 2:
                 this_df = self._average_dfs[this_df_name]
-            elif df_type == 3:
-                this_df = self._dfs_with_reco_range[this_df_name]
+            # elif df_type == 3:
+            #     this_df = self._dfs_with_reco_range[this_df_name]
             else:
                 return "Invalid Use !!!"
 
@@ -1056,7 +859,6 @@ class Analysis:
         df_type: int
             1 means self._data_sheet
             2 means self._average_dfs
-            3 means self._dfs_with_reco_range
         figure_name: string
             The name of this graph.
         x_name: string
@@ -1104,8 +906,8 @@ class Analysis:
                 this_df = self._data_sheet[this_df_name]
             elif df_type == 2:
                 this_df = self._average_dfs[this_df_name]
-            elif df_type == 3:
-                this_df = self._dfs_with_reco_range[this_df_name]
+            # elif df_type == 3:
+            #     this_df = self._dfs_with_reco_range[this_df_name]
             else:
                 return "Invalid Use !!!"
             # Set the start date and the end date.
@@ -1212,7 +1014,6 @@ class Analysis:
         df_type: int
             1 means self._data_sheet
             2 means self._average_dfs
-            3 means self._dfs_with_reco_range
         df_names: list
             The list contains the names of dataframes need to output
             csv files.
@@ -1236,8 +1037,8 @@ class Analysis:
                     this_df = self._data_sheet[this_df_name]
                 elif df_type == 2:
                     this_df = self._average_dfs[this_df_name]
-                elif df_type == 3:
-                    this_df = self._dfs_with_reco_range[this_df_name]
+                # elif df_type == 3:
+                #     this_df = self._dfs_with_reco_range[this_df_name]
                 else:
                     return "Invalid Use !!!"
 
@@ -1250,8 +1051,8 @@ class Analysis:
                     this_df = self._data_sheet[this_df_name]
                 elif df_type == 2:
                     this_df = self._average_dfs[this_df_name]
-                elif df_type == 3:
-                    this_df = self._dfs_with_reco_range[this_df_name]
+                # elif df_type == 3:
+                #     this_df = self._dfs_with_reco_range[this_df_name]
                 else:
                     return "Invalid Use !!!"
                     

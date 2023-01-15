@@ -352,16 +352,16 @@ class DataPlotting(tk.Tk):
             print("Above for start minute.")
         
         # Create upper window.
-        top = tk.Toplevel(self)
+        top = tk.Toplevel(self, bg='#FF9800')
         top_width = self.winfo_screenwidth() / 2.7
         top_height = self.winfo_screenheight() / 5
         top_left = (self.winfo_screenwidth() - top_width) / 2
         top_top = (self.winfo_screenheight() - top_height) / 2
         top.geometry("%dx%d+%d+%d" % (top_width, top_height, top_left, top_top))
-        ttk.Label(top, text='Choose start date and time', font=("Times", 22, "bold")).pack(padx=10, pady=10)
-        ttk.Label(top, text="Date:", font=("Times", 20)).pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        ttk.Label(top, text='Choose start date and time', font=("Times", 22, "bold"), background='#FF9800', foreground="#757575").pack(padx=10, pady=10)
+        ttk.Label(top, text="Date:", font=("Times", 20), foreground="#757575", background='#FF9800').pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
         # The widget for date selection.
-        cal = DateEntry(top, width=8, height=15, background='darkblue', font=("Times", 20),
+        cal = DateEntry(top, width=8, height=15, background='#F57C00', font=("Times", 20),
                         foreground='white', borderwidth=2, year=2022, month=6, day=14)
         # Set the default date.
         # cal.set_date(dt.date(2022, 6, 14))
@@ -371,7 +371,7 @@ class DataPlotting(tk.Tk):
         # Bind the DateEntrySelected event with set_start_date function.
         cal.bind("<<DateEntrySelected>>", set_start_date)
         
-        ttk.Label(top, text="Time:", font=("Times", 20)).pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        ttk.Label(top, text="Time:", font=("Times", 20), foreground="#757575", background='#FF9800').pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
 
         # The Combobox for choosing the hour.
         hour_box = ttk.Combobox(
@@ -387,7 +387,7 @@ class DataPlotting(tk.Tk):
         # Bind this event with function.
         hour_box.bind("<<ComboboxSelected>>", set_start_hour)
         # : text.
-        ttk.Label(top, text=":", font=("", 20)).pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        ttk.Label(top, text=":", font=("", 20), foreground="#757575", background='#FF9800').pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
         # The Combobox for choosing the minute.
         minute_box = ttk.Combobox(
             master=top,  
@@ -459,16 +459,16 @@ class DataPlotting(tk.Tk):
             print("Above for start minute.")
         
         # Create upper window.
-        top = tk.Toplevel(self)
+        top = tk.Toplevel(self, bg='#FF9800')
         top_width = self.winfo_screenwidth() / 2.7
         top_height = self.winfo_screenheight() / 5
         top_left = (self.winfo_screenwidth() - top_width) / 2
         top_top = (self.winfo_screenheight() - top_height) / 2
         top.geometry("%dx%d+%d+%d" % (top_width, top_height, top_left, top_top))
-        ttk.Label(top, text='Choose end date and time', font=("Times", 22, "bold")).pack(padx=10, pady=10)
-        ttk.Label(top, text="Date:", font=("Times", 20)).pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        ttk.Label(top, text='Choose end date and time', font=("Times", 22, "bold"), background='#FF9800', foreground="#757575").pack(padx=10, pady=10)
+        ttk.Label(top, text="Date:", font=("Times", 20), foreground="#757575", background='#FF9800').pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
         # The widget for date selection.
-        cal = DateEntry(top, width=8, height=15, background='darkblue', font=("Times", 20),
+        cal = DateEntry(top, width=8, height=15, background='#F57C00', font=("Times", 20),
                         foreground='white', borderwidth=2, year=2022, month=7, day=23)
         # Set the default date.
         # cal.set_date(dt.date(2022, 6, 14))
@@ -478,7 +478,7 @@ class DataPlotting(tk.Tk):
         # Bind the DateEntrySelected event with set_start_date function.
         cal.bind("<<DateEntrySelected>>", set_end_date)
         
-        ttk.Label(top, text="Time:", font=("Times", 20)).pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        ttk.Label(top, text="Time:", font=("Times", 20), foreground="#757575", background='#FF9800').pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
 
         # The Combobox for choosing the hour.
         hour_box = ttk.Combobox(
@@ -494,7 +494,7 @@ class DataPlotting(tk.Tk):
         # Bind this event with function.
         hour_box.bind("<<ComboboxSelected>>", set_end_hour)
         # : text.
-        ttk.Label(top, text=":", font=("", 20)).pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
+        ttk.Label(top, text=":", font=("", 20), foreground="#757575", background='#FF9800').pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
         # The Combobox for choosing the minute.
         minute_box = ttk.Combobox(
             master=top,  
@@ -560,13 +560,13 @@ class DataPlotting(tk.Tk):
             
 
         # Create upper window.
-        top = tk.Toplevel(self)
+        top = tk.Toplevel(self, bg='#FF9800')
         top_width = self.winfo_screenwidth() / 2.7
         top_height = self.winfo_screenheight() / 7
         top_left = (self.winfo_screenwidth() - top_width) / 2
         top_top = (self.winfo_screenheight() - top_height) / 2
         top.geometry("%dx%d+%d+%d" % (top_width, top_height, top_left, top_top))
-        ttk.Label(top, text='Choose the name(s) of csv(s) for Plotting', font=("Times", 22, "bold")).pack(padx=10, pady=10)
+        ttk.Label(top, text='Choose the name(s) of csv(s) for Plotting', font=("Times", 22, "bold"), background='#FF9800', foreground="#757575").pack(padx=10, pady=10)
         
 
         choose_df_name_box = ttk.Combobox(
