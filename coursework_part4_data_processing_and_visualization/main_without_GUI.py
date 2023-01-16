@@ -236,7 +236,7 @@ class Analysis:
             The column needs to be transferred. Defaut column name is Date&Time.
         """
         if is_outdoor_temp is True:
-            self._outdoor_temp_df[dtcolumn] = pd.to_datetime(self._outdoor_temp_df[dtcolumn])
+            self._outdoor_temp_df[date_column] = pd.to_datetime(self._outdoor_temp_df[date_column]).dt.date
         else:
             if df_name == None:
                 for this_df_name in self._df_names:
@@ -430,8 +430,8 @@ class Analysis:
 
             if df_type == 1:
                 self._average_dfs[df_name] = average_df
-            elif df_type == 4:
-                self._outdoor_average_temp_df = average_df
+            # elif df_type == 4:
+            #     self._outdoor_average_temp_df = average_df
 
         else:
             for df_name in self._df_names:
@@ -468,6 +468,8 @@ class Analysis:
         temp_df["Comfortable Temperature"] = temp_df[temp_col] * 0.33 + 18.8
         temp_df["Max Acceptable Temperature"] = temp_df["Comfortable Temperature"] + 3
         temp_df["Min Acceptable Temperature"] = temp_df["Comfortable Temperature"] - 3
+        temp_df["Upper Limit Temperature"] = temp_df["Max Acceptable Temperature"] + 4
+
 
     # Data visualization
     def plot_graph(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None, is_GUI=False, start_date=None, end_date=None, date_column="Date"):
@@ -538,21 +540,25 @@ class Analysis:
                     end_date = this_df.iloc[-1][date_column]
                 this_df = this_df[this_df[date_column]<=end_date]
 
-            # Set x value.
+            # Set x value. 
             x_data = this_df[x_name]
 
             for this_y_name in y_names:
                 # Set y value.
                 y_data = this_df[this_y_name]
+
+                # Set this_y_name.
+                this_y_name = this_y_name.replace('C', '℃')
+
                 # Plot the graph
-                plt.plot(x_data, y_data, marker='o', label=f"{this_y_name}: {this_df_name}", linewidth=1, markersize=1.5)
+                plt.plot(x_data, y_data, marker='o', label=f"{this_y_name}: {this_df_name}", linewidth=1.5, markersize=1.5)
 
         # Set the title and labels.
         plt.title(figure_name, fontsize=12, fontweight='bold')
         plt.xlabel(x_name, fontsize=12, fontweight='bold')
         plt.ylabel("Value", fontsize=12, fontweight='bold')
 
-        plt.legend(loc=0, numpoints=1)
+        plt.legend(loc=2, numpoints=1)
         leg = plt.gca().get_legend()
         ltext = leg.get_texts()
         plt.setp(ltext, fontsize=12, fontweight='bold')
@@ -657,8 +663,10 @@ class Analysis:
                     for this_y_name in y_names:
                         # Set y value.
                         y_data = today_df[this_y_name]
+                        # Set the unit of temperature
+                        this_y_name = this_y_name.replace('C', '℃')
                         # Plot the graph
-                        plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=0.5, markersize=0.5)
+                        plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=1.5, markersize=0.5)
                     
                 today = today + dt.timedelta(1)
                 
@@ -667,7 +675,7 @@ class Analysis:
         plt.xlabel(x_name, fontsize=12, fontweight='bold')
         plt.ylabel("Value", fontsize=12, fontweight='bold')
 
-        plt.legend(loc=0, numpoints=1)
+        plt.legend(loc=2, numpoints=1)
         leg = plt.gca().get_legend()
         ltext = leg.get_texts()
         plt.setp(ltext, fontsize=8, fontweight='bold')
@@ -686,7 +694,7 @@ class Analysis:
         plt.show()
         plt.close()
 
-    def plot_graph_with_recommandation(self, df_names, df_type, figure_name, x_name, y_names, y_names_for_reco=["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature"], output_dir=None, is_GUI=False, start_date=None, end_date=None, date_column="Date"):
+    def plot_graph_with_recommandation(self, df_names, df_type, figure_name, x_name, y_names, y_names_for_reco=["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature", "Upper Limit Temperature"], output_dir=None, is_GUI=False, start_date=None, end_date=None, date_column="Date"):
         """
         Plot graph with recommandation.
         -------------
@@ -768,11 +776,13 @@ class Analysis:
             for this_y_name in y_names:
                 # Set y value.
                 y_data = this_df[this_y_name]
+                this_y_name = this_y_name.replace('C', '℃')
                 # Plot the graph
-                plt.plot(x_data, y_data, marker='o', label=f"{this_y_name}: {this_df_name}", linewidth=1, markersize=1.5)
+                plt.plot(x_data, y_data, marker='o', label=f"{this_y_name}: {this_df_name}", linewidth=1.5, markersize=1.5)
         
         # Get the outdoor temperature dataframe.
-        outdoor_df = self._outdoor_average_temp_df
+        # outdoor_df = self._outdoor_average_temp_df
+        outdoor_df = self._outdoor_temp_df
 
         print("Testing---")
         print("Outdoor_temp_df:", outdoor_df)
@@ -815,10 +825,11 @@ class Analysis:
 
             print("Testing=======")
             print("y_data:", y_data_reco)
-
+            # Set the unit of y_name_reco
+            y_name_reco = y_name_reco + '(℃)'
 
             # Plot the graph.
-            plt.plot(x_data_reco, y_data_reco, linestyle='dotted', label=f"{y_name_reco}", linewidth=1, markersize=1.5)
+            plt.plot(x_data_reco, y_data_reco, linestyle='dotted', label=f"{y_name_reco}", linewidth=1.5, markersize=1.5)
 
             print("Testing======")
             print("Outdoor_temperature: ", y_name_reco)
@@ -829,7 +840,7 @@ class Analysis:
         plt.xlabel(x_name, fontsize=12, fontweight='bold')
         plt.ylabel("Value", fontsize=12, fontweight='bold')
 
-        plt.legend(loc=0, numpoints=1)
+        plt.legend(loc=2, numpoints=1)
         leg = plt.gca().get_legend()
         ltext = leg.get_texts()
         plt.setp(ltext, fontsize=12, fontweight='bold')
@@ -848,7 +859,7 @@ class Analysis:
         plt.show()
         plt.close()
 
-    def plot_each_day_with_recommendatioin(self, df_names, df_type, figure_name, x_name, y_names, y_names_for_reco=["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature"], output_dir=None, start_date=None, end_date=None, date_column="Date", start_time=None, end_time=None, is_GUI=False):
+    def plot_each_day_with_recommendatioin(self, df_names, df_type, figure_name, x_name, y_names, y_names_for_reco=["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature", "Upper Limit Temperature"], output_dir=None, start_date=None, end_date=None, date_column="Date", start_time=None, end_time=None, is_GUI=False):
         """
         Plot graph of each day.
         Default: all the values will be used.
@@ -934,8 +945,9 @@ class Analysis:
                     for this_y_name in y_names:
                         # Set y value.
                         y_data = today_df[this_y_name]
+                        this_y_name = this_y_name.replace('C', '℃')
                         # Plot the graph
-                        plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=0.5, markersize=0.5)
+                        plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=1.5, markersize=0.5)
                     
                 today = today + dt.timedelta(1)
 
@@ -953,31 +965,50 @@ class Analysis:
         while today <= end_date:
             today_df = outdoor_df[outdoor_df[date_column] == today]
 
-            
+            print()
+            print("---===")
+            print("today_df:", today_df)
+
+            x_data = [start_time, end_time]
+
 
             if today_df.empty is False:
 
-                # today_df[x_name] = today_df["Date&Time"].dt.time
-                today_df.loc[:, x_name] = pd.to_datetime(today_df["Date&Time"]).dt.time
+                # # today_df[x_name] = today_df["Date&Time"].dt.time
+                # today_df.loc[:, x_name] = pd.to_datetime(today_df["Date&Time"]).dt.time
 
-                if start_time is not None:
-                    today_df = today_df.loc[today_df[x_name] >= start_time]
-                if end_time is not None:
-                    today_df = today_df.loc[today_df[x_name] <= end_time]
+                # if start_time is not None:
+                #     today_df = today_df.loc[today_df[x_name] >= start_time]
+                # if end_time is not None:
+                #     today_df = today_df.loc[today_df[x_name] <= end_time]
 
-                print("===========")
-                print("today_df: ", today_df)
-                print("==========")
+                # print("===========")
+                # print("today_df: ", today_df)
+                # print("==========")
 
-                # Set up input
-                x_data = today_df[x_name]
+                # # Set up input
+                # x_data = today_df[x_name]
 
+                # for this_y_name in y_names_for_reco:
+                #     # Set y value.
+                #     y_data = today_df[this_y_name]
+                #     # Plot the graph
+                #     plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=0.5, markersize=0.5, linestyle = 'dotted')
+                
                 for this_y_name in y_names_for_reco:
                     # Set y value.
                     y_data = today_df[this_y_name]
+                    y_data = pd.concat([y_data]*2).reset_index(drop=True)
+
+                    print("\n====")
+                    print("y", y_data)
+                    this_y_name = this_y_name + '(℃)'
                     # Plot the graph
-                    plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=0.5, markersize=0.5, linestyle = 'dotted')
-                
+                    plt.plot(x_data, y_data, label=f"{today}: {this_y_name}", linewidth=1.5, markersize=0.5, linestyle = 'dotted')
+
+                    print("This_y_name: ", this_y_name)
+
+
             today = today + dt.timedelta(1)
 
                 
@@ -986,7 +1017,7 @@ class Analysis:
         plt.xlabel(x_name, fontsize=12, fontweight='bold')
         plt.ylabel("Value", fontsize=12, fontweight='bold')
 
-        plt.legend(loc=0, numpoints=1)
+        plt.legend(loc=2, numpoints=1)
         leg = plt.gca().get_legend()
         ltext = leg.get_texts()
         plt.setp(ltext, fontsize=8, fontweight='bold')

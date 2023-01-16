@@ -291,12 +291,12 @@ class DataPlotting(tk.Tk):
             outdoor_temp_df = pd.read_csv(self.outdoor_temp_dir.get(), encoding='gbk')
             self.analysis.outdoor_temp_df = outdoor_temp_df
             self.analysis.transfer_to_datetime(is_outdoor_temp=True)
-            this_analysis = self.analysis
-            this_analysis.calculate_average(df_name="Outdoor Average", df_type=4)
+            # this_analysis = self.analysis
+            # this_analysis.calculate_average(df_name="Outdoor Average", df_type=4)
 
             msgbox.showinfo("Reminder", "Outdoor Temperature Data added successfully!")
             print(self.analysis.outdoor_temp_df)
-            print(self.analysis.outdoor_average_temp_df)
+            # print(self.analysis.outdoor_average_temp_df)
 
 
     def choose_start_date_and_time(self):
@@ -613,7 +613,7 @@ class DataPlotting(tk.Tk):
         else:
             df_names = [choice]
 
-        this_analysis.plot_graph(df_names=df_names, df_type=2, figure_name=f"Day Average Temperature vs Date ({choice})", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
+        this_analysis.plot_graph(df_names=df_names, df_type=2, figure_name=f"Day Average Temperature(℃) vs Date ({choice})", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
 
     def plotting_each_day(self):
         """
@@ -642,7 +642,7 @@ class DataPlotting(tk.Tk):
         else:
             df_names = [choice]
 
-        this_analysis.plot_each_day(df_names=df_names, df_type=1, figure_name=f"Temperature vs Time in different date ({choice})", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time)
+        this_analysis.plot_each_day(df_names=df_names, df_type=1, figure_name=f"Temperature(℃) vs Time ({choice})", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time)
 
     def plotting_average_with_reco(self):
         """
@@ -666,7 +666,7 @@ class DataPlotting(tk.Tk):
         else:
             df_names = [choice]
 
-        this_analysis.plot_graph_with_recommandation(df_names=df_names, df_type=2, figure_name=f"Day Average Temperature vs Date with recommendations ({choice})", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
+        this_analysis.plot_graph_with_recommandation(df_names=df_names, df_type=2, figure_name=f"Day Average Temperature(℃) vs Date with benchmarks ({choice})", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
 
     def plotting_each_day_with_reco(self):
         """
@@ -695,7 +695,7 @@ class DataPlotting(tk.Tk):
         else:
             df_names = [choice]
 
-        this_analysis.plot_each_day_with_recommendatioin(df_names=df_names, df_type=1, figure_name=f"Temperature vs Time in different date with recommendations ({choice})", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time)
+        this_analysis.plot_each_day_with_recommendatioin(df_names=df_names, df_type=1, figure_name=f"Temperature(℃) vs Time with benchmarks ({choice})", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time)
 
 
 
