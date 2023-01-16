@@ -401,9 +401,9 @@ class Analysis:
                 return "The dataframe is already in average."
             # elif df_type == 3:
             #     this_df = self._dfs_with_reco_range[df_name]
-            elif df_type == 4:
-                this_df = self._outdoor_temp_df
-                this_df["Date"] = this_df["Date&Time"].dt.date
+            # elif df_type == 4:
+            #     this_df = self._outdoor_temp_df
+            #     this_df["Date"] = this_df["Date&Time"].dt.date
             else:
                 return "Invalid Use !!!"
 
