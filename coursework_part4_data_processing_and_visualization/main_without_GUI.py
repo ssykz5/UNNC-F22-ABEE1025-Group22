@@ -859,7 +859,7 @@ class Analysis:
         plt.show()
         plt.close()
 
-    def plot_each_day_with_recommendatioin(self, df_names, df_type, figure_name, x_name, y_names, y_names_for_reco=["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature", "Upper Limit Temperature"], output_dir=None, start_date=None, end_date=None, date_column="Date", start_time=None, end_time=None, is_GUI=False):
+    def plot_each_day_with_recommendatioin(self, df_names, df_type, figure_name, x_name, y_names, y_names_for_reco=["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature", "Upper Limit Temperature"], output_dir=None, start_date=None, end_date=None, date_column="Date", start_time=None, end_time=None, is_GUI=False, is_analysis=False, file_name=None):
         """
         Plot graph of each day.
         Default: all the values will be used.
@@ -1030,10 +1030,15 @@ class Analysis:
             os.makedirs(output_dir)
             os.chmod(output_dir, stat.S_IWRITE)
 
-        output_dir += f"/{figure_name}.svg"
-        # Save the graph as a svg file.
-        plt.savefig(output_dir, format="svg")
-        plt.show()
+        if is_analysis is True:
+
+            output_dir += f"/{file_name}.svg"
+            plt.savefig(output_dir, format="svg")
+        else:
+            output_dir += f"/{figure_name}.svg"
+            # Save the graph as a svg file.
+            plt.savefig(output_dir, format="svg")
+            plt.show()
         plt.close()
 
     # Data Storage
