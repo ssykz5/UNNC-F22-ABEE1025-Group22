@@ -788,7 +788,7 @@ class Analysis:
         print("Outdoor_temp_df:", outdoor_df)
 
         # Testing
-        outdoor_df.loc[:, date_column] = pd.to_datetime(outdoor_df[date_column]).dt.date
+        # outdoor_df.loc[:, date_column] = pd.to_datetime(outdoor_df[date_column]).dt.date
 
 
         # Change this_df with date range.

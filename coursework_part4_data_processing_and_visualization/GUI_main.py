@@ -10,6 +10,8 @@ import os
 from tkcalendar import DateEntry
 from tkinter import ttk
 import copy
+from ComBoPicker import Combopicker
+
 
 class DataPlotting(tk.Tk):
     def __init__(self):
@@ -273,10 +275,15 @@ class DataPlotting(tk.Tk):
         print("================")
         print("Average dfs =====")
         print(this_analysis.average_dfs)
+        
 
         # Get the df_names.
+        # self.df_names = ["All"]
         self.df_names = this_analysis.df_names
-        self.df_names.append("All")
+
+        print("================")
+        print("self.df_names: ", self.df_names)
+        # self.df_names.append("All")
 
         msgbox.showinfo("Reminder", "Analysis created successfully!")
 
@@ -551,37 +558,52 @@ class DataPlotting(tk.Tk):
         """
         plot_df = self.plot_df
 
-        def choose_plotting_df(self):
-            """
-            This function is for choosing plotting df.
-            """
-            plot_df.set(choose_df_name_box.get())
-            print("plot_df: ", plot_df.get())
+        # def choose_plotting_df(self):
+        #     """
+        #     This function is for choosing plotting df.
+        #     """
+        #     plot_df.set(choose_df_name_box.get())
+        #     print("plot_df: ", plot_df.get())
             
 
         # Create upper window.
         top = tk.Toplevel(self, bg='#FF9800')
         top_width = self.winfo_screenwidth() / 2.7
-        top_height = self.winfo_screenheight() / 7
+        top_height = self.winfo_screenheight() / 4
         top_left = (self.winfo_screenwidth() - top_width) / 2
         top_top = (self.winfo_screenheight() - top_height) / 2
         top.geometry("%dx%d+%d+%d" % (top_width, top_height, top_left, top_top))
         ttk.Label(top, text='Choose the name(s) of csv(s) for Plotting', font=("Times", 22, "bold"), background='#FF9800', foreground="#757575").pack(padx=10, pady=10)
         
 
-        choose_df_name_box = ttk.Combobox(
-            master=top,  
-            height=15,  
-            width=10,  
-            state="normal",  
-            cursor="arrow",  
-            font=("", 20),  
-            values=self.df_names,  
-            textvariable=plot_df)
-        choose_df_name_box.pack()
+        # choose_df_name_box = ttk.Combobox(
+        #     master=top,  
+        #     height=15,  
+        #     width=10,  
+        #     state="normal",  
+        #     cursor="arrow",  
+        #     font=("", 20),  
+        #     values=self.df_names,  
+        #     textvariable=plot_df)
+        # choose_df_name_box.pack()
+
+        def show_result():
+            print(picker.current_value)
+            print("entry_val: ", self.plot_df.get())
+            print(type(self.plot_df.get()))
+            msgbox.showinfo("Plotting Name", picker.current_value)
+            top.destroy()
+
+
+        # Multiple choose box
+        picker = Combopicker(top, values=["All"]+self.df_names, entryvar=plot_df, entrywidth=10)
+        picker.pack()
+
+        test_btn = tk.Button(top, text="Show result and Quit", command=show_result, bg="#FF9800", fg="#FFE0B2", font=('Times', 10, 'bold'))
+        test_btn.pack(side=tk.BOTTOM, padx=(0, 20), pady=(0, 20))
 
         # Bind this event with function.
-        choose_df_name_box.bind("<<ComboboxSelected>>", choose_plotting_df)
+        # choose_df_name_box.bind("<<ComboboxSelected>>", choose_plotting_df)
 
         self.plot_df = plot_df
         
@@ -601,19 +623,26 @@ class DataPlotting(tk.Tk):
 
         # Choose the dataframe needs to be plotted.
         choice = self.plot_df.get()
-        if choice == "All":
+        choice = choice.split(",")
+        if choice.count("All"):
             df_names = copy.deepcopy(this_analysis.df_names)
             # Remove "All" element in the name list.
-            df_names.remove("All")
+            # df_names.remove("All")
 
 
             print("Testing code!!!")
             print("df_names: ", df_names)
-
         else:
-            df_names = [choice]
+            df_names = choice
 
-        this_analysis.plot_graph(df_names=df_names, df_type=2, figure_name=f"Day Average Temperature(℃) vs Date ({choice})", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
+        # Decide the right name.
+        if choice.count("All"):
+            plot_name = ""
+        else:
+            plot_name = ", ".join(choice)
+            plot_name = "(" + plot_name + ")"
+        # Plotting
+        this_analysis.plot_graph(df_names=df_names, df_type=2, figure_name=f"Day Average Temperature(℃) vs Date {plot_name}", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
 
     def plotting_each_day(self):
         """
@@ -635,14 +664,26 @@ class DataPlotting(tk.Tk):
 
         # Choose the dataframe needs to be plotted.
         choice = self.plot_df.get()
-        if choice == "All":
+        choice = choice.split(",")
+        if choice.count("All"):
             df_names = copy.deepcopy(this_analysis.df_names)
             # Remove "All" element in the name list.
-            df_names.remove("All")
-        else:
-            df_names = [choice]
+            # df_names.remove("All")
 
-        this_analysis.plot_each_day(df_names=df_names, df_type=1, figure_name=f"Temperature(℃) vs Time ({choice})", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time)
+
+            print("Testing code!!!")
+            print("df_names: ", df_names)
+        else:
+            df_names = choice
+
+        # Decide the right name.
+        if choice.count("All"):
+            plot_name = ""
+        else:
+            plot_name = ", ".join(choice)
+            plot_name = "(" + plot_name + ")"
+
+        this_analysis.plot_each_day(df_names=df_names, df_type=1, figure_name=f"Temperature(℃) vs Time {plot_name}", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time)
 
     def plotting_average_with_reco(self):
         """
@@ -659,14 +700,26 @@ class DataPlotting(tk.Tk):
 
         # Choose the dataframe needs to be plotted.
         choice = self.plot_df.get()
-        if choice == "All":
+        choice = choice.split(",")
+        if choice.count("All"):
             df_names = copy.deepcopy(this_analysis.df_names)
             # Remove "All" element in the name list.
-            df_names.remove("All")
-        else:
-            df_names = [choice]
+            # df_names.remove("All")
 
-        this_analysis.plot_graph_with_recommandation(df_names=df_names, df_type=2, figure_name=f"Day Average Temperature(℃) vs Date with benchmarks ({choice})", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
+
+            print("Testing code!!!")
+            print("df_names: ", df_names)
+        else:
+            df_names = choice
+
+        # Decide the right name.
+        if choice.count("All"):
+            plot_name = ""
+        else:
+            plot_name = ", ".join(choice)
+            plot_name = "(" + plot_name + ")"
+
+        this_analysis.plot_graph_with_recommandation(df_names=df_names, df_type=2, figure_name=f"Day Average Temperature(℃) vs Date with benchmarks {plot_name}", x_name="Date", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date)
 
     def plotting_each_day_with_reco(self):
         """
@@ -688,14 +741,26 @@ class DataPlotting(tk.Tk):
 
         # Choose the dataframe needs to be plotted.
         choice = self.plot_df.get()
-        if choice == "All":
+        choice = choice.split(",")
+        if choice.count("All"):
             df_names = copy.deepcopy(this_analysis.df_names)
             # Remove "All" element in the name list.
-            df_names.remove("All")
-        else:
-            df_names = [choice]
+            # df_names.remove("All")
 
-        this_analysis.plot_each_day_with_recommendatioin(df_names=df_names, df_type=1, figure_name=f"Temperature(℃) vs Time with benchmarks ({choice})", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time)
+
+            print("Testing code!!!")
+            print("df_names: ", df_names)
+        else:
+            df_names = choice
+
+        # Decide the right name.
+        if choice.count("All"):
+            plot_name = ""
+        else:
+            plot_name = ", ".join(choice)
+            plot_name = "(" + plot_name + ")"
+
+        this_analysis.plot_each_day_with_recommendatioin(df_names=df_names, df_type=1, figure_name=f"Temperature(℃) vs Time with benchmarks {plot_name}", x_name="Time", y_names=["Temperature(C)"], output_dir=self.output_dir.get(), is_GUI=True, start_date=start_date, end_date=end_date, start_time=start_time, end_time=end_time)
 
 
 
