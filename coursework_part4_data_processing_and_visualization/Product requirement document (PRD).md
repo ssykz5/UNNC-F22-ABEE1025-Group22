@@ -3,7 +3,7 @@
 ## 1. Background and motivation of this software
     It is always difficult for us to analyze and visualize data, especially if there is a large amount of it. Data cleaning and visualizing always consume lots of time and irritate us a lot.
 
-    This software is designed for analyzing and visualizing data with graphic user interface, especially for indoor temperature analyzing. The idea is coming up when we try to analyse data of CSET and PMB building from Building Performance Report coursework.
+    This software is designed for analyzing and visualizing data with graphic user interface, specificly for indoor temperature analyzing. The idea was coming up when we tried to analyse the data of CSET and PMB building for Building Performance Report coursework.
 ## 2. Key functions and Algorithm behind of this software
 * Data Aquisition
   * Read csv file into pandas dataframe.
@@ -23,7 +23,7 @@
         * The equation for calculating comfort temperature:
         * $$ T_{comf}=0.33T_{rm}+18.8 $$
         * Where: $T_{comf}$ is Comfort Temperature, $T_{rm}$ is Running mean outdoor air temperature.
-        * For normal expectation, the suggested accpetable range is $_{\pm }3K$.
+        * For normal expectation, the suggested accpetable range is $_{\pm }3K$. In addition, Upper Limit Temperature can be calculated as Comfort Temperature +7K.
     * Draw the graph using Date as x values and Day Average Temperature as y values with recommended range.
     * Draw the graph using Time as x values and Temperature in one day as y values with recommended range.
 * Data Storage and Return
@@ -32,6 +32,7 @@
   * Use tkinter to create a dashboard.
     * Input and output directory selection.
     * Date and time (start/end) selection.
+    * Choose plotting csv.
     * Plotting.
     * Quit.
 ## 3. Similar products in the market
