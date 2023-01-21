@@ -22,7 +22,8 @@ class Analysis:
         file_directory: string
             The directory where store csv files. e.g.,"C:\Test"
         data_sheet: dict
-            The dictionary contains all the dataframes read from file_directory.
+            The dictionary contains all the dataframes read from 
+            file_directory.
         df_names: list
             The name of every dataframe after reading csv files.
         average_dfs: dict
@@ -130,7 +131,8 @@ class Analysis:
         This function is for deleting empty column.
         """
         for this_df_name in self._data_sheet.keys():
-            self._data_sheet[this_df_name] = self._data_sheet[this_df_name].dropna(axis=1, how="all")
+            self._data_sheet[this_df_name] = \
+                    self._data_sheet[this_df_name].dropna(axis=1, how="all")
         
     def drop_useless_column(self, useless_column_names, this_df_name=None):
         """
@@ -142,15 +144,18 @@ class Analysis:
             The columns names needs to be dropped
         this_df_name: string
             The df name needs to be modified.
-            Default value is None which means all the data_sheet dfs will be modified.
+            Default value is None which means all the data_sheet dfs will 
+            be modified.
         """
         if this_df_name is None:
             for this_df_name in self._data_sheet.keys():
                 this_df = self._data_sheet[this_df_name]
-                self._data_sheet[this_df_name] = this_df.drop(useless_column_names, axis=1)
+                self._data_sheet[this_df_name] = \
+                            this_df.drop(useless_column_names, axis=1)
         else:
             this_df = self._data_sheet[this_df_name]
-            self._data_sheet[this_df_name] = this_df.drop(useless_column_names, axis=1)
+            self._data_sheet[this_df_name] = \
+                            this_df.drop(useless_column_names, axis=1)
 
 
     def rename_one_df(self, this_df_name, column_names):
@@ -163,7 +168,8 @@ class Analysis:
         this_df_name: The name of data_sheet needs to be modified.
         column_names: list of column names.
         """
-        self._data_sheet[this_df_name] = self._data_sheet[this_df_name].dropna(axis=0, how="all")
+        self._data_sheet[this_df_name] = \
+                self._data_sheet[this_df_name].dropna(axis=0, how="all")
         self._data_sheet[this_df_name].columns = column_names
 
     def rename_df(self, column_names):
@@ -185,9 +191,10 @@ class Analysis:
         Args:
         --------
         column_names: list of column names.
-        this_df_name: default value is None, and all the dataframes will be modified.
-                    If this_df_name contains a string, this dataframe called this_df_name
+        this_df_name: default value is None, and all the dataframes 
                     will be modified.
+                    If this_df_name contains a string, this dataframe 
+                    called this_df_name will be modified.
         """
         if this_df_name is None:
             self.drop_empty_column()
@@ -196,7 +203,8 @@ class Analysis:
             self.drop_empty_column()
             self.rename_one_df(this_df_name, column_names)
 
-    def chinese_time_format_to_datetime(self, df_name, dtcolumn="Date&Time"):
+    def chinese_time_format_to_datetime(self, df_name,
+                                         dtcolumn="Date&Time"):
         """
         This function is for transferring the format like 06/14/22 上午09时30分47秒
         to 2022-07-06 09:44:44 (datetime type).
@@ -221,24 +229,28 @@ class Analysis:
                 .str.replace('下午', '', case=False)) + dt.timedelta(hours=12)
         this_df[dtcolumn] = pd.to_datetime(this_df[dtcolumn])
 
-    def transfer_to_datetime(self, df_name=None, dtcolumn="Date&Time", is_outdoor_temp=False, date_column="Date"):
+    def transfer_to_datetime(self, df_name=None, dtcolumn="Date&Time",
+                             is_outdoor_temp=False, date_column="Date"):
         """
         This function is for transferring the object column to datetime column.
 
         Args:
         --------
         df_name: string
-            The dataframe name of df needs to be transfer. Default value is None, which
-            means all the dataframe in self.data_sheet will be transferred.
+            The dataframe name of df needs to be transfer. 
+            Default value is None, which means all the dataframe 
+            in self.data_sheet will be transferred.
         dtcolumn: string
-            The column needs to be transferred. Defaut column name is Date&Time.
+            The column needs to be transferred.Defaut column name is Date&Time.
         is_outdoor_temp: bool
-            Determine if it is the outdoor_temp_df that needs to transfer datetime.
+            Determine if it is the outdoor_temp_df that needs to transfer 
+            datetime.
         date_column: string
             The name of date column.
         """
         if is_outdoor_temp is True:
-            self._outdoor_temp_df[date_column] = pd.to_datetime(self._outdoor_temp_df[date_column]).dt.date
+            self._outdoor_temp_df[date_column] = \
+                pd.to_datetime(self._outdoor_temp_df[date_column]).dt.date
         else:
             if df_name == None:
                 for this_df_name in self._df_names:
@@ -248,7 +260,8 @@ class Analysis:
                 this_df = self._df_names[df_name]
                 this_df[dtcolumn] = pd.to_datetime(this_df[dtcolumn])
 
-    def seperate_date_and_time_for_one_df(self, df_name, seperate_column_name="Date&Time"):
+    def seperate_date_and_time_for_one_df(self, df_name,
+                                         seperate_column_name="Date&Time"):
         """
         Add date and time columns for one dataframe.
 
@@ -257,7 +270,8 @@ class Analysis:
         df_name: string
             The name of this dataframe.
         seperate_column_name: string
-            The column name used to seperate date and time. Default value is "Date&Time".
+            The column name used to seperate date and time. Default value 
+            is "Date&Time".
         """
         this_df = self._data_sheet[df_name]
 
@@ -271,10 +285,12 @@ class Analysis:
         Args:
         --------
         seperate_column_name: string
-            The column name used to seperate date and time. Default value is "Date&Time".
+            The column name used to seperate date and time. Default value is
+             "Date&Time".
         """
         for this_df_name in self._data_sheet.keys():
-            self.seperate_date_and_time_for_one_df(this_df_name, seperate_column_name)
+            self.seperate_date_and_time_for_one_df(this_df_name,
+                                                 seperate_column_name)
 
     def ascending_df_by_datetime(self, df_name=None, dtcolumn="Date&Time"):
         """
@@ -318,8 +334,10 @@ class Analysis:
         """
         this_df = self._data_sheet[df_name]
         for column_name in column_names:
-            this_df[column_name] = this_df[column_name].str.replace('℃', '', case=False)
-            this_df[column_name] = this_df[column_name].astype(float, errors = 'raise')
+            this_df[column_name] = this_df[column_name].str.replace('℃', '',
+                                                                 case=False)
+            this_df[column_name] = this_df[column_name].astype(float, 
+                                                            errors = 'raise')
 
     def remove_row_contain_specific_data(self, specific_data, df_name=None):
         """
@@ -331,8 +349,8 @@ class Analysis:
             The specific data information.
         df_name: string
             The name of the dataframe needs to remove specific data.
-            Default value is None, which means all the specific data in self.data_sheet
-            will be removed.
+            Default value is None, which means all the specific data in 
+            self.data_sheet will be removed.
         """
         if df_name is None:
             for this_df_name in self._df_names:
@@ -357,7 +375,8 @@ class Analysis:
         Args:
         --------
         df_name: string
-            The name of the dataframe needs to transfer fahrenheit degree to celsius.
+            The name of the dataframe needs to transfer fahrenheit degree 
+            to celsius.
         column_names: string 
             It contains the column name need to be transferred.
             Default value is "Temperature(C)"
@@ -390,7 +409,8 @@ class Analysis:
         # Return a Series of mean values
         return this_mean
 
-    def calculate_average(self, df_name=None, column_of_date="Date", start_date=None, end_date=None, df_type=1):
+    def calculate_average(self, df_name=None, column_of_date="Date",
+                         start_date=None, end_date=None, df_type=1):
         """
         Calculate the average number in different days.
 
@@ -409,7 +429,8 @@ class Analysis:
 
         """
         if df_name is not None:
-            # Judge whether start or end date exists, if not, use the first date of input_df as
+            # Judge whether start or end date exists, if not, 
+            # use the first date of input_df as
             # start_date, last date of input_df as end_date.
 
             # Judge the type of dfs.
@@ -433,15 +454,19 @@ class Analysis:
             if end_date == None:
                 end_date = this_df.iloc[len(this_df)-1][column_of_date]
             date = pd.Series([today])
-            average_df = self.calculate_average_one_day(this_df, column_of_date, today)
+            average_df = self.calculate_average_one_day(this_df,
+                                             column_of_date, today)
 
             today = today + dt.timedelta(1)
             while today <= end_date:
                 today_df = this_df[this_df[column_of_date] == today]
                 if today_df.empty is False:
-                    date = pd.concat([date, pd.Series([today])], axis=0, ignore_index=True)
-                    this_average_df = self.calculate_average_one_day(this_df, column_of_date, today)
-                    average_df = pd.concat([average_df, this_average_df], axis=1, ignore_index=True)
+                    date = pd.concat([date, pd.Series([today])],
+                                     axis=0, ignore_index=True)
+                    this_average_df = self.calculate_average_one_day(this_df,
+                                                     column_of_date, today)
+                    average_df = pd.concat([average_df, this_average_df],
+                                             axis=1, ignore_index=True)
                 today = today + dt.timedelta(1)
             average_df = average_df.T
             average_df[column_of_date] = date
@@ -461,14 +486,19 @@ class Analysis:
                 if end_date == None:
                     end_date = this_df.iloc[len(this_df)-1][column_of_date]
                 date = pd.Series([today])
-                average_df = self.calculate_average_one_day(this_df, column_of_date, today)
+                average_df = self.calculate_average_one_day(this_df,
+                                                     column_of_date, today)
                 today = today + dt.timedelta(1)
                 while today <= end_date:
                     today_df = this_df[this_df[column_of_date] == today]
                     if today_df.empty is False:
-                        date = pd.concat([date, pd.Series([today])], axis=0, ignore_index=True)
-                        this_average_df = self.calculate_average_one_day(this_df, column_of_date, today)
-                        average_df = pd.concat([average_df, this_average_df], axis=1, ignore_index=True)
+                        date = pd.concat([date, pd.Series([today])],
+                                         axis=0, ignore_index=True)
+                        this_average_df = \
+                            self.calculate_average_one_day(this_df,
+                                             column_of_date, today)
+                        average_df = pd.concat([average_df, this_average_df],
+                                                 axis=1, ignore_index=True)
                     today = today + dt.timedelta(1)
                 average_df = average_df.T
                 average_df[column_of_date] = date
@@ -485,20 +515,26 @@ class Analysis:
         """
         temp_df = self._outdoor_temp_df
         temp_df["Comfortable Temperature"] = temp_df[temp_col] * 0.33 + 18.8
-        temp_df["Max Acceptable Temperature"] = temp_df["Comfortable Temperature"] + 3
-        temp_df["Min Acceptable Temperature"] = temp_df["Comfortable Temperature"] - 3
-        temp_df["Upper Limit Temperature"] = temp_df["Max Acceptable Temperature"] + 4
+        temp_df["Max Acceptable Temperature"] = \
+                                    temp_df["Comfortable Temperature"] + 3
+        temp_df["Min Acceptable Temperature"] = \
+                                    temp_df["Comfortable Temperature"] - 3
+        temp_df["Upper Limit Temperature"] = \
+                                    temp_df["Max Acceptable Temperature"] + 4
 
 
     # Data visualization
-    def plot_graph(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None, is_GUI=False, start_date=None, end_date=None, date_column="Date"):
+    def plot_graph(self, df_names, df_type, figure_name, x_name, y_names,
+                 output_dir=None, is_GUI=False, start_date=None,
+                                 end_date=None, date_column="Date"):
         """
         Plot graph.
 
         Args:
         --------
         df_names: list
-            The list of names of dataframes where the datas are retrieved from.
+            The list of names of dataframes where the datas are 
+            retrieved from.
         df_type: int
             1 means self._data_sheet
             2 means self._average_dfs
@@ -509,7 +545,8 @@ class Analysis:
         y_names: list
             The list of column names of datas used for y-axis.
         output_dir: string
-            The name of output directory of graph which is after the self.output_dir. (not GUI)
+            The name of output directory of graph which is after
+            the self.output_dir. (not GUI)
             If is_GUI is True, it is the absolute directory.
             Default value is None.
         is_GUI: bool
@@ -571,7 +608,9 @@ class Analysis:
                 this_y_name = this_y_name.replace('C', '℃')
 
                 # Plot the graph
-                plt.plot(x_data, y_data, marker='o', label=f"{this_y_name}: {this_df_name}", linewidth=1.5, markersize=1.5)
+                plt.plot(x_data, y_data, marker='o',
+                         label=f"{this_y_name}: {this_df_name}",
+                          linewidth=1.5, markersize=1.5)
 
         # Set the title and labels.
         plt.title(figure_name, fontsize=12, fontweight='bold')
@@ -597,7 +636,10 @@ class Analysis:
         plt.show()
         plt.close()    
 
-    def plot_each_day(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None, start_date=None, end_date=None, date_column="Date", start_time=None, end_time=None, is_GUI=False):
+    def plot_each_day(self, df_names, df_type, figure_name,
+                     x_name, y_names, output_dir=None, start_date=None,
+                     end_date=None, date_column="Date", start_time=None,
+                     end_time=None, is_GUI=False):
         """
         Plot graph of each day.
         Default: all the values will be used.
@@ -605,7 +647,8 @@ class Analysis:
         Args:
         --------
         df_names: list
-            The list of names of dataframes where the datas are retrieved from.
+            The list of names of dataframes where the datas are
+            retrieved from.
         df_type: int
             1 means self._data_sheet
             2 means self._average_dfs
@@ -617,7 +660,8 @@ class Analysis:
         y_names: list
             The list of column names of datas used for y-axis.
         output_dir: string
-            The name of output directory of graph which is after the self.output_dir.
+            The name of output directory of graph which is after
+             the self.output_dir.
             Default value is None.
         start_date: datetime.date
             Start date of plotting.
@@ -689,7 +733,9 @@ class Analysis:
                         # Set the unit of temperature
                         this_y_name = this_y_name.replace('C', '℃')
                         # Plot the graph
-                        plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=1.5, markersize=0.5)
+                        plt.plot(x_data, y_data, 
+                            label=f"{today}: {this_df_name} {this_y_name}",
+                                 linewidth=1.5, markersize=0.5)
                     
                 today = today + dt.timedelta(1)
                 
@@ -717,14 +763,19 @@ class Analysis:
         plt.show()
         plt.close()
 
-    def plot_graph_with_recommandation(self, df_names, df_type, figure_name, x_name, y_names, y_names_for_reco=["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature", "Upper Limit Temperature"], output_dir=None, is_GUI=False, start_date=None, end_date=None, date_column="Date"):
+    def plot_graph_with_recommandation(self, df_names, df_type, figure_name,
+                                     x_name, y_names, y_names_for_reco=None,
+                                     output_dir=None, is_GUI=False,
+                                      start_date=None, end_date=None,
+                                       date_column="Date"):
         """
         Plot graph with recommandation.
 
         Args:
         --------
         df_names: list
-            The list of names of dataframes where the datas are retrieved from.
+            The list of names of dataframes where the datas are
+             retrieved from.
         df_type: int
             1 means self._data_sheet
             2 means self._average_dfs
@@ -735,10 +786,12 @@ class Analysis:
         y_names: list
             The list of column names of datas used for y-axis.
         y_names_for_reco: list
-            The list of column names for outdoor temperature range.
-            e.g. ["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature"]
+            The list of column names for outdoor temperature range. if None
+            Default ["Comfortable Temperature", "Max Acceptable Temperature",
+                 "Min Acceptable Temperature"]
         output_dir: string
-            The name of output directory of graph which is after the self.output_dir. (not GUI)
+            The name of output directory of graph which is after the
+             self.output_dir. (not GUI)
             If is_GUI is True, it is the absolute directory.
             Default value is None.
         is_GUI: bool
@@ -802,7 +855,9 @@ class Analysis:
                 y_data = this_df[this_y_name]
                 this_y_name = this_y_name.replace('C', '℃')
                 # Plot the graph
-                plt.plot(x_data, y_data, marker='o', label=f"{this_y_name}: {this_df_name}", linewidth=1.5, markersize=1.5)
+                plt.plot(x_data, y_data, marker='o',
+                 label=f"{this_y_name}: {this_df_name}",
+                     linewidth=1.5, markersize=1.5)
         
         # Get the outdoor temperature dataframe.
         # outdoor_df = self._outdoor_average_temp_df
@@ -812,7 +867,8 @@ class Analysis:
         print("Outdoor_temp_df:", outdoor_df)
 
         # Testing
-        # outdoor_df.loc[:, date_column] = pd.to_datetime(outdoor_df[date_column]).dt.date
+        # outdoor_df.loc[:, date_column] =
+        #  pd.to_datetime(outdoor_df[date_column]).dt.date
 
 
         # Change this_df with date range.
@@ -842,6 +898,11 @@ class Analysis:
         print("Testing=====")
         print("x_data:", x_data_reco)
 
+        if y_names_for_reco is None:
+            y_names_for_reco = ["Comfortable Temperature",
+                                 "Max Acceptable Temperature", 
+                                "Min Acceptable Temperature",
+                                 "Upper Limit Temperature"]
 
         for y_name_reco in y_names_for_reco:
             # Set y value.
@@ -853,7 +914,9 @@ class Analysis:
             y_name_reco = y_name_reco + '(℃)'
 
             # Plot the graph.
-            plt.plot(x_data_reco, y_data_reco, linestyle='dotted', label=f"{y_name_reco}", linewidth=1.5, markersize=1.5)
+            plt.plot(x_data_reco, y_data_reco,
+                 linestyle='dotted', label=f"{y_name_reco}",
+                  linewidth=1.5, markersize=1.5)
 
             print("Testing======")
             print("Outdoor_temperature: ", y_name_reco)
@@ -883,7 +946,12 @@ class Analysis:
         plt.show()
         plt.close()
 
-    def plot_each_day_with_recommendatioin(self, df_names, df_type, figure_name, x_name, y_names, y_names_for_reco=["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature", "Upper Limit Temperature"], output_dir=None, start_date=None, end_date=None, date_column="Date", start_time=None, end_time=None, is_GUI=False, is_analysis=False, file_name=None):
+    def plot_each_day_with_recommendatioin(self, df_names, df_type,
+                     figure_name, x_name, y_names,
+                      y_names_for_reco=None, output_dir=None,
+                       start_date=None, end_date=None, date_column="Date",
+                        start_time=None, end_time=None, is_GUI=False,
+                         is_analysis=False, file_name=None):
         """
         Plot graph of each day.
         Default: all the values will be used.
@@ -891,7 +959,8 @@ class Analysis:
         Args:
         --------
         df_names: list
-            The list of names of dataframes where the datas are retrieved from.
+            The list of names of dataframes where the datas are
+             retrieved from.
         df_type: int
             1 means self._data_sheet
             2 means self._average_dfs
@@ -903,10 +972,12 @@ class Analysis:
         y_names: list
             The list of column names of datas used for y-axis.
         y_names_for_reco: list
-            The list of column names for outdoor temperature range.
-            e.g. ["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature"]
+            The list of column names for outdoor temperature range. if None
+            Default ["Comfortable Temperature", "Max Acceptable Temperature",
+                     "Min Acceptable Temperature"]
         output_dir: string
-            The name of output directory of graph which is after the self.output_dir.
+            The name of output directory of graph which
+             is after the self.output_dir.
             Default value is None.
         start_date: datetime.date
             Start date of plotting.
@@ -945,6 +1016,12 @@ class Analysis:
         ax.spines['right'].set_visible(False)
         pd.plotting.register_matplotlib_converters()
 
+        if y_names_for_reco is None:
+            y_names_for_reco = ["Comfortable Temperature",
+                            "Max Acceptable Temperature",
+                            "Min Acceptable Temperature",
+                            "Upper Limit Temperature"]
+
         # Plot graph in different dataframes.
         for this_df_name in df_names:
             # Judge the type of dfs.
@@ -982,7 +1059,9 @@ class Analysis:
                         y_data = today_df[this_y_name]
                         this_y_name = this_y_name.replace('C', '℃')
                         # Plot the graph
-                        plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=1.5, markersize=0.5)
+                        plt.plot(x_data, y_data,
+                             label=f"{today}: {this_df_name} {this_y_name}",
+                              linewidth=1.5, markersize=0.5)
                     
                 today = today + dt.timedelta(1)
 
@@ -1010,7 +1089,8 @@ class Analysis:
             if today_df.empty is False:
 
                 # # today_df[x_name] = today_df["Date&Time"].dt.time
-                # today_df.loc[:, x_name] = pd.to_datetime(today_df["Date&Time"]).dt.time
+                # today_df.loc[:, x_name] =
+                #  pd.to_datetime(today_df["Date&Time"]).dt.time
 
                 # if start_time is not None:
                 #     today_df = today_df.loc[today_df[x_name] >= start_time]
@@ -1039,7 +1119,10 @@ class Analysis:
                     print("y", y_data)
                     this_y_name = this_y_name + '(℃)'
                     # Plot the graph
-                    plt.plot(x_data, y_data, label=f"{today}: {this_y_name}", linewidth=1.5, markersize=0.5, linestyle = 'dotted')
+                    plt.plot(x_data, y_data, 
+                            label=f"{today}: {this_y_name}",
+                             linewidth=1.5, markersize=0.5,
+                              linestyle = 'dotted')
 
                     print("This_y_name: ", this_y_name)
 
@@ -1091,7 +1174,8 @@ class Analysis:
             Default value is None which means all the dfs in self.data_sheet
             will be output.
         output_dir: string
-            The name of output directory of graph which is after the self.output_dir.
+            The name of output directory of graph which is after the
+             self.output_dir.
             Default value is None.
         """
         # Set output folder.
