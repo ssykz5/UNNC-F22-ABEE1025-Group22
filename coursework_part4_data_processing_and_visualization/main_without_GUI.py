@@ -403,7 +403,6 @@ class Analysis:
         --------
         this_mean: pandas series contains mean values of each column.
         """
-        # this_df = self._data_sheet[df_name]
         today_df = this_df[this_df[column_of_date] == today]
         this_mean = today_df.mean(numeric_only=True)
         # Return a Series of mean values
@@ -860,16 +859,7 @@ class Analysis:
                      linewidth=1.5, markersize=1.5)
         
         # Get the outdoor temperature dataframe.
-        # outdoor_df = self._outdoor_average_temp_df
         outdoor_df = self._outdoor_temp_df
-
-        print("Testing---")
-        print("Outdoor_temp_df:", outdoor_df)
-
-        # Testing
-        # outdoor_df.loc[:, date_column] =
-        #  pd.to_datetime(outdoor_df[date_column]).dt.date
-
 
         # Change this_df with date range.
         if reco_start_date is not None:
@@ -877,26 +867,13 @@ class Analysis:
                 reco_start_date = outdoor_df.iloc[0][date_column]
             outdoor_df = outdoor_df[outdoor_df[date_column]>=reco_start_date]
 
-            print("Testing+++")
-            print("Outdoor_temp_df:", outdoor_df)
-
         if reco_end_date is not None:
             if reco_end_date > outdoor_df.iloc[-1][date_column]:
                 reco_end_date = outdoor_df.iloc[-1][date_column]
             outdoor_df = outdoor_df[outdoor_df[date_column]<=reco_end_date]
-
-            print("Testing+++")
-            print("Outdoor_temp_df:", outdoor_df)
-
-
-        print("Testing---")
-        print("Outdoor_temp_df after:", outdoor_df)
         
         # Plotting recommended range.
         x_data_reco = outdoor_df[x_name]
-
-        print("Testing=====")
-        print("x_data:", x_data_reco)
 
         if y_names_for_reco is None:
             y_names_for_reco = ["Comfortable Temperature",
@@ -908,8 +885,6 @@ class Analysis:
             # Set y value.
             y_data_reco = outdoor_df[y_name_reco]
 
-            print("Testing=======")
-            print("y_data:", y_data_reco)
             # Set the unit of y_name_reco
             y_name_reco = y_name_reco + '(℃)'
 
@@ -917,10 +892,6 @@ class Analysis:
             plt.plot(x_data_reco, y_data_reco,
                  linestyle='dotted', label=f"{y_name_reco}",
                   linewidth=1.5, markersize=1.5)
-
-            print("Testing======")
-            print("Outdoor_temperature: ", y_name_reco)
-            print()
 
         # Set the title and labels.
         plt.title(figure_name, fontsize=12, fontweight='bold')
@@ -1066,8 +1037,6 @@ class Analysis:
                 today = today + dt.timedelta(1)
 
         outdoor_df = self.outdoor_temp_df
-        
-        print("outdoor_df:", outdoor_df)
 
         if start_date is not None:
             today = start_date
@@ -1079,53 +1048,19 @@ class Analysis:
         while today <= end_date:
             today_df = outdoor_df[outdoor_df[date_column] == today]
 
-            print()
-            print("---===")
-            print("today_df:", today_df)
-
             x_data = [start_time, end_time]
 
-
-            if today_df.empty is False:
-
-                # # today_df[x_name] = today_df["Date&Time"].dt.time
-                # today_df.loc[:, x_name] =
-                #  pd.to_datetime(today_df["Date&Time"]).dt.time
-
-                # if start_time is not None:
-                #     today_df = today_df.loc[today_df[x_name] >= start_time]
-                # if end_time is not None:
-                #     today_df = today_df.loc[today_df[x_name] <= end_time]
-
-                # print("===========")
-                # print("today_df: ", today_df)
-                # print("==========")
-
-                # # Set up input
-                # x_data = today_df[x_name]
-
-                # for this_y_name in y_names_for_reco:
-                #     # Set y value.
-                #     y_data = today_df[this_y_name]
-                #     # Plot the graph
-                #     plt.plot(x_data, y_data, label=f"{today}: {this_df_name} {this_y_name}", linewidth=0.5, markersize=0.5, linestyle = 'dotted')
-                
+            if today_df.empty is False:          
                 for this_y_name in y_names_for_reco:
                     # Set y value.
                     y_data = today_df[this_y_name]
                     y_data = pd.concat([y_data]*2).reset_index(drop=True)
-
-                    print("\n====")
-                    print("y", y_data)
                     this_y_name = this_y_name + '(℃)'
                     # Plot the graph
                     plt.plot(x_data, y_data, 
                             label=f"{today}: {this_y_name}",
                              linewidth=1.5, markersize=0.5,
                               linestyle = 'dotted')
-
-                    print("This_y_name: ", this_y_name)
-
 
             today = today + dt.timedelta(1)
 

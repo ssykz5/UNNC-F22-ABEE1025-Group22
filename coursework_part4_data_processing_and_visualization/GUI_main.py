@@ -19,8 +19,6 @@ class DataPlotting(tk.Tk):
         This class is for GUI.
         """
         super().__init__()
-        # Initialise analysis.
-        # self.analysis = Analysis()
 
         # Set the title of the main window
         self.title("Indoor Temperature Plotting")
@@ -35,8 +33,6 @@ class DataPlotting(tk.Tk):
 
         # Change the background colour.
         self.config(background="#F57C00")
-        # Set the window at the top level.
-        # self.attributes('-topmost',True)
         # Set the transparency of the window.
         self.attributes('-alpha',1)
         # Change the icon in the top left corner of the window 
@@ -62,7 +58,6 @@ class DataPlotting(tk.Tk):
         self.output_dir = tk.StringVar()
         self.directory.set(os.path.abspath("."))
         self.output_dir.set(os.path.abspath("."))
-        # print(self.directory.get())
 
         # Initialize start date and end date.
         self.start_date = tk.StringVar()
@@ -83,7 +78,6 @@ class DataPlotting(tk.Tk):
 
         # Create a PanedWindow for creating the analysis.
         self.p_create = tk.PanedWindow(self, bg='#FF9800')
-        # self.p_create.pack(fill=tk.NONE, expand=1, side=tk.TOP, anchor="n")
         self.p_control.add(self.p_create)
 
         # -----------------
@@ -182,7 +176,6 @@ class DataPlotting(tk.Tk):
         self.p_control.add(self.p_dt)
 
         self.p_dt_start = tk.PanedWindow(self, bg='#FF9800')
-        # self.p_dt_start.pack(fill=tk.NONE, expand=1, anchor="n", side=tk.TOP)
         self.p_dt.add(self.p_dt_start)
         # Choose start and end dates.
         # Showing start date.
@@ -218,7 +211,6 @@ class DataPlotting(tk.Tk):
 
         # Create a PanedWindow for choosing the end date and time.
         self.p_dt_end = tk.PanedWindow(self, bg='#FF9800')
-        # self.p_dt_end.pack(fill=tk.NONE, expand=1, anchor="n", side=tk.TOP)
         self.p_dt.add(self.p_dt_end)
         # Showing end date.
         end_date_indicator = tk.Label(self.p_dt_end, text="End Date:", 
@@ -330,12 +322,6 @@ class DataPlotting(tk.Tk):
                                 font=('Times', 15, 'bold'))
         status_test.pack(side=tk.LEFT, padx=(0, 20), pady=(0, 20))
 
-        #=============
-        # Testing
-        #=============
-        # show_end_date_btn = tk.Button(self, text="Testing", command=self.show_self_end_date, bg="#FF9800")
-        # show_end_date_btn.pack(side=tk.BOTTOM)
-
     def select_directory_input(self):
         """
         This function is for selecting directory.
@@ -359,50 +345,27 @@ class DataPlotting(tk.Tk):
         info = f"Outdoor Temperature Directory:\n{self.outdoor_temp_dir.get()}"
         msgbox.showinfo("Outdoor Temperature Directory", info)
 
-        print(self.outdoor_temp_dir.get())
-
-
     def initialize_analysis(self):
         """
         This function is for initializing analysis.
         """
+        # Create analysis.
         name = self.analysis_name.get()
-        # locals()[name] = Analysis(name, self.directory)
-        # this_analysis = locals()[name]
-        # print(locals()[name])
-        # print(this_analysis.name)
-        # print(this_analysis.file_directory.get())
         self.analysis = Analysis(name, self.directory.get())
-        # print(self.analysis.name)
-        # print(self.analysis.file_directory)
         this_analysis = self.analysis
         # Read csv files.
         this_analysis.read_csv_to_df()
-        print(this_analysis.data_sheet)
-
         # Transform Date&Time column to datetime.
         this_analysis.transfer_to_datetime()
         # Create Date and Time columns.
         this_analysis.seperate_date_and_time()
-
         # Calculate day average.
         this_analysis.calculate_average()
-        print("================")
-        print("Average dfs =====")
-        print(this_analysis.average_dfs)
-        
-
         # Get the df_names.
-        # self.df_names = ["All"]
         self.df_names = this_analysis.df_names
-
-        print("================")
-        print("self.df_names: ", self.df_names)
-        # self.df_names.append("All")
-
+        # Set the status.
         self.status.set(self.status_list[1])
-        
-
+        # Show info.
         msgbox.showinfo("Reminder", "Analysis created successfully!")
 
     def add_outdoor_temperature_df(self):
@@ -418,14 +381,9 @@ class DataPlotting(tk.Tk):
                                              encoding='gbk')
             self.analysis.outdoor_temp_df = outdoor_temp_df
             self.analysis.transfer_to_datetime(is_outdoor_temp=True)
-            # this_analysis = self.analysis
-            # this_analysis.calculate_average(df_name="Outdoor Average", df_type=4)
             self.status.set(self.status_list[2])
             info = "Outdoor Temperature Data added successfully!"
             msgbox.showinfo("Reminder", info)
-            print(self.analysis.outdoor_temp_df)
-            # print(self.analysis.outdoor_average_temp_df)
-
 
     def choose_start_date_and_time(self):
         """
@@ -447,11 +405,8 @@ class DataPlotting(tk.Tk):
             """
             This function is used for setting the start date.
             """
-            # self.start_date.set(str(cal.get_date()))
             date.set(str(cal.get_date()))
-            
-            # print(date.get())
-            # print(type(date))
+
         def set_start_hour(self):
             """
             This function is for setting start hour.
@@ -460,12 +415,6 @@ class DataPlotting(tk.Tk):
             time_str = hour.get() + ":" + minute.get()
             time.set(time_str)
 
-            # time_list[0] = hour.get()
-            print("hour: ", hour.get())
-            # print("time_list[0]: ", time_list[0])
-            print("time: ", time.get())
-            print("Above for start hour.")
-            
         def set_start_minute(self):
             """
             This function is for setting start minute.
@@ -473,11 +422,6 @@ class DataPlotting(tk.Tk):
             minute.set(minute_box.get())
             time_str = hour.get() + ":" + minute.get()
             time.set(time_str)
-            # time_list[1] = minute.get()
-            print("minute: ", minute.get())
-            # print("time_list[1]: ", time_list[1])
-            print("time: ", time.get())
-            print("Above for start minute.")
         
         # Create upper window.
         top = tk.Toplevel(self, bg='#FF9800')
@@ -502,7 +446,6 @@ class DataPlotting(tk.Tk):
         # cal.set_date(dt.date(2022, 6, 14))
         cal.pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
 
-        # date.set(str(cal.get_date()))
         # Bind the DateEntrySelected event with set_start_date function.
         cal.bind("<<DateEntrySelected>>", set_start_date)
         
@@ -565,11 +508,8 @@ class DataPlotting(tk.Tk):
             """
             This function is used for setting the end date.
             """
-            # self.start_date.set(str(cal.get_date()))
             date.set(str(cal.get_date()))
             
-            # print(date.get())
-            # print(type(date))
         def set_end_hour(self):
             """
             This function is for setting end hour.
@@ -577,12 +517,6 @@ class DataPlotting(tk.Tk):
             hour.set(hour_box.get())
             time_str = hour.get() + ":" + minute.get()
             time.set(time_str)
-
-            # time_list[0] = hour.get()
-            print("hour: ", hour.get())
-            # print("time_list[0]: ", time_list[0])
-            print("time: ", time.get())
-            print("Above for start hour.")
             
         def set_end_minute(self):
             """
@@ -591,12 +525,7 @@ class DataPlotting(tk.Tk):
             minute.set(minute_box.get())
             time_str = hour.get() + ":" + minute.get()
             time.set(time_str)
-            # time_list[1] = minute.get()
-            print("minute: ", minute.get())
-            # print("time_list[1]: ", time_list[1])
-            print("time: ", time.get())
-            print("Above for start minute.")
-        
+
         # Create upper window.
         top = tk.Toplevel(self, bg='#FF9800')
         top_width = self.winfo_screenwidth() / 2.7
@@ -619,7 +548,6 @@ class DataPlotting(tk.Tk):
         # cal.set_date(dt.date(2022, 6, 14))
         cal.pack(side=tk.LEFT, padx=(20, 0), pady=(0, 20))
 
-        # date.set(str(cal.get_date()))
         # Bind the DateEntrySelected event with set_start_date function.
         cal.bind("<<DateEntrySelected>>", set_end_date)
         
@@ -662,14 +590,6 @@ class DataPlotting(tk.Tk):
         self.end_date = date
         self.end_time = time
 
-    # def show_self_end_date(self):
-    #     """
-    #     For testing
-    #     """
-    #     print(self.plot_df.get())
-
-     
-
     def get_h_and_m_list(self):
         """
         This function is for getting the hour and minute list for time
@@ -702,60 +622,32 @@ class DataPlotting(tk.Tk):
         """
         plot_df = self.plot_df
 
-        # def choose_plotting_df(self):
-        #     """
-        #     This function is for choosing plotting df.
-        #     """
-        #     plot_df.set(choose_df_name_box.get())
-        #     print("plot_df: ", plot_df.get())
-            
-
         # Create upper window.
         top = tk.Toplevel(self, bg='#FF9800')
         top_width = self.winfo_screenwidth() / 2.7
-        top_height = self.winfo_screenheight() / 4
+        top_height = self.winfo_screenheight() / 3.5
         top_left = (self.winfo_screenwidth() - top_width) / 2
         top_top = (self.winfo_screenheight() - top_height) / 2
         top.geometry("%dx%d+%d+%d" % (top_width,top_height,top_left,top_top))
         ttk.Label(top, text='Choose the name(s) of csv(s) for Plotting', 
                 font=("Times", 22, "bold"), background='#FF9800', 
                 foreground="#757575").pack(padx=10, pady=10)
-        
-
-        # choose_df_name_box = ttk.Combobox(
-        #     master=top,  
-        #     height=15,  
-        #     width=10,  
-        #     state="normal",  
-        #     cursor="arrow",  
-        #     font=("", 20),  
-        #     values=self.df_names,  
-        #     textvariable=plot_df)
-        # choose_df_name_box.pack()
 
         def show_result():
-            print(picker.current_value)
-            print("entry_val: ", self.plot_df.get())
-            print(type(self.plot_df.get()))
             msgbox.showinfo("Plotting Name", picker.current_value)
             top.destroy()
-
 
         # Multiple choose box
         picker = Combopicker(top, values=["All"]+self.df_names, 
                             entryvar=plot_df, entrywidth=10)
         picker.pack()
 
-        test_btn = tk.Button(top, text="Show result and Quit", 
+        test_btn = tk.Button(top, text="Quit", 
                             command=show_result, bg="#FF9800", 
                             fg="#FFE0B2", font=('Times', 10, 'bold'))
         test_btn.pack(side=tk.BOTTOM, padx=(0, 20), pady=(0, 20))
 
-        # Bind this event with function.
-        # choose_df_name_box.bind("<<ComboboxSelected>>", choose_plotting_df)
-
         self.plot_df = plot_df
-        
 
     def plotting_average(self):
         """
@@ -775,12 +667,6 @@ class DataPlotting(tk.Tk):
         choice = choice.split(",")
         if choice.count("All"):
             df_names = copy.deepcopy(this_analysis.df_names)
-            # Remove "All" element in the name list.
-            # df_names.remove("All")
-
-
-            print("Testing code!!!")
-            print("df_names: ", df_names)
         else:
             df_names = choice
 
@@ -790,6 +676,7 @@ class DataPlotting(tk.Tk):
         else:
             plot_name = ", ".join(choice)
             plot_name = "(" + plot_name + ")"
+
         # Plotting
         this_analysis.plot_graph(df_names=df_names, df_type=2, 
                 figure_name=f"Day Average Temperature(℃) vs Date {plot_name}",
@@ -821,12 +708,6 @@ class DataPlotting(tk.Tk):
         choice = choice.split(",")
         if choice.count("All"):
             df_names = copy.deepcopy(this_analysis.df_names)
-            # Remove "All" element in the name list.
-            # df_names.remove("All")
-
-
-            print("Testing code!!!")
-            print("df_names: ", df_names)
         else:
             df_names = choice
 
@@ -862,12 +743,6 @@ class DataPlotting(tk.Tk):
         choice = choice.split(",")
         if choice.count("All"):
             df_names = copy.deepcopy(this_analysis.df_names)
-            # Remove "All" element in the name list.
-            # df_names.remove("All")
-
-
-            print("Testing code!!!")
-            print("df_names: ", df_names)
         else:
             df_names = choice
 
@@ -909,12 +784,6 @@ class DataPlotting(tk.Tk):
         choice = choice.split(",")
         if choice.count("All"):
             df_names = copy.deepcopy(this_analysis.df_names)
-            # Remove "All" element in the name list.
-            # df_names.remove("All")
-
-
-            print("Testing code!!!")
-            print("df_names: ", df_names)
         else:
             df_names = choice
 
@@ -932,8 +801,6 @@ class DataPlotting(tk.Tk):
             output_dir=self.output_dir.get(), is_GUI=True, 
             start_date=start_date, end_date=end_date, 
             start_time=start_time, end_time=end_time)
-
-
 
     def select_directory_output(self):
         """
@@ -954,7 +821,7 @@ class DataPlotting(tk.Tk):
         self.after(1000, self.destroy)
 
 
-
+# Run the window.
 if __name__ == "__main__":
     app = DataPlotting()
     app.mainloop()
