@@ -45,6 +45,11 @@ class DataPlotting(tk.Tk):
         software_title=tk.Label(self, text="Indoor Temperature Plotting", bg="#FF9800", fg="#FFE0B2", font=('Times', f"{self.title_size}", 'bold italic'))
         software_title.pack(side=tk.TOP)
 
+        # Indicate the status of analysis.
+        self.status_list = ["Analysis is not created !!!", "Outdoor temperature file is not added !!!", "Plotting is ready."]
+        self.status = tk.StringVar()
+        self.status.set(self.status_list[0])
+
         # Initialize the original directories.
         self.directory = tk.StringVar()
         self.output_dir = tk.StringVar()
@@ -209,11 +214,17 @@ class DataPlotting(tk.Tk):
 
 
         # -------------
-        # Quit button.
+        # Quit button and status.
         # ------------
-        goodbye_button = tk.Button(self, text="Quit",
+        self.p_bottom = tk.PanedWindow(self, bg="#F57C00")
+        self.p_control.add(self.p_bottom)
+        goodbye_button = tk.Button(self.p_bottom, text="Quit",
                                     command=self.say_goodbye, bg="#FF9800", fg="#FFE0B2", font=('Times', 10, 'bold'))
-        goodbye_button.pack(side=tk.BOTTOM, padx=(0, 20), pady=(0, 20))
+        goodbye_button.pack(side=tk.RIGHT, padx=(0, 20), pady=(0, 20))
+        status_label = tk.Label(self.p_bottom, text="Status:", bg="#F57C00", fg="#757575", font=('Times', 15, 'bold'))
+        status_label.pack(side=tk.LEFT, padx=(0, 20), pady=(0, 20))
+        status_test = tk.Label(self.p_bottom, textvariable=self.status, bg="#F57C00", fg="#757575", font=('Times', 15, 'bold'))
+        status_test.pack(side=tk.LEFT, padx=(0, 20), pady=(0, 20))
 
         #=============
         # Testing
@@ -285,6 +296,9 @@ class DataPlotting(tk.Tk):
         print("self.df_names: ", self.df_names)
         # self.df_names.append("All")
 
+        self.status.set(self.status_list[1])
+        
+
         msgbox.showinfo("Reminder", "Analysis created successfully!")
 
     def add_outdoor_temperature_df(self):
@@ -300,7 +314,7 @@ class DataPlotting(tk.Tk):
             self.analysis.transfer_to_datetime(is_outdoor_temp=True)
             # this_analysis = self.analysis
             # this_analysis.calculate_average(df_name="Outdoor Average", df_type=4)
-
+            self.status.set(self.status_list[2])
             msgbox.showinfo("Reminder", "Outdoor Temperature Data added successfully!")
             print(self.analysis.outdoor_temp_df)
             # print(self.analysis.outdoor_average_temp_df)
