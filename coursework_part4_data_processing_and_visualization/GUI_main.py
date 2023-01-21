@@ -79,7 +79,7 @@ class DataPlotting(tk.Tk):
         tfd_label = tk.Label(self.p_create, text="Target File Directory:", bg="#FF9800", fg="#757575", font=('Times', 15, 'bold'))
         tfd_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20)
         # Directory Entry
-        directory_entry = tk.Entry(self.p_create, textvariable=self.directory, state="readonly", bg="#FF9800")
+        directory_entry = tk.Entry(self.p_create, textvariable=self.directory, state="readonly", background="#FF9800", foreground="#757575", readonlybackground="#FF9800")
         directory_entry.pack(fill=tk.X, side=tk.LEFT, padx=20, pady=20)
         # Choose button
         choose_dir_btn = tk.Button(self.p_create, text="Choose Directory", command=self.select_directory_input, bg="#FF9800", fg="#FFF9C4", font=('Times', 10, 'bold'))
@@ -103,7 +103,7 @@ class DataPlotting(tk.Tk):
         output_label = tk.Label(self.p_create, text="Output File Directory:", bg="#FF9800", fg="#757575", font=('Times', 15, 'bold'))
         output_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20)
         # Output directory Entry
-        output_entry = tk.Entry(self.p_create, textvariable=self.output_dir, state="readonly", bg="#FF9800")
+        output_entry = tk.Entry(self.p_create, textvariable=self.output_dir, state="readonly", background="#FF9800", foreground="#757575", readonlybackground="#FF9800")
         output_entry.pack(fill=tk.X, side=tk.LEFT, padx=20, pady=20)
         # Choose button
         output_choose_dir_btn = tk.Button(self.p_create, text="Choose Directory", command=self.select_directory_output, bg="#FF9800", fg="#FFF9C4", font=('Times', 10, 'bold'))
@@ -129,7 +129,7 @@ class DataPlotting(tk.Tk):
         # Show the outdoor_temperature directory.
         outdoor_label = tk.Label(self.p_outdoor, text="Outdoor Temperature Directory:", bg="#FF9800", fg="#757575", font=('Times', 15, 'bold'))
         outdoor_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20)
-        outdoor_temp_entry = tk.Entry(self.p_outdoor, textvariable=self.outdoor_temp_dir, state="readonly", bg="#FF9800", width=40)
+        outdoor_temp_entry = tk.Entry(self.p_outdoor, textvariable=self.outdoor_temp_dir, state="readonly", background="#FF9800", foreground="#757575", readonlybackground="#FF9800", width=40)
         outdoor_temp_entry.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20)
         # Button used to choose outdoor temperature file.
         outdoor_temp_btn = tk.Button(self.p_outdoor, text="Choose Directory", command=self.select_outdoor_temp_input, bg="#FF9800", fg="#FFF9C4", font=('Times', 10, 'bold'))
@@ -189,7 +189,7 @@ class DataPlotting(tk.Tk):
         self.plot_df.set("All")
         choose_plot_name_label = tk.Label(self.p_plot, text="The name of csv for Plotting", bg="#FF9800", fg="#757575", font=('Times', 15, 'bold'))
         choose_plot_name_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="center")
-        choose_plot_name_entry = tk.Entry(self.p_plot, textvariable=self.plot_df, state="readonly", bg="#FF9800")
+        choose_plot_name_entry = tk.Entry(self.p_plot, textvariable=self.plot_df, state="readonly", background="#FF9800", foreground="#757575", readonlybackground="#FF9800")
         choose_plot_name_entry.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="center")
         choose_plot_name_btn = tk.Button(self.p_plot, text="Choose plotting dataframe", command=self.choose_plotting_df_name, bg="#FF9800", fg="#FFF9C4", font=('Times', 10, 'bold'))
         choose_plot_name_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20, anchor="center")

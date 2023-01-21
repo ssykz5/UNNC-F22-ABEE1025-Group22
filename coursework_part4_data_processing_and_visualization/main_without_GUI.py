@@ -42,7 +42,7 @@ class Analysis:
         self._average_dfs = {}
         self._output_path = r"./Result"
         self._outdoor_temp_df = pd.DataFrame()
-        self._outdoor_average_temp_df = pd.DataFrame()
+        # self._outdoor_average_temp_df = pd.DataFrame()
 
     # Getter to get the value of attributes.
     @property
@@ -66,9 +66,9 @@ class Analysis:
     @property
     def outdoor_temp_df(self):
         return self._outdoor_temp_df
-    @property
-    def outdoor_average_temp_df(self):
-        return self._outdoor_average_temp_df
+    # @property
+    # def outdoor_average_temp_df(self):
+    #     return self._outdoor_average_temp_df
     
     
     # Setter used to rename or reset.
@@ -124,14 +124,6 @@ class Analysis:
 
         self._df_names = list(self._data_sheet.keys())
 
-    def display_data_sheet_names(self):
-        """
-        This function is for displaying the name of each dataframe in
-        data_sheet.
-        """
-        names = self._data_sheet.keys()
-        print(names)
-
     # Data cleaning
     def drop_empty_column(self):
         """
@@ -143,8 +135,9 @@ class Analysis:
     def drop_useless_column(self, useless_column_names, this_df_name=None):
         """
         This function is for dropping useless columns.
-        --------
+
         Args:
+        --------
         useless_column_names: string
             The columns names needs to be dropped
         this_df_name: string
@@ -164,10 +157,11 @@ class Analysis:
         """
         This function is used for delete useless column and empty row, and
         change the column name into English.
-        ---------
+
         Args:
+        --------
         this_df_name: The name of data_sheet needs to be modified.
-        column_names: list of column names
+        column_names: list of column names.
         """
         self._data_sheet[this_df_name] = self._data_sheet[this_df_name].dropna(axis=0, how="all")
         self._data_sheet[this_df_name].columns = column_names
@@ -176,9 +170,10 @@ class Analysis:
         """
         This function is used for delete useless column and empty row, and
         change the column name into English. Rename all the dataframe.
-        ---------
+
         Args:
-        column_names: list of column names
+        --------
+        column_names: list of column names.
         """
         for this_df_name in self._data_sheet.keys():
             self.rename_one_df(this_df_name, column_names)
@@ -186,8 +181,9 @@ class Analysis:
     def modify_df(self, column_names, this_df_name=None):
         """
         This function is for modify the datasheet.
-        ---------
+
         Args:
+        --------
         column_names: list of column names.
         this_df_name: default value is None, and all the dataframes will be modified.
                     If this_df_name contains a string, this dataframe called this_df_name
@@ -204,8 +200,9 @@ class Analysis:
         """
         This function is for transferring the format like 06/14/22 上午09时30分47秒
         to 2022-07-06 09:44:44 (datetime type).
-        --------
+
         Args:
+        --------
         df_name: string
             The dataframe name of df needs to be transfer.
         dtcolumn: string
@@ -227,13 +224,18 @@ class Analysis:
     def transfer_to_datetime(self, df_name=None, dtcolumn="Date&Time", is_outdoor_temp=False, date_column="Date"):
         """
         This function is for transferring the object column to datetime column.
-        ---------
+
         Args:
+        --------
         df_name: string
             The dataframe name of df needs to be transfer. Default value is None, which
             means all the dataframe in self.data_sheet will be transferred.
         dtcolumn: string
             The column needs to be transferred. Defaut column name is Date&Time.
+        is_outdoor_temp: bool
+            Determine if it is the outdoor_temp_df that needs to transfer datetime.
+        date_column: string
+            The name of date column.
         """
         if is_outdoor_temp is True:
             self._outdoor_temp_df[date_column] = pd.to_datetime(self._outdoor_temp_df[date_column]).dt.date
@@ -249,8 +251,9 @@ class Analysis:
     def seperate_date_and_time_for_one_df(self, df_name, seperate_column_name="Date&Time"):
         """
         Add date and time columns for one dataframe.
-        ---------
+
         Args:
+        --------
         df_name: string
             The name of this dataframe.
         seperate_column_name: string
@@ -264,8 +267,9 @@ class Analysis:
     def seperate_date_and_time(self, seperate_column_name="Date&Time"):
         """
         Add date and time columns for every dataframe.
-        --------
+
         Args:
+        --------
         seperate_column_name: string
             The column name used to seperate date and time. Default value is "Date&Time".
         """
@@ -275,8 +279,9 @@ class Analysis:
     def ascending_df_by_datetime(self, df_name=None, dtcolumn="Date&Time"):
         """
         Ascending sort by dtcolumn (default is Date&Time).
-        --------
+
         Args:
+        --------
         df_name: string
             The name of the dataframe needs to be ascended.
             Default value is None, which means all the df in self.data_sheet
@@ -301,8 +306,9 @@ class Analysis:
     def remove_c(self, df_name, column_names):
         """
         Remove C symbol and transform data type to float
-        --------------
+
         Args:
+        --------
         df_name: string
             The name of the dataframe needs to be removed degree C.
             Default value is None, which means all the df in self.data_sheet
@@ -318,9 +324,11 @@ class Analysis:
     def remove_row_contain_specific_data(self, specific_data, df_name=None):
         """
         Remove row contain specific data like "无数据".
-        -----------
+
         Args:
+        --------
         specific_data: string
+            The specific data information.
         df_name: string
             The name of the dataframe needs to remove specific data.
             Default value is None, which means all the specific data in self.data_sheet
@@ -345,13 +353,14 @@ class Analysis:
         This function is for transforming Fahrenheit to Celsius.
         Principle: the temperature of degree celsius is almost impossible 
         greater than 50 degree C.
-        ----------
+
         Args:
+        --------
         df_name: string
             The name of the dataframe needs to transfer fahrenheit degree to celsius.
         column_names: string 
             It contains the column name need to be transferred.
-            Default value is ["Temperature(C)"]
+            Default value is "Temperature(C)"
         """
         this_df = self._data_sheet[df_name]
         this_df.loc[this_df[column_name]>50, column_name] = \
@@ -361,13 +370,18 @@ class Analysis:
     def calculate_average_one_day(self, this_df, column_of_date, today):
         """
         This function is for calculate average value in one day.
-        -----------
+
         Args:
+        --------
         this_df: pandas dataframe
             The dataframe needs to be calculated.
-        column_of_date: string type, the column name of date.
-        today: datetime type, the day of calculating average value.
+        column_of_date: string type
+            The column name of date.
+        today: datetime type
+            The day of calculating average value.
+        
         Returns:
+        --------
         this_mean: pandas series contains mean values of each column.
         """
         # this_df = self._data_sheet[df_name]
@@ -379,16 +393,20 @@ class Analysis:
     def calculate_average(self, df_name=None, column_of_date="Date", start_date=None, end_date=None, df_type=1):
         """
         Calculate the average number in different days.
-        ---------
+
         Args:
+        --------
         df_name: string
             The name of the dataframe needs to be calculated.
         column_of_date: string
             The column name of date. Default value is "Date".
-        start_date: datetime type, the start date for calculation.
-        end_date: datetime type, the end date for calculation.
-        Returns:
-        average_df: pandas dateframe, contains average values. (Saved in the class attribute)
+        start_date: datetime type
+            The start date for calculation.
+        end_date: datetime type
+            The end date for calculation.
+        df_type: int
+            Indicate the type of dataframe. (1: data_sheet, 2: average_dfs)
+
         """
         if df_name is not None:
             # Judge whether start or end date exists, if not, use the first date of input_df as
@@ -456,11 +474,12 @@ class Analysis:
                 average_df[column_of_date] = date
                 self._average_dfs[df_name] = average_df
 
-    def gemerate_recommended_temp_range(self, temp_col="Temperature(C)"):
+    def generate_recommended_temp_range(self, temp_col="Temperature(C)"):
         """
         This function is used for generating recommended temperature range.
-        -------------
+
         Args:
+        --------
         temp_col: string
             The column name of temperature.
         """
@@ -475,8 +494,9 @@ class Analysis:
     def plot_graph(self, df_names, df_type, figure_name, x_name, y_names, output_dir=None, is_GUI=False, start_date=None, end_date=None, date_column="Date"):
         """
         Plot graph.
-        -------------
+
         Args:
+        --------
         df_names: list
             The list of names of dataframes where the datas are retrieved from.
         df_type: int
@@ -581,8 +601,9 @@ class Analysis:
         """
         Plot graph of each day.
         Default: all the values will be used.
-        -------------
+
         Args:
+        --------
         df_names: list
             The list of names of dataframes where the datas are retrieved from.
         df_type: int
@@ -613,6 +634,8 @@ class Analysis:
         end_time: datetime.time
             End time of plotting.
             Default value is None.
+        is_GUI: bool
+            Judege whether the use of this function is for GUI.
         """
         # Set the font as SimHei.
         plt.rcParams['font.sans-serif'] = ['SimHei']
@@ -697,8 +720,9 @@ class Analysis:
     def plot_graph_with_recommandation(self, df_names, df_type, figure_name, x_name, y_names, y_names_for_reco=["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature", "Upper Limit Temperature"], output_dir=None, is_GUI=False, start_date=None, end_date=None, date_column="Date"):
         """
         Plot graph with recommandation.
-        -------------
+
         Args:
+        --------
         df_names: list
             The list of names of dataframes where the datas are retrieved from.
         df_type: int
@@ -863,8 +887,9 @@ class Analysis:
         """
         Plot graph of each day.
         Default: all the values will be used.
-        -------------
+
         Args:
+        --------
         df_names: list
             The list of names of dataframes where the datas are retrieved from.
         df_type: int
@@ -877,6 +902,9 @@ class Analysis:
             Usually "Time".
         y_names: list
             The list of column names of datas used for y-axis.
+        y_names_for_reco: list
+            The list of column names for outdoor temperature range.
+            e.g. ["Comfortable Temperature", "Max Acceptable Temperature", "Min Acceptable Temperature"]
         output_dir: string
             The name of output directory of graph which is after the self.output_dir.
             Default value is None.
@@ -895,6 +923,13 @@ class Analysis:
         end_time: datetime.time
             End time of plotting.
             Default value is None.
+        is_GUI: bool
+            Judege whether the use of this function is for GUI.
+        is_Analysis: bool
+            Determine whether show the plotting.
+        File_name: string
+            The file name of csv file.
+        
         """
         # Set the font as SimHei.
         plt.rcParams['font.sans-serif'] = ['SimHei']
