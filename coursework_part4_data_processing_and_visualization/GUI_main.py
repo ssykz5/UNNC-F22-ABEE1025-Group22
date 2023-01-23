@@ -5,7 +5,7 @@
 import tkinter as tk
 import tkinter.messagebox as msgbox
 from tkinter import filedialog
-from main_without_GUI import *
+from Analysis import *
 import os
 from tkcalendar import DateEntry
 from tkinter import ttk

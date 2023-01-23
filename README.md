@@ -23,6 +23,8 @@ Before running the code, make sure you are in the this repository.
 
 The name of this software is Indoor Temperature Plotting.
 
+Photo !!!
+
 The Product requirement document (PRD) can be accseed as following ([PRD](coursework_part4_data_processing_and_visualization/Product%20requirement%20document%20(PRD).md ':include')).
 
 The User's Guide can be accessed as ([User's Guide](coursework_part4_data_processing_and_visualization/User's%20Guide.md  ':include')).
