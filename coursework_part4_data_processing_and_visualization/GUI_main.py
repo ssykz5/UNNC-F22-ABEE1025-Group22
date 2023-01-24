@@ -678,11 +678,11 @@ class DataPlotting(tk.Tk):
             plot_name = "(" + plot_name + ")"
 
         # Plotting
-        this_analysis.plot_graph(df_names=df_names, df_type=2, 
+        this_analysis.plot_graph(df_names=df_names, 
                 figure_name=f"Day Average Temperature(℃) vs Date {plot_name}",
                 x_name="Date", y_names=["Temperature(C)"], 
                 output_dir=self.output_dir.get(), 
-                is_GUI=True, start_date=start_date, 
+                start_date=start_date, 
                 end_date=end_date)
 
     def plotting_each_day(self):
@@ -718,10 +718,10 @@ class DataPlotting(tk.Tk):
             plot_name = ", ".join(choice)
             plot_name = "(" + plot_name + ")"
 
-        this_analysis.plot_each_day(df_names=df_names, df_type=1, 
+        this_analysis.plot_each_day(df_names=df_names, 
             figure_name=f"Temperature(℃) vs Time {plot_name}", 
             x_name="Time", y_names=["Temperature(C)"], 
-            output_dir=self.output_dir.get(), is_GUI=True, 
+            output_dir=self.output_dir.get(), 
             start_date=start_date, end_date=end_date, 
             start_time=start_time, end_time=end_time)
 
@@ -756,9 +756,9 @@ class DataPlotting(tk.Tk):
         plot_name = \
             f"Day Average Temperature(℃) vs Date with benchmarks {plot_name}"
         this_analysis.plot_graph_with_recommandation(df_names=df_names, 
-                    df_type=2, figure_name=plot_name, x_name="Date", 
+                    figure_name=plot_name, x_name="Date", 
                     y_names=["Temperature(C)"], 
-                    output_dir=self.output_dir.get(), is_GUI=True, 
+                    output_dir=self.output_dir.get(), 
                     start_date=start_date, end_date=end_date)
 
     def plotting_each_day_with_reco(self):
@@ -795,10 +795,9 @@ class DataPlotting(tk.Tk):
             plot_name = "(" + plot_name + ")"
 
         this_analysis.plot_each_day_with_recommendatioin(df_names=df_names, 
-            df_type=1, 
             figure_name=f"Temperature(℃) vs Time with benchmarks {plot_name}",
             x_name="Time", y_names=["Temperature(C)"], 
-            output_dir=self.output_dir.get(), is_GUI=True, 
+            output_dir=self.output_dir.get(), 
             start_date=start_date, end_date=end_date, 
             start_time=start_time, end_time=end_time)
 
