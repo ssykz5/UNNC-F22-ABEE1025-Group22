@@ -11,7 +11,7 @@
 
 #### Method from CIBSE TM52 The limits of thermal comfort: avoiding overheating in European buildings to get the indoor temperature recommended range.
   * The equation for calculating comfort temperature:
-   $$ T_{comf}=0.33T_{rm}+18.8 $$
+    $$ T_{comf}=0.33T_{rm}+18.8 $$
   * Where: $T_{comf}$ is Comfort Temperature, $T_{rm}$ is Running mean outdoor air temperature.
   * For normal expectation, the suggested accpetable range is plus or minus $3K$.
   * For normal expectation, the suggested accpetable range is $_{\pm }3K$. In addition, Upper Limit Temperature can be calculated as Comfort Temperature +7K.
@@ -80,13 +80,15 @@
   * Outdoor temperature csv file.
     * In this file, the column names should be defined as below:
       * [Temperature(C), Date,	Comfortable Temperature	Max Acceptable Temperature,	Min Acceptable Temperature,	Upper Limit Temperature]
-      * PHOTO !!!
+      ![Outdoor_csv](/GuideScreenshot/Outdoor_csv.jpg "Outdoor_csv")
   * The csv files need to be analysed.
     * All these files should be stored in a folder, and there are no other files in this folder.
-    * PHOTO !!!
+      ![Sample_dir](/GuideScreenshot/Sample_dir.jpg "Sample_dir")
 
   ### 2. Run the GUI_main.py file with Python 3.
-  * Main window will be shown like this.
+  * Make sure your terminal is in the right working directory.
+    ![Working_dir](/GuideScreenshot/Working_dir.jpg "Working_dir")
+  * Main window will be shown like this. The status message at the left bottom tells you that you need create an analysis first.
     ![Main Window](/GuideScreenshot/Main_Window.jpg "Main Window")
   ### 3. Choose Target File Directory.
   * Click the "Choose Directory" button and choose the directory.
@@ -99,26 +101,31 @@
   * A message will be shown up to remind the directory you chose.
     ![Output Directory msg](/GuideScreenshot/Output_dir_msg.jpg "Output_dir_msg")    
   ### 5. Create Analysis
-  * Click Create Analysis button, and a messahe will shown up to remind you.
+  * Click Create Analysis button, and a messahe will shown up to remind you. Besides, the status will change and it will remind you that the outdoor temperature file is not added.
     ![Analysis_msg](/GuideScreenshot/Analysis_msg.jpg "Analysis_msg")
   ### 6. Choose Outdoor Temperature File Directory and add into the Analysis.
   * Click the "Choose Directory" button and choose the directory.
     ![Outdoor Directory](/GuideScreenshot/Outdoor_dir.jpg "Outdoor_dir")
   * A success message will pop up after choosing.
     ![Outdoor Directory msg](/GuideScreenshot/Outdoor_dir_msg.jpg "Outdoor_dir_msg")
-  * Click "Add Outdoor Temperature datas into the Analysis", and then a success message will pop up.
+  * Click "Add Outdoor Temperature datas into the Analysis", and then a success message will pop up. Besides, the status will change to "Plotting is ready".
     ![Outdoor Add msg](/GuideScreenshot/Outdoor_add_msg.jpg "Outdoor_add_msg")
 ### 7. Choose Start Date & Time.
   * Click the "Choose start date & time" button and choose the start date & time.
+  * Default value: 2022-6-14, 9:00
     ![Start_date_choice](/GuideScreenshot/Start_date_choice.jpg "Start_date_choice")
 ### 8. Choose End Date & Time.
   * Click the "Choose end date & time" button and choose the end date & time. (The same as last step)
+  * Default value: 2022-7-23, 18:00
     ![End_date_choice](/GuideScreenshot/End_date_choice.jpg "End_date_choice")
 ### 9. Choose the name of csv for Plotting.
   * Click the "Choose plotting dataframe" button and choose the name of dataframe. "All" means all the dataframes will be plotted.
     ![csv_plot](/GuideScreenshot/csv_plot.jpg "csv_plot")
-  * If you do not want to plot all the dataframes, please click "All" to refresh the choosing box first. You need to make sure there is no "All" in the choosing box.
+  * If you do not want to plot all the dataframes, please click "All" to refresh the choosing box first. You need to make sure there is no "All" in the choosing box. Multiple choices are also acceptable.
     ![csv_plot_single](/GuideScreenshot/csv_plot_single.jpg "csv_plot_single")
+    ![csv_plot_multiple](/GuideScreenshot/csv_plot_multiple.jpg "csv_plot_multiple")
+  * Click "Quit" and a message will pop up to show the names you have chosen.
+    ![choose_quit](/GuideScreenshot/choose_quit.jpg "choose_quit")
 ### 10. Plotting
   * Plot Day Average Temperature vs Date
     * Click "Plot Day Average Temperature vs Date" button, and a graph will shown up and it is also saved in output directory.
@@ -136,8 +143,10 @@
     * Click "Plot Temperature vs Time in different date with recommended range" button, and a graph will shown up and it is also saved in output directory.
     * Here is an example:
       ![Time_reco](/GuideScreenshot/Time_reco.jpg "Time_reco")
+  * Your output directory should be looked like this:
+    ![Output_plotting](/GuideScreenshot/Output_plotting.jpg "Output_plotting")
 ### 11. Quit
-  * Click "Quit" button, there will be a goodbye message and quit this program.
+  * Click "Quit" button, a goodbye message will be shown up and this program will be quited.
     ![Quit](/GuideScreenshot/Quit.jpg "Quit")
 
-Quick link: [PRD](coursework_part4_data_processing_and_visualization/Product%20requirement%20document%20(PRD).md ':include'), [README](../README.md ':include')
+Quick link: [PRD](Product%20requirement%20document%20(PRD).md ':include'), [README](../README.md ':include')
