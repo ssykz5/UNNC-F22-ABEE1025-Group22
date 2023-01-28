@@ -11,7 +11,7 @@
 
 #### Method from CIBSE TM52 The limits of thermal comfort: avoiding overheating in European buildings to get the indoor temperature recommended range.
   * The equation for calculating comfort temperature:
-    $$ T_{comf}=0.33T_{rm}+18.8 $$
+$$ T_{comf}=0.33T_{rm}+18.8 $$
   * Where: $T_{comf}$ is Comfort Temperature, $T_{rm}$ is Running mean outdoor air temperature.
   * For normal expectation, the suggested accpetable range is plus or minus $3K$.
   * For normal expectation, the suggested accpetable range is $_{\pm }3K$. In addition, Upper Limit Temperature can be calculated as Comfort Temperature +7K.
@@ -66,7 +66,7 @@
       * This function is used for delete useless column and empty row, and change the column name into English.
       * NOT FINISHED !!!!!!!+++++++
 ### GUI Part (GUI_main.py)
-* Class DataPlotting (For GUI analysis and plotting)
+* Class DataPlotting (For GUI demonstration)
   * Main window:
     * directory_entry: tkinter Entry
       * Show the current input directory.
@@ -91,7 +91,7 @@
   * Main window will be shown like this. The status message at the left bottom tells you that you need create an analysis first.
     ![Main Window](/GuideScreenshot/Main_Window.jpg "Main Window")
   ### 3. Choose Target File Directory.
-  * Click the "Choose Directory" button and choose the directory.
+  * Click the "Choose Directory" button and choose the directory. All the files in the chosen directory must be csv files. (.csv or .CSV)
     ![Target Directory](/GuideScreenshot/Target_dir.jpg "Target_dir")
   * A message will be shown up to remind the directory you chose.
     ![Target Directory msg](/GuideScreenshot/Target_dir_msg.jpg "Target_dir_msg")
@@ -149,4 +149,4 @@
   * Click "Quit" button, a goodbye message will be shown up and this program will be quited.
     ![Quit](/GuideScreenshot/Quit.jpg "Quit")
 
-Quick link: [PRD](Product%20requirement%20document%20(PRD).md ':include'), [README](../README.md ':include')
+### Quick link: [PRD](Product%20requirement%20document%20(PRD).md ':include'), [README](../README.md ':include')

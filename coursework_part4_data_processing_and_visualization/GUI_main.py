@@ -12,7 +12,6 @@ from tkinter import ttk
 import copy
 from ComBoPicker import Combopicker
 
-
 class DataPlotting(tk.Tk):
     def __init__(self):
         """
@@ -246,7 +245,8 @@ class DataPlotting(tk.Tk):
         self.p_control.add(self.p_plot)
         # Choose plotting df names.
         self.plot_df = tk.StringVar()
-        self.plot_df.set("All")
+        self.plot_df.set("Create an analysis first!")
+        self.df_names = []
         choose_plot_name_label = tk.Label(self.p_plot,
                                          text="The name of csv for Plotting",
                                          bg="#FF9800", fg="#757575",
@@ -332,6 +332,16 @@ class DataPlotting(tk.Tk):
         else:
             path = path.replace("/", "\\")   
             self.directory.set(path)
+        # Make sure all the files in the chosen directory are csv files.
+        for file in os.listdir(path):
+            if file.find(".csv") == -1:
+                if file.find(".CSV") == -1:
+                    info = 'Please choose directory again.' + \
+                    'All the files in the chosen directory ' + \
+                    'must be csv files. (.csv or .CSV)'
+                    msgbox.showwarning("Warning", info)
+                    return None
+
         info = f"The target directory:\n{self.directory.get()}"
         msgbox.showinfo("Target Directory", info)
 
@@ -351,6 +361,15 @@ class DataPlotting(tk.Tk):
         """
         # Create analysis.
         name = self.analysis_name.get()
+        # Make sure all the files in the chosen directory are csv files.
+        for file in os.listdir(self.directory.get()):
+            if file.find(".csv") == -1:
+                if file.find(".CSV") == -1:
+                    info = 'Please choose the target directory again.' + \
+                    'All the files in the chosen directory ' + \
+                    'must be csv files. (.csv or .CSV)'
+                    msgbox.showwarning("Warning", info)
+                    return None
         self.analysis = Analysis(name, self.directory.get())
         this_analysis = self.analysis
         # Read csv files.
@@ -363,6 +382,8 @@ class DataPlotting(tk.Tk):
         this_analysis.calculate_average()
         # Get the df_names.
         self.df_names = this_analysis.df_names
+        # Set the default plotting name.
+        self.plot_df.set("All")
         # Set the status.
         self.status.set(self.status_list[1])
         # Show info.
@@ -375,6 +396,10 @@ class DataPlotting(tk.Tk):
         # Make sure there is a target directory.
         if self.outdoor_temp_dir.get() == "Please Choose.":
             info = "Please choose the outdoor temperature csv first."
+            msgbox.showwarning("Warning", info)
+        # Make sure a analysis is created.
+        elif self.status.get() == self.status_list[0]:
+            info = "Please create an analysis first."
             msgbox.showwarning("Warning", info)
         else:
             outdoor_temp_df = pd.read_csv(self.outdoor_temp_dir.get(),
@@ -425,6 +450,8 @@ class DataPlotting(tk.Tk):
         
         # Create upper window.
         top = tk.Toplevel(self, bg='#FF9800')
+        # Change the icon in the top left corner of the window 
+        top.iconbitmap('.\\Tower.ico')
         top_width = self.winfo_screenwidth() / 2.7
         top_height = self.winfo_screenheight() / 5
         top_left = (self.winfo_screenwidth() - top_width) / 2
@@ -528,6 +555,7 @@ class DataPlotting(tk.Tk):
 
         # Create upper window.
         top = tk.Toplevel(self, bg='#FF9800')
+        top.iconbitmap('.\\Tower.ico')
         top_width = self.winfo_screenwidth() / 2.7
         top_height = self.winfo_screenheight() / 5
         top_left = (self.winfo_screenwidth() - top_width) / 2
@@ -621,6 +649,10 @@ class DataPlotting(tk.Tk):
         This function is for choosing the plotting df name.
         """
         plot_df = self.plot_df
+        if plot_df.get() == "Create an analysis first!":
+            info = "Create an analysis first!"
+            msgbox.showwarning("Warning", info)
+            return None
 
         # Create upper window.
         top = tk.Toplevel(self, bg='#FF9800')
@@ -653,6 +685,15 @@ class DataPlotting(tk.Tk):
         """
         This function is for plotting temperature average.
         """
+        # Check the status.
+        if self.status.get() != self.status_list[2]:
+            if self.status.get() == self.status_list[0]:
+                info = "Please create an analysis first."
+            else:
+                info = "Please add the outdoor temperature file."
+            msgbox.showwarning("Warning", info)
+            return None
+
         this_analysis = self.analysis
 
         # Transfer to dt.date.
@@ -689,6 +730,15 @@ class DataPlotting(tk.Tk):
         """
         This function is for plotting graph of each day.
         """
+        # Check the status.
+        if self.status.get() != self.status_list[2]:
+            if self.status.get() == self.status_list[0]:
+                info = "Please create an analysis first."
+            else:
+                info = "Please add the outdoor temperature file."
+            msgbox.showwarning("Warning", info)
+            return None
+
         this_analysis = self.analysis
         # Transfer to dt.date.
         date_format = "%Y-%m-%d"
@@ -729,6 +779,15 @@ class DataPlotting(tk.Tk):
         """
         This function is for plotting temperature average with recommendations.
         """
+        # Check the status.
+        if self.status.get() != self.status_list[2]:
+            if self.status.get() == self.status_list[0]:
+                info = "Please create an analysis first."
+            else:
+                info = "Please add the outdoor temperature file."
+            msgbox.showwarning("Warning", info)
+            return None
+
         this_analysis = self.analysis
 
         # Transfer to dt.date.
@@ -765,6 +824,15 @@ class DataPlotting(tk.Tk):
         """
         This function is for plotting graph of each day with recommendations.
         """
+        # Check the status.
+        if self.status.get() != self.status_list[2]:
+            if self.status.get() == self.status_list[0]:
+                info = "Please create an analysis first."
+            else:
+                info = "Please add the outdoor temperature file."
+            msgbox.showwarning("Warning", info)
+            return None
+
         this_analysis = self.analysis
         # Transfer to dt.date.
         date_format = "%Y-%m-%d"
