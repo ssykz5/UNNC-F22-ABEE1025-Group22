@@ -77,13 +77,17 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
     * NOT FINISHED !!!!++++++
 ## 4. Guide with an example (Plotting with GUI)
   ### 1. Preparation
-  * Outdoor temperature csv file.
+  * Outdoor temperature csv file. (daily data)
     * In this file, the column names should be defined as below:
       * [Temperature(C), Date,	Comfortable Temperature	Max Acceptable Temperature,	Min Acceptable Temperature,	Upper Limit Temperature]
       ![Outdoor_csv](/GuideScreenshot/Outdoor_csv.jpg "Outdoor_csv")
   * The csv files need to be analysed.
     * All these files should be stored in a folder, and there are no other files in this folder.
       ![Sample_dir](/GuideScreenshot/Sample_dir.jpg "Sample_dir")
+    * GUI_sample folder contains sample csv files that can be used to analysed.
+    * The csv files used to analyse must be expressed in the following style.
+      * It must have Temperature(C) and Date&Time column. i.e., It is OK to have other columns.
+      ![csv_sample](/GuideScreenshot/csv_sample.jpg "csv_sample")
 
   ### 2. Run the GUI_main.py file with Python 3.
   * Make sure your terminal is in the right working directory.
