@@ -22,7 +22,9 @@ This software is designed for analyzing and visualizing data with graphic user i
     * Generate recommended range. (CSET, PMB data, or other similar structure data)
       * Method from CIBSE TM52 The limits of thermal comfort: avoiding overheating in European buildings
         * The equation for calculating comfort temperature:
-          $T_{comf}=0.33T_{rm}+18.8$
+
+$$T_{comf}=0.33T_{rm}+18.8$$
+
         * Where: $T_{comf}$ is Comfort Temperature, $T_{rm}$ is Running mean outdoor air temperature.
         * For normal expectation, the suggested accpetable range is $_{\pm }3K$. In addition, Upper Limit Temperature can be calculated as Comfort Temperature +7K.
         * Running mean outdoor air temperature data is from outdoor temperature csv file.
