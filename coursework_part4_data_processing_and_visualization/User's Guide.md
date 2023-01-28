@@ -31,6 +31,7 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
 ## 3. Documentation
 ### Processing Part (Analysis.py)
 * Class Analysis (For data processing and plotting)
+
   * Attributes:
     * name: string
       * The name of this analysis.
@@ -47,24 +48,25 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
       * Default path is "./Result".
     * outdoor_temp_df: pandas dataframe
       * The dataframe of outdoor temperature.
-    * outdoor_average_temp_df: pandas dataframe
-      * The dataframe of outdoor temperature in day average.
+
   * Methods:
     * read_csv_to_df(self)
       * Read csv files into pandas dataframe and store the dataframe into data_sheet.
-    * drop_empty_column(self) [without GUI]
-      * This function is for deleting empty column.
-    * drop_useless_column(self, useless_column_names, this_df_name=None) [without GUI]
-      * This function is for dropping useless columns.
+    * transfer_to_datetime(self, df_name=None, dtcolumn="Date&Time",is_outdoor_temp=False, date_column="Date")
       * Args:
-        * useless_column_names: string
-          * The columns names needs to be dropped
-        * this_df_name: string
-          * The df name needs to be modified.
-          * Default value is None which means all the data_sheet dfs will be modified.
-    * rename_one_df(self, this_df_name, column_names) [without GUI]
-      * This function is used for delete useless column and empty row, and change the column name into English.
-      * NOT FINISHED !!!!!!!+++++++
+        * df_name: string
+          * The dataframe name of df needs to be transfer. 
+            Default value is None, which means all the dataframe 
+            in self.data_sheet will be transferred.
+        * dtcolumn: string
+          * The column needs to be transferred.Defaut column name is Date&Time.
+        * is_outdoor_temp: bool
+          * Determine if it is the outdoor_temp_df that needs to transfer 
+            datetime.
+        * date_column: string
+          * The name of date column.
+    * NOT FINISHED !!!!!!!+++++++
+  
 ### GUI Part (GUI_main.py)
 * Class DataPlotting (For GUI demonstration)
   * Main window:

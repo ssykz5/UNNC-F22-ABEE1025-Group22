@@ -33,8 +33,6 @@ class Analysis:
             Default path is "./Result".
         outdoor_temp_df: pandas dataframe
             df contains outdoor temperature.
-        outdoor_average_temp_df: pandas dataframe
-            df contains outdoor temperature in days' average.
         """
         self._name = name
         self._file_directory = file_directory
@@ -43,7 +41,6 @@ class Analysis:
         self._average_dfs = {}
         self._output_path = r"./Result"
         self._outdoor_temp_df = pd.DataFrame()
-        # self._outdoor_average_temp_df = pd.DataFrame()
 
     # Getter to get the value of attributes.
     @property
@@ -67,10 +64,6 @@ class Analysis:
     @property
     def outdoor_temp_df(self):
         return self._outdoor_temp_df
-    # @property
-    # def outdoor_average_temp_df(self):
-    #     return self._outdoor_average_temp_df
-    
     
     # Setter used to rename or reset.
     @name.setter
