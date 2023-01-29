@@ -67,8 +67,156 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
             datetime.
         * date_column: string
           * The name of date column.
-    * NOT FINISHED !!!!!!!+++++++
-  
+    * seperate_date_and_time_for_one_df(self, df_name,
+                                         seperate_column_name="Date&Time"):
+        * Add date and time columns for one dataframe.
+      * Args:
+        * df_name: string
+            * The name of this dataframe.
+        * seperate_column_name: string
+            * The column name used to seperate date and time. Default value 
+            * is "Date&Time".
+    * seperate_date_and_time(self, seperate_column_name="Date&Time"):
+        * Add date and time columns for every dataframe.
+      * Args:
+        * seperate_column_name: string
+            * The column name used to seperate date and time. Default value is
+            * "Date&Time".
+    * calculate_average_one_day(self, this_df, column_of_date, today):
+        * This function is for calculate average value in one day.
+      * Args:
+        * this_df: pandas dataframe
+            * The dataframe needs to be calculated.
+        * column_of_date: string type
+            * The column name of date.
+        * today: datetime type
+            * The day of calculating average value.
+        * Returns:
+          * this_mean: pandas series contains mean values of each column.
+    * calculate_average(self, column_of_date="Date"):
+        * Calculate the average number in different days.
+      * Args:
+        * column_of_date: string
+            * The column name of date. Default value is "Date".
+    * plot_graph(self, df_names, figure_name, x_name, y_names,
+                 output_dir, start_date,
+                end_date, date_column="Date"):
+        * Plot graph.
+      * Args:
+        * df_names: list
+          * The list of names of dataframes where the datas are 
+            retrieved from.
+        * figure_name: string
+            * The name of this graph.
+        * x_name: string
+            * The column name of datas used for x-axis.
+        * y_names: list
+            * The list of column names of datas used for y-axis.
+        * output_dir: string
+            * Output directory.
+        * start_date: datetime.date
+            * Start date of plotting.
+        * end_date: datetime.time
+            * End date of plotting.
+        * date_column: string
+            * The name of date column.
+            * Default value is "Date".
+    * plot_each_day(self, df_names, figure_name,
+                     x_name, y_names, output_dir, start_date,
+                     end_date, start_time,
+                     end_time, date_column="Date"):
+        * Plot graph of each day.
+          * Default: all the values will be used.
+      * Args:
+        * df_names: list
+          * The list of names of dataframes where the datas are
+          * retrieved from.
+        * figure_name: string
+            * The name of this graph.
+        * x_name: string
+            * The column name of datas used for x-axis.
+            * Usually "Time".
+        * y_names: list
+            * The list of column names of datas used for y-axis.
+        * output_dir: string
+            * Output_dir of plotting.
+        * start_date: datetime.date
+            * Start date of plotting.
+        * end_date: datetime.time
+            * End date of plotting.
+        * start_time: datetime.time
+            * Start time of plotting.
+        * end_time: datetime.time
+            * End time of plotting.
+        * date_column: string
+            * The name of date column.
+    * plot_graph_with_recommandation(self, df_names, figure_name,
+                                     x_name, y_names, 
+                                     output_dir,
+                                    start_date, end_date,
+                                    date_column="Date",
+                                     y_names_for_reco=None):
+        * Plot graph with recommandation.
+      * Args:
+        * df_names: list
+            * The list of names of dataframes where the datas are
+             retrieved from.
+        * figure_name: string
+            * The name of this graph.
+        * x_name: string
+            * The column name of datas used for x-axis.
+        * y_names: list
+            * The list of column names of datas used for y-axis.
+        * y_names_for_reco: list
+            * The list of column names for outdoor temperature range. if None
+            Default ["Comfortable Temperature", "Max Acceptable Temperature",
+                 "Min Acceptable Temperature"]
+        * output_dir: string
+            * The name of output directory of graph which is after the
+             self.output_dir. (not GUI)
+            * If is_GUI is True, it is the absolute directory.
+        * start_date: datetime.date
+            * Start date of plotting.
+        * end_date: datetime.time
+            * End date of plotting.
+        * date_column: string
+            * The name of date column.
+    * plot_each_day_with_recommendatioin(self, df_names,
+                    figure_name, x_name, y_names,
+                    output_dir,
+                    start_date, end_date,
+                    start_time, end_time,
+                    y_names_for_reco=None, date_column="Date"):
+        * Plot graph of each day.
+          * Default: all the values will be used.
+      * Args:
+        * df_names: list
+            * The list of names of dataframes where the datas are
+             retrieved from.
+        * figure_name: string
+            * The name of this graph.
+        * x_name: string
+            * The column name of datas used for x-axis.
+            * Usually "Time".
+        * y_names: list
+            * The list of column names of datas used for y-axis.
+        * output_dir: string
+            * Output directory.
+        * start_date: datetime.date
+            Start date of plotting.
+        * end_date: datetime.time
+            * End date of plotting.
+        * start_time: datetime.time
+            * Start time of plotting.
+        * end_time: datetime.time
+            * End time of plotting.
+        * y_names_for_reco: list
+            * The list of column names for outdoor temperature range. if None
+            Default ["Comfortable Temperature", "Max Acceptable Temperature",
+                     "Min Acceptable Temperature"]
+        * date_column: string
+            * The name of date column.
+
 ### GUI Part (GUI_main.py)
 * Class DataPlotting (For GUI demonstration)
   * Main window:
