@@ -200,12 +200,12 @@ class DataPlotting(tk.Tk):
                                     font=('Times', 13, 'bold'))
         start_time_label.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20)
         # Choose start date and time.
-        start_date_btn = tk.Button(self.p_dt_start, 
+        start_dt_btn = tk.Button(self.p_dt_start, 
                                     text="Choose start date & time", 
                                     command=self.choose_start_date_and_time,
                                     bg="#FF9800", fg="#FFF9C4", 
                                     font=('Times', 10, 'bold'))
-        start_date_btn.pack(fill=tk.NONE, side=tk.LEFT, 
+        start_dt_btn.pack(fill=tk.NONE, side=tk.LEFT, 
                                     padx=20, pady=20)
 
         # Create a PanedWindow for choosing the end date and time.
@@ -234,11 +234,11 @@ class DataPlotting(tk.Tk):
         end_time_label.pack(fill=tk.NONE, side=tk.LEFT, 
                             padx=20, pady=20)
         # Choose start date and time.
-        end_date_btn = tk.Button(self.p_dt_end, text="Choose end date & time",
+        end_dt_btn = tk.Button(self.p_dt_end, text="Choose end date & time",
                                 command=self.choose_end_date_and_time, 
                                 bg="#FF9800", fg="#FFF9C4", 
                                 font=('Times', 10, 'bold'))
-        end_date_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20)
+        end_dt_btn.pack(fill=tk.NONE, side=tk.LEFT, padx=20, pady=20)
 
         # Create a PanedWindow for plotting.
         self.p_plot = tk.PanedWindow(self, bg='#FF9800')
@@ -317,10 +317,10 @@ class DataPlotting(tk.Tk):
                                 bg="#F57C00", fg="#757575", 
                                 font=('Times', 15, 'bold'))
         status_label.pack(side=tk.LEFT, padx=(0, 20), pady=(0, 20))
-        status_test = tk.Label(self.p_bottom, textvariable=self.status, 
+        status_display = tk.Label(self.p_bottom, textvariable=self.status, 
                                 bg="#F57C00", fg="#757575", 
                                 font=('Times', 15, 'bold'))
-        status_test.pack(side=tk.LEFT, padx=(0, 20), pady=(0, 20))
+        status_display.pack(side=tk.LEFT, padx=(0, 20), pady=(0, 20))
 
     def select_directory_input(self):
         """
