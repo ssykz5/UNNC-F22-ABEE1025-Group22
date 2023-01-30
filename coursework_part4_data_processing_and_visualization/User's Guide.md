@@ -248,7 +248,7 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
       * Show the start date.
     * start_time_label: tkinter label
       * Show the start time.
-    * start_date_btn: tkinter button
+    * start_dt_btn: tkinter button
       * Call choose_start_date_and_time function
     * choose_start_date_and_time(self)
       * Create a tkinter Toplevel window.
@@ -262,7 +262,7 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
       * Show the end date.
     * end_time_label: tkinter label
       * Show the end time.
-    * end_date_btn: tkinter button
+    * end_dt_btn: tkinter button
       * Call choose_end_date_and_time function
     * choose_end_date_and_time(self)
       * Create a tkinter Toplevel window.
@@ -300,7 +300,7 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
       * Call say_goodbye function.
     * say_goodbye(self)
       * Show the goodbye message and quit the software.
-    * status_test: tkinter Label
+    * status_display: tkinter Label
       * Show the status of the analysis and plotting.
 
 ## 4. Guide with an example (Plotting with GUI)
