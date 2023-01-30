@@ -68,8 +68,8 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
         * date_column: string
           * The name of date column.
     * seperate_date_and_time_for_one_df(self, df_name,
-                                         seperate_column_name="Date&Time"):
-        * Add date and time columns for one dataframe.
+                                        seperate_column_name="Date&Time"):
+      * Add date and time columns for one dataframe.
       * Args:
         * df_name: string
             * The name of this dataframe.
@@ -77,13 +77,12 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
             * The column name used to seperate date and time. Default value 
             * is "Date&Time".
     * seperate_date_and_time(self, seperate_column_name="Date&Time"):
-        * Add date and time columns for every dataframe.
+      * Add date and time columns for every dataframe.
       * Args:
         * seperate_column_name: string
-            * The column name used to seperate date and time. Default value is
-            * "Date&Time".
+            * The column name used to seperate date and time. Default value is "Date&Time".
     * calculate_average_one_day(self, this_df, column_of_date, today):
-        * This function is for calculate average value in one day.
+      * This function is for calculate average value in one day.
       * Args:
         * this_df: pandas dataframe
             * The dataframe needs to be calculated.
@@ -91,17 +90,17 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
             * The column name of date.
         * today: datetime type
             * The day of calculating average value.
-        * Returns:
+      * Returns:
           * this_mean: pandas series contains mean values of each column.
     * calculate_average(self, column_of_date="Date"):
-        * Calculate the average number in different days.
+      * Calculate the average number in different days.
       * Args:
         * column_of_date: string
             * The column name of date. Default value is "Date".
     * plot_graph(self, df_names, figure_name, x_name, y_names,
                  output_dir, start_date,
                 end_date, date_column="Date"):
-        * Plot graph.
+      * Plot graph.
       * Args:
         * df_names: list
           * The list of names of dataframes where the datas are 
@@ -125,17 +124,14 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
                      x_name, y_names, output_dir, start_date,
                      end_date, start_time,
                      end_time, date_column="Date"):
-        * Plot graph of each day.
-          * Default: all the values will be used.
+      * Plot graph of each day.
       * Args:
         * df_names: list
-          * The list of names of dataframes where the datas are
-          * retrieved from.
+          * The list of names of dataframes where the datas are retrieved from.
         * figure_name: string
             * The name of this graph.
         * x_name: string
-            * The column name of datas used for x-axis.
-            * Usually "Time".
+            * The column name of datas used for x-axis. Usually "Time".
         * y_names: list
             * The list of column names of datas used for y-axis.
         * output_dir: string
@@ -156,7 +152,7 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
                                     start_date, end_date,
                                     date_column="Date",
                                      y_names_for_reco=None):
-        * Plot graph with recommandation.
+      * Plot graph with recommandation.
       * Args:
         * df_names: list
             * The list of names of dataframes where the datas are
@@ -168,7 +164,7 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
         * y_names: list
             * The list of column names of datas used for y-axis.
         * y_names_for_reco: list
-            * The list of column names for outdoor temperature range. if None
+            * The list of column names for outdoor temperature range. if None， 
             Default ["Comfortable Temperature", "Max Acceptable Temperature",
                  "Min Acceptable Temperature"]
         * output_dir: string
@@ -226,7 +222,87 @@ $$ T_{comf}=0.33T_{rm}+18.8 $$
       * Call the select_directory_input function when it is clicked.
     * select_directory_input(self)
       * Selecting directory, after selection, a message box will show up.
-    * NOT FINISHED !!!!++++++
+    * output_entry: tkinter Entry
+      * Show the current input directory.
+    * output_choose_dir_btn: tkinter Button
+      * Call the select_directory_output function when it is clicked.
+    * select_directory_output(self)
+      * Selecting directory, after selection, a message box will show up.
+    * create_analysis_btn: tkinter Button
+      * Initialize the analysis, call initialize_analysis function.
+    * initialize_analysis(self)
+      * Create an anlysis with chosen csv directory and calculate the average values.
+    * outdoor_temp_entry: tkinter Entry
+      * Show the address of outdoor temperature csv file.
+    * outdoor_temp_btn: tkinter Button
+      * Call add_outdoor_temperature_df function.
+    * add_outdoor_temperature_df(self)
+      * Add outdoor temperature dataframe to analysis.
+    * get_h_and_m_list(self)
+      * This function is for getting the hour and minute list for time
+        choosing box.
+      * Returns:
+        a tuple contains the lists of hours and minutes. 
+        e.g.(hours list, minutes list)
+    * start_date_label: tkinter Label
+      * Show the start date.
+    * start_time_label: tkinter label
+      * Show the start time.
+    * start_date_btn: tkinter button
+      * Call choose_start_date_and_time function
+    * choose_start_date_and_time(self)
+      * Create a tkinter Toplevel window.
+        * cal: tkcalendar DateEntry
+          * For date selection.
+        * hour_box: ttk Combobox
+          * For hour selection.
+        * minute_box: ttk Combobox
+          * For minute selection.
+    * end_date_label: tkinter Label
+      * Show the end date.
+    * end_time_label: tkinter label
+      * Show the end time.
+    * end_date_btn: tkinter button
+      * Call choose_end_date_and_time function
+    * choose_end_date_and_time(self)
+      * Create a tkinter Toplevel window.
+        * cal: tkcalendar DateEntry
+          * For date selection.
+        * hour_box: ttk Combobox
+          * For hour selection.
+        * minute_box: ttk Combobox
+          * For minute selection.
+    * choose_plot_name_entry: tkinter Entry
+      * Show the name of csv for plotting.
+    * choose_plot_name_btn: tkinter Button
+      * Create a tkinter Toplevel window.
+        * picker: Combopicker
+          * For multiple selection.
+        * test_btn: tkinter Button
+          * show the result and destroy this Toplevel window.
+    * plot_average_btn: tkinter Button
+      * Call plotting_average function.
+    * plotting_average(self)
+      * This function is for plotting day average temperature vs date.
+    * plot_each_day_btn: tkinter Button
+      * Call plotting_each_day function.
+    * plotting_each_day(self)
+      * This function is for plotting graph of each day. (Temperature vs Time)
+    * reco_average_btn: tkinter Button
+      * Call plotting_average_with_reco function.
+    * plotting_average_with_reco(self)
+      * This function is for plotting temperature average with recommendations. (Day Average Temperature(℃) vs Date with benchmarks)
+    * reco_each_day_btn: tkinter Button
+      * Call plotting_each_day_with_reco function.
+    * plotting_each_day_with_reco(self)
+      * This function is for plotting graph of each day with recommendations. (Temperature(℃) vs Time with benchmarks)
+    * goodbye_button: tkinter Button
+      * Call say_goodbye function.
+    * say_goodbye(self)
+      * Show the goodbye message and quit the software.
+    * status_test: tkinter Label
+      * Show the status of the analysis and plotting.
+
 ## 4. Guide with an example (Plotting with GUI)
   ### 1. Preparation
   * Outdoor temperature csv file. (daily data)
