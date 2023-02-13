@@ -1,4 +1,4 @@
-Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2022.11.26 14:26
+Program Version,EnergyPlus, Version 9.5.0-de239b2e5f, YMD=2023.02.13 19:58
 ! <Version>, Version ID
  Version, 9.5
 ! <Timesteps per Hour>, #TimeSteps, Minutes per TimeStep {minutes}
@@ -87,8 +87,8 @@ Surface Heat Transfer Algorithm, CTF - ConductionTransferFunction,200,0.10,1000.
  CTF,   0,      0.18328446    ,      0.18328446    ,      0.18328446    
 ! <WindowConstruction>,Construction Name,Index,#Layers,Roughness,Conductance {W/m2-K},SHGC,Solar Transmittance at Normal Incidence,Visible Transmittance at Normal Incidence
 ! <WindowMaterial:Glazing>, Material Name, Optical Data Type, Spectral Data Set Name, Thickness {m}, Solar Transmittance,Front Solar Reflectance, Back Solar Reflectance, Visible Transmittance, Front Visible Reflectance,Back Visible Reflectance,Infrared Transmittance, Front Thermal Emissivity, Back Thermal Emissivity,Conductivity {W/m-K},Dirt Factor,Solar Diffusing
- WindowConstruction,DOUBLECLEAR,1,1,VerySmooth,1.600,0.250,0.162,0.814
- WindowMaterial:Glazing,SIMPLEWINDOW:DOUBLE PANE WINDOW,SpectralAverage,,4.32833E-002,0.16139,0.63591,0.63591,0.81200,0.15008,0.14911,0.00000,0.84000,0.84000,9.61247E-002,1.00000,No
+ WindowConstruction,DOUBLECLEAR,1,1,VerySmooth,2.502,0.251,0.162,0.814
+ WindowMaterial:Glazing,SIMPLEWINDOW:DOUBLE PANE WINDOW,SpectralAverage,,2.78794E-002,0.16139,0.61843,0.61843,0.81200,0.15008,0.14911,0.00000,0.84000,0.84000,0.12206,1.00000,No
 ! <Shadowing/Sun Position Calculations Annual Simulations>, Shading Calculation Method, Shading Calculation Update Frequency Method, Shading Calculation Update Frequency {days}, Maximum Figures in Shadow Overlap Calculations {}, Polygon Clipping Algorithm, Pixel Counting Resolution, Sky Diffuse Modeling Algorithm, Output External Shading Calculation Results, Disable Self-Shading Within Shading Zone Groups, Disable Self-Shading From Shading Zone Groups to Other Zones
 Shadowing/Sun Position Calculations Annual Simulations,PolygonClipping,Periodic,20,15000,SutherlandHodgman,512,SimpleSkyDiffuseModeling,No,No,No
 ! <Surface Convection Parameters>, Surface Name, Outside Model Assignment, Outside Area [m2], Outside Perimeter [m], Outside Height [m], Inside Model Assignment, Inside Height [m], Inside Perimeter Envelope [m], Inside Hydraulic Diameter [m], Window Wall Ratio, Window Location, Near Radiant {Yes/No}, Has Active HVAC {Yes/No}
@@ -112,7 +112,7 @@ Zone Volume Capacitance Multiplier,   1.000 ,   1.000,   1.000,   1.000
 ! <Frame/Divider Surface>,Surface Name,Surface Class,Base Surface,Heat Transfer Algorithm,Construction,Nominal U (w/o film coefs) {W/m2-K},Nominal U (with film coefs) {W/m2-K},Solar Diffusing,Area (Net) {m2},Area (Gross) {m2},Area (Sunlit Calc) {m2},Azimuth {deg},Tilt {deg},~Width {m},~Height {m},Reveal {m}
 Zone Surfaces,ZONE ONE,7
 HeatTransfer Surface,ZN001:WALL001,Wall,,CTF - ConductionTransferFunction,R13WALL,0.189,0.184,,37.34,53.34,37.34,180.00,90.00,15.24,3.50,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
-HeatTransfer Surface,ZN001:WALL001:WIN001,Window,ZN001:WALL001,Window5 Detailed Fenestration,DOUBLECLEAR,N/A,1.600,No,16.00,16.00,16.00,180.00,90.00,8.00,2.00,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
+HeatTransfer Surface,ZN001:WALL001:WIN001,Window,ZN001:WALL001,Window5 Detailed Fenestration,DOUBLECLEAR,N/A,2.502,No,16.00,16.00,16.00,180.00,90.00,8.00,2.00,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
 HeatTransfer Surface,ZN001:WALL002,Wall,,CTF - ConductionTransferFunction,R13WALL,0.189,0.184,,53.34,53.34,53.34,90.00,90.00,15.24,3.50,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
 HeatTransfer Surface,ZN001:WALL003,Wall,,CTF - ConductionTransferFunction,R13WALL,0.189,0.184,,53.34,53.34,53.34,0.00,90.00,15.24,3.50,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
 HeatTransfer Surface,ZN001:WALL004,Wall,,CTF - ConductionTransferFunction,R13WALL,0.189,0.184,,53.34,53.34,53.34,270.00,90.00,15.24,3.50,0.00,ExternalEnvironment,DOE-2,ASHRAETARP,SunExposed,WindExposed,0.50,0.50,0.50,0.50,4
@@ -124,9 +124,9 @@ HeatTransfer Surface,ZN001:ROOF001,Roof,,CTF - ConductionTransferFunction,ROOF31
 ! <Environment:WarmupDays>, NumberofWarmupDays
 Environment,RUN PERIOD 1,WeatherFileRunPeriod,01/01/2013,01/01/2013,Tuesday,1,Use RunPeriod Specified Day,Yes,Yes,No,Yes,Yes,Clark and Allen
 Environment:Daylight Saving,No,
-Environment:WarmupDays, 27
+Environment:WarmupDays, 25
 ! <Warmup Convergence Information>,Zone Name,Environment Type/Name,Average Warmup Temperature Difference {deltaC},Std Dev Warmup Temperature Difference {deltaC},Max Temperature Pass/Fail Convergence,Min Temperature Pass/Fail Convergence,Average Warmup Load Difference {W},Std Dev Warmup Load Difference {W},Heating Load Pass/Fail Convergence,Cooling Load Pass/Fail Convergence
- Warmup Convergence Information,ZONE ONE,RunPeriod: RUN PERIOD 1,5.7235802907E-002,5.8103054213E-002,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
+ Warmup Convergence Information,ZONE ONE,RunPeriod: RUN PERIOD 1,5.7413956575E-002,5.8595904840E-002,Pass,Pass,0.0000000000,0.0000000000,Pass,Pass
 ! <Program Control Information:Threads/Parallel Sims>, Threading Supported,Maximum Number of Threads, Env Set Threads (OMP_NUM_THREADS), EP Env Set Threads (EP_OMP_NUM_THREADS), IDF Set Threads, Number of Threads Used (Interior Radiant Exchange), Number Nominal Surfaces, Number Parallel Sims
 Program Control:Threads/Parallel Sims, No,1, N/A, N/A, N/A, N/A, N/A, N/A
 End of Data
