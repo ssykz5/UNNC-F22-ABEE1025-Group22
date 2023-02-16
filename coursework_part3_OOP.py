@@ -31,37 +31,37 @@ class SingleSim:
 		parameter_key1: list type, each item in the list represents the key
 					 at different levels.
 					 For example, ['WindowMaterial:SimpleGlazingSystem', 
-					 				'SimpleWindow:DOUBLE PANE WINDOW', 
-					 				'solar_heat_gain_coefficient'] 
+							'SimpleWindow:DOUBLE PANE WINDOW', 
+							'solar_heat_gain_coefficient'] 
 					 means (assume json_model is the EnergyPlus JSON model) 
 					 json_model['WindowMaterial:SimpleGlazingSystem']\
-					 			['SimpleWindow:DOUBLE PANE WINDOW']\
-					 			['solar_heat_gain_coefficient'] 
+						['SimpleWindow:DOUBLE PANE WINDOW']\
+						['solar_heat_gain_coefficient'] 
 					 is the innermost key to be accessed.
 		parameter_key1_str: string type, the same as parameter_key1 but 
 							different type.
 		parameter_key2: list type, same as parameter_key1
 		parameter_key2_str: string type, the same as parameter_key1_str
 		parameter_key1_vals: list type,
-							contain two float value, which is
-							the value range of this parameter key.
-							For example, [0.25, 0.75] means the range of this 
-							parameter key is from 0.25 to 0.75.
+					contain two float value, which is
+					the value range of this parameter key.
+					For example, [0.25, 0.75] means the range of this 
+					parameter key is from 0.25 to 0.75.
 		parameter_key2_vals: list type, same as parameter_key1_vals
 		full_parameter_value1: numpy.ndarray type,
-							all the values of this parameter key.
-							generate from parameter_key_vals
+					all the values of this parameter key.
+					generate from parameter_key_vals
 		full_parameter_value2: numpy.ndarray type, same as
-							 full_parameter_value1
+					 full_parameter_value1
 		output_paths_df: Pandas DataFrame type, contains the data of different
-						 simulation (2 parameter values,
-						 		 output path of csv file for this simulation)
+					 simulation (2 parameter values,
+					 output path of csv file for this simulation)
 		mean_temperature_df: Pandas DataFrame type, contains the data
-						 of different simulation (2 parameter values, output
-						 path of csv file for this simulation, mean
-						 temperature of this simulation)
+					 of different simulation (2 parameter values, output
+					 path of csv file for this simulation, mean
+					 temperature of this simulation)
 		optimal: Pandas Series type, contains the information of the simulation
-						 has the highest average indoor air temperature. 
+					 has the highest average indoor air temperature. 
 		"""
 		self._eplus_run_path = eplus_run_path
 		self._idf_path = idf_path
@@ -203,14 +203,14 @@ class SingleSim:
 		"""
 
 		self._full_parameter_values1 =np.linspace(self._parameter_key1_vals[0],
-												self._parameter_key1_vals[1],
-												parameter1_number)
+							self._parameter_key1_vals[1],
+							parameter1_number)
 		self._full_parameter_values2 =np.linspace(self._parameter_key2_vals[0],
-												self._parameter_key2_vals[1],
-												parameter2_number)
+							self._parameter_key2_vals[1],
+							parameter2_number)
 
 	def run_two_simulation_helper(self, parameter_key1_value,
-								 parameter_key2_value, output_path = None):
+					 parameter_key2_value, output_path = None):
 		"""
 		This is a helper function to run one simulation with the changed
 		value of the parameter_key
@@ -259,7 +259,7 @@ class SingleSim:
 
 
 	def run_two_parameter_parametric(self, parameter1_number,
-									 parameter2_number):
+					 parameter2_number):
 
 		"""
 		This function is used to run two parameter simulation
@@ -285,19 +285,19 @@ class SingleSim:
 				each_output_dir = self._output_dir + f"/run_{time}"
 				# Run one simulation
 				output_path = self.run_two_simulation_helper(parameter_key1_value,
-									 parameter_key2_value, each_output_dir)
+								parameter_key2_value, each_output_dir)
 				# Save the data of this simulation in a DataFrame
 				this_output_path_df = pd.DataFrame({self._parameter_key1_str:\
-													 parameter_key1_value,
-													self._parameter_key2_str:\
-													 parameter_key2_value,
-													"output_path":\
-													 output_path},
-													 index=[0])
+									 parameter_key1_value,
+									self._parameter_key2_str:\
+									 parameter_key2_value,
+									"output_path":\
+									 output_path},
+									 index=[0])
 				# Save this simulation in the overall DataFrame.
 				self._output_paths_df = pd.concat([self._output_paths_df,\
-													 this_output_path_df],
-													 ignore_index=True)
+								 this_output_path_df],
+								 ignore_index=True)
 				# Set for next time
 				time += 1
 
@@ -360,19 +360,19 @@ class Simulation(SingleSim):
 		parameter_key1: list type, each item in the list represents the key
 					 at different levels.
 					 For example, ['WindowMaterial:SimpleGlazingSystem', 
-					 				'SimpleWindow:DOUBLE PANE WINDOW', 
-					 				'solar_heat_gain_coefficient'] 
+							'SimpleWindow:DOUBLE PANE WINDOW', 
+							'solar_heat_gain_coefficient'] 
 					 means (assume json_model is the EnergyPlus JSON model) 
 					 json_model['WindowMaterial:SimpleGlazingSystem']\
-					 			['SimpleWindow:DOUBLE PANE WINDOW']\
-					 			['solar_heat_gain_coefficient'] 
+						['SimpleWindow:DOUBLE PANE WINDOW']\
+						['solar_heat_gain_coefficient'] 
 					 is the innermost key to be accessed.
 		parameter_key2: list type, same as parameter_key1
 		parameter_key1_vals: list type,
-							contain two float value, which is
-							the value range of this parameter key.
-							For example, [0.25, 0.75] means the range of this 
-							parameter key is from 0.25 to 0.75.
+				contain two float value, which is
+				the value range of this parameter key.
+				For example, [0.25, 0.75] means the range of this 
+				parameter key is from 0.25 to 0.75.
 		parameter_key2_vals: list type, same as parameter_key1_vals 
 		"""
 		exec(f'self.{name} = SingleSim(eplus_run_path, idf_path,\
@@ -388,23 +388,23 @@ class Simulation(SingleSim):
 		Args:
 		------------
 		parameter1_number: int type, the number of parameter value will
-							be generated for parameter 1.
+				be generated for parameter 1.
 		parameter2_number: int type, the number of parameter value will
-							be generated for parameter 2.
+				be generated for parameter 2.
 		name: string type, the default value is empty string, which means
-							all the single simulations will be run.
-							The name of this single simulation will be run.
+				all the single simulations will be run.
+				The name of this single simulation will be run.
 		"""
 		if name != '':
 			this_sim = eval(f"self.{name}")
 			this_sim.run_two_parameter_parametric(parameter1_number,
-													parameter2_number)
+								parameter2_number)
 			this_sim.calculate_avg_indoor_air_temperature()
 		else:
 			for this_name in self._sim_names:
 				this_sim = eval(f"self.{this_name}")
 				this_sim.run_two_parameter_parametric(parameter1_number,
-														parameter2_number)
+									parameter2_number)
 				this_sim.calculate_avg_indoor_air_temperature()
 
 	def show_simulations_result(self, name=''):
@@ -414,8 +414,8 @@ class Simulation(SingleSim):
 		Args:
 		-----------
 		name: string type, the default value is empty string, which means
-							all the single simulations' results will be shown.
-							The name of this single simulation will be shown.
+			all the single simulations' results will be shown.
+			The name of this single simulation will be shown.
 
 		"""
 		if name != '':
@@ -441,10 +441,10 @@ class Simulation(SingleSim):
 		Args:
 		-----------
 		name: string type, the default value is empty string, which means
-							the optimal result of all the single simulations
-							 will be shown.
-							The name of this single simulation's optimal
-							 result will be shown.
+			the optimal result of all the single simulations
+			 will be shown.
+			The name of this single simulation's optimal
+			 result will be shown.
 		"""
 		if name != '':
 			this_sim = eval(f"self.{name}")
